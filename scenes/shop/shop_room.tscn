@@ -1,0 +1,139 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_fixture.tscn" id="fixture"]
+
+[sub_resource type="StandardMaterial3D" id="FloorMat"]
+albedo_color = Color(0.25, 0.25, 0.24, 1)
+
+[sub_resource type="StandardMaterial3D" id="WallMat"]
+albedo_color = Color(0.3, 0.29, 0.26, 1)
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(12, 1, 12)
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(12, 1, 12)
+
+[sub_resource type="BoxMesh" id="NorthWallMesh"]
+size = Vector3(12, 4, 0.5)
+
+[sub_resource type="BoxShape3D" id="NorthWallShape"]
+size = Vector3(12, 4, 0.5)
+
+[sub_resource type="BoxMesh" id="SouthWallMesh"]
+size = Vector3(12, 4, 0.5)
+
+[sub_resource type="BoxShape3D" id="SouthWallShape"]
+size = Vector3(12, 4, 0.5)
+
+[sub_resource type="BoxMesh" id="EastWallMesh"]
+size = Vector3(0.5, 4, 12.5)
+
+[sub_resource type="BoxShape3D" id="EastWallShape"]
+size = Vector3(0.5, 4, 12.5)
+
+[sub_resource type="BoxMesh" id="EntryNorthMesh"]
+size = Vector3(0.5, 4, 4.5)
+
+[sub_resource type="BoxShape3D" id="EntryNorthShape"]
+size = Vector3(0.5, 4, 4.5)
+
+[sub_resource type="BoxMesh" id="EntrySouthMesh"]
+size = Vector3(0.5, 4, 4.5)
+
+[sub_resource type="BoxShape3D" id="EntrySouthShape"]
+size = Vector3(0.5, 4, 4.5)
+
+[sub_resource type="BoxMesh" id="EntryLintelMesh"]
+size = Vector3(0.5, 0.8, 4)
+
+[sub_resource type="BoxShape3D" id="EntryLintelShape"]
+size = Vector3(0.5, 0.8, 4)
+
+[node name="ShopRoom" instance=ExtResource("fixture")]
+
+[node name="Geometry" type="Node3D" parent="."]
+
+[node name="Floor" type="StaticBody3D" parent="Geometry"]
+position = Vector3(0, -0.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Floor"]
+mesh = SubResource("FloorMesh")
+material_override = SubResource("FloorMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/Floor"]
+shape = SubResource("FloorShape")
+
+[node name="NorthWall" type="StaticBody3D" parent="Geometry"]
+position = Vector3(0, 2, -6.25)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/NorthWall"]
+mesh = SubResource("NorthWallMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/NorthWall"]
+shape = SubResource("NorthWallShape")
+
+[node name="SouthWall" type="StaticBody3D" parent="Geometry"]
+position = Vector3(0, 2, 6.25)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/SouthWall"]
+mesh = SubResource("SouthWallMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/SouthWall"]
+shape = SubResource("SouthWallShape")
+
+[node name="EastWall" type="StaticBody3D" parent="Geometry"]
+position = Vector3(6.25, 2, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/EastWall"]
+mesh = SubResource("EastWallMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/EastWall"]
+shape = SubResource("EastWallShape")
+
+[node name="EntryNorth" type="StaticBody3D" parent="Geometry"]
+position = Vector3(-6.25, 2, -4.25)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/EntryNorth"]
+mesh = SubResource("EntryNorthMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/EntryNorth"]
+shape = SubResource("EntryNorthShape")
+
+[node name="EntrySouth" type="StaticBody3D" parent="Geometry"]
+position = Vector3(-6.25, 2, 4.25)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/EntrySouth"]
+mesh = SubResource("EntrySouthMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/EntrySouth"]
+shape = SubResource("EntrySouthShape")
+
+[node name="EntryLintel" type="StaticBody3D" parent="Geometry"]
+position = Vector3(-6.25, 3.6, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/EntryLintel"]
+mesh = SubResource("EntryLintelMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/EntryLintel"]
+shape = SubResource("EntryLintelShape")

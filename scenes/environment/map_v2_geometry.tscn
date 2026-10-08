@@ -1,0 +1,166 @@
+[gd_scene format=3 uid="uid://dcxrgc436iq7t"]
+
+[ext_resource type="Shape3D" path="res://resources/environment/map_v2_collisions/cleaning_door_frame.res" id="cleaning_door_frame"]
+[ext_resource type="Shape3D" path="res://resources/environment/map_v2_collisions/cleaning_floor.res" id="cleaning_floor"]
+[ext_resource type="ArrayMesh" path="res://resources/environment/map_v2_collisions/cleaning_floor_mesh.res" id="cleaning_floor_mesh"]
+[ext_resource type="Shape3D" path="res://resources/environment/map_v2_collisions/cleaning_ramp.res" id="cleaning_ramp"]
+[ext_resource type="ArrayMesh" path="res://resources/environment/map_v2_collisions/cleaning_ramp_mesh.res" id="cleaning_ramp_mesh"]
+[ext_resource type="Shader" uid="uid://w3ouoebcqc2o" path="res://shaders/map_passage_cut.gdshader" id="cut_shader"]
+[ext_resource type="Shape3D" path="res://resources/environment/map_v2_collisions/main_floor.res" id="main_floor"]
+[ext_resource type="ArrayMesh" path="res://resources/environment/map_v2_collisions/main_floor_mesh.res" id="main_floor_mesh"]
+[ext_resource type="Shape3D" path="res://resources/environment/map_v2_collisions/main_walls.res" id="main_walls"]
+[ext_resource type="PackedScene" uid="uid://c3l6o3jwildxy" path="res://assets/prototypes/map/map_v2.fbx" id="model"]
+[ext_resource type="ArrayMesh" path="res://resources/environment/map_v2_collisions/passage_mesh.res" id="passage_mesh"]
+[ext_resource type="Shape3D" path="res://resources/environment/map_v2_collisions/pit.res" id="pit"]
+[ext_resource type="Shape3D" path="res://resources/environment/map_v2_collisions/passage_ramp.res" id="ramp"]
+[ext_resource type="ArrayMesh" path="res://resources/environment/map_v2_collisions/ramp_mesh.res" id="ramp_mesh"]
+[ext_resource type="Shape3D" path="res://resources/environment/map_v2_collisions/shop_floor.res" id="shop_floor"]
+[ext_resource type="ArrayMesh" path="res://resources/environment/map_v2_collisions/shop_floor_mesh.res" id="shop_floor_mesh"]
+[ext_resource type="Shape3D" path="res://resources/environment/map_v2_collisions/shop_passage.res" id="shop_passage"]
+[ext_resource type="Shape3D" path="res://resources/environment/map_v2_collisions/shop_walls.res" id="shop_walls"]
+
+[sub_resource type="ShaderMaterial" id="cut_main_walls"]
+render_priority = 0
+shader = ExtResource("cut_shader")
+shader_parameter/mesh_to_map = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+shader_parameter/passage_start = Vector3(-8, 0, 1)
+shader_parameter/passage_end = Vector3(-14, 0, 3.6)
+shader_parameter/radius = 1.4
+shader_parameter/spring_height = 1.6
+shader_parameter/arch_segments = 12
+shader_parameter/floor_start = -0.0834
+shader_parameter/floor_end = -0.4279
+shader_parameter/floor_transition = Vector2(0.55, 0.85)
+
+[sub_resource type="ShaderMaterial" id="cut_shop_walls"]
+render_priority = 0
+shader = ExtResource("cut_shader")
+shader_parameter/mesh_to_map = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+shader_parameter/passage_start = Vector3(-8, 0, 1)
+shader_parameter/passage_end = Vector3(-14, 0, 3.6)
+shader_parameter/radius = 1.4
+shader_parameter/spring_height = 1.6
+shader_parameter/arch_segments = 12
+shader_parameter/floor_start = -0.0834
+shader_parameter/floor_end = -0.4279
+shader_parameter/floor_transition = Vector2(0.55, 0.85)
+
+[sub_resource type="StandardMaterial3D" id="floor_mat"]
+cull_mode = 2
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="passage_mat"]
+cull_mode = 2
+albedo_color = Color(0.48, 0.43, 0.39, 1)
+roughness = 0.9
+
+[node name="MapV2Geometry" type="Node3D" unique_id=2020513760]
+metadata/source_sha256 = "3fd95257e14c17617b00cb9b9d95fd6f5586f23f7733ca9710db78ce5280877c"
+
+[node name="Model" parent="." unique_id=1852889974 instance=ExtResource("model")]
+
+[node name="优化墙" parent="Model" index="0" unique_id=1689169002]
+material_override = SubResource("cut_main_walls")
+
+[node name="商店区域" parent="Model" index="1" unique_id=169968863]
+visible = false
+
+[node name="圆环" parent="Model" index="2" unique_id=604613953]
+material_override = SubResource("cut_shop_walls")
+
+[node name="清理区域" parent="Model" index="5" unique_id=213181670]
+visible = false
+
+[node name="立方体" parent="Model" index="6" unique_id=2037356735]
+visible = false
+
+[node name="联通门" parent="Model" index="7" unique_id=414251256]
+visible = false
+
+[node name="MainFloor" type="MeshInstance3D" parent="." unique_id=617437974]
+material_override = SubResource("floor_mat")
+mesh = ExtResource("main_floor_mesh")
+
+[node name="CleaningFloor" type="MeshInstance3D" parent="." unique_id=1987513656]
+material_override = SubResource("floor_mat")
+mesh = ExtResource("cleaning_floor_mesh")
+
+[node name="ShopFloor" type="MeshInstance3D" parent="." unique_id=343398616]
+material_override = SubResource("floor_mat")
+mesh = ExtResource("shop_floor_mesh")
+
+[node name="Passage" type="MeshInstance3D" parent="." unique_id=1462882831]
+material_override = SubResource("passage_mat")
+mesh = ExtResource("passage_mesh")
+
+[node name="Ramp" type="MeshInstance3D" parent="." unique_id=835796690]
+material_override = SubResource("passage_mat")
+mesh = ExtResource("ramp_mesh")
+
+[node name="CleaningRamp" type="MeshInstance3D" parent="." unique_id=1031397415]
+material_override = SubResource("passage_mat")
+mesh = ExtResource("cleaning_ramp_mesh")
+
+[node name="Collision" type="Node3D" parent="." unique_id=1967225578]
+
+[node name="MainFloor" type="StaticBody3D" parent="Collision" unique_id=1633603772]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision/MainFloor" unique_id=367111622]
+shape = ExtResource("main_floor")
+
+[node name="CleaningFloor" type="StaticBody3D" parent="Collision" unique_id=86921245]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision/CleaningFloor" unique_id=361246118]
+shape = ExtResource("cleaning_floor")
+
+[node name="Pit" type="StaticBody3D" parent="Collision" unique_id=37255621]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision/Pit" unique_id=1621349298]
+shape = ExtResource("pit")
+
+[node name="ShopFloor" type="StaticBody3D" parent="Collision" unique_id=2028738876]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision/ShopFloor" unique_id=944550005]
+shape = ExtResource("shop_floor")
+
+[node name="MainWalls" type="StaticBody3D" parent="Collision" unique_id=1351133985]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision/MainWalls" unique_id=1629599823]
+shape = ExtResource("main_walls")
+
+[node name="ShopWalls" type="StaticBody3D" parent="Collision" unique_id=980525672]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision/ShopWalls" unique_id=1859493835]
+shape = ExtResource("shop_walls")
+
+[node name="ShopPassage" type="StaticBody3D" parent="Collision" unique_id=716743237]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision/ShopPassage" unique_id=2008742664]
+shape = ExtResource("shop_passage")
+
+[node name="CleaningDoorFrame" type="StaticBody3D" parent="Collision" unique_id=1023975503]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision/CleaningDoorFrame" unique_id=791600703]
+shape = ExtResource("cleaning_door_frame")
+
+[node name="PassageRamp" type="StaticBody3D" parent="Collision" unique_id=357701960]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision/PassageRamp" unique_id=814600863]
+shape = ExtResource("ramp")
+
+[node name="CleaningRamp" type="StaticBody3D" parent="Collision" unique_id=1544946351]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision/CleaningRamp" unique_id=1903971528]
+shape = ExtResource("cleaning_ramp")
+
+[editable path="Model"]

@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/shop/shop_item.gd" id="script"]
+
+[sub_resource type="CylinderMesh" id="Jar"]
+top_radius = 0.16
+bottom_radius = 0.22
+height = 0.4
+
+[sub_resource type="CylinderShape3D" id="Shape"]
+radius = 0.22
+height = 0.4
+
+[node name="ShopItem" type="RigidBody3D"]
+collision_layer = 8
+collision_mask = 3
+freeze = true
+script = ExtResource("script")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("Jar")
+
+[node name="Shape" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape")
+
+[node name="Price" type="Label3D" parent="."]
+position = Vector3(0, 0.55, 0)
+billboard = 1
+font_size = 28
+pixel_size = 0.004

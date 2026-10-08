@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bd2b8m71ej6u5"]
+
+[ext_resource type="Script" uid="uid://rjon2v860fg1" path="res://scripts/enemies/monster_spawner.gd" id="1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mb1uh"]
+albedo_color = Color(0.6785404, 0.25210792, 1, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_dcxud"]
+material = SubResource("StandardMaterial3D_mb1uh")
+height = 1.015
+
+[node name="MonsterSpawner" type="Marker3D" unique_id=5975947]
+gizmo_extents = 0.6
+script = ExtResource("1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1427286603]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.54995495, 0)
+mesh = SubResource("CylinderMesh_dcxud")

@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/elements/flammable_vines.tscn" id="1"]
+
+[sub_resource type="SphereShape3D" id="Contact"]
+radius = 0.6
+
+[node name="FlammableGrass" instance=ExtResource("1")]
+size = Vector3(0.8, 0.5, 0.7)
+tint = Color(0.25, 0.5, 0.12, 1)
+blocks_movement = false
+
+[node name="ElementComponent" parent="." index="1"]
+burn_duration = 3.0
+flame_scale = 0.65
+
+[node name="Shape" parent="ElementComponent" index="0"]
+shape = SubResource("Contact")

@@ -1,0 +1,284 @@
+[gd_scene format=3 uid="uid://c7h21wl1k4iji"]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/crosshair.tscn" id="crosshair"]
+[ext_resource type="FontVariation" uid="uid://devl8p2neeq6s" path="res://resources/ui/game_font.tres" id="font"]
+[ext_resource type="PackedScene" uid="uid://dcxrgc436iq7t" path="res://scenes/environment/map_v2_geometry.tscn" id="geometry"]
+[ext_resource type="PackedScene" path="res://scenes/elements/flammable_grass.tscn" id="grass"]
+[ext_resource type="PackedScene" uid="uid://chole00000001" path="res://scenes/economy/hole.tscn" id="hole"]
+[ext_resource type="PackedScene" uid="uid://cmoneyui00001" path="res://scenes/ui/money_ui.tscn" id="money"]
+[ext_resource type="PackedScene" uid="uid://b1nf44seup0a5" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="Resource" uid="uid://6g0i0fluavl3" path="res://resources/enemies/monster_rat.tres" id="rat"]
+[ext_resource type="Script" uid="uid://dk2kylwpxjl15" path="res://scripts/rooms/map_world.gd" id="room"]
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_fixture.tscn" id="shop"]
+[ext_resource type="PackedScene" uid="uid://bd2b8m71ej6u5" path="res://scenes/enemies/monster_spawner.tscn" id="spawner"]
+[ext_resource type="PackedScene" path="res://scenes/elements/torch.tscn" id="torch"]
+[ext_resource type="PackedScene" path="res://scenes/elements/flammable_vines.tscn" id="vines"]
+
+[sub_resource type="CylinderShape3D" id="Swallow"]
+height = 5.0
+radius = 3.15
+
+[sub_resource type="StandardMaterial3D" id="SpawnerMat"]
+albedo_color = Color(0.08, 0.04, 0.025, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="SpawnMarker"]
+top_radius = 0.45
+bottom_radius = 0.45
+height = 0.015
+
+[sub_resource type="Environment" id="Environment"]
+background_mode = 1
+background_color = Color(0.055, 0.065, 0.08, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.72, 0.76, 0.84, 1)
+ambient_light_sky_contribution = 0.0
+ambient_light_energy = 0.14
+tonemap_mode = 2
+
+[node name="MapWorld" type="Node3D" unique_id=106279645]
+script = ExtResource("room")
+room_title = "模型世界"
+initial_task = "在主厅杀鼠，将尸体带到中央洞献祭，攒 %d 金币购买油。"
+purchase_task = "金币已够，沿商店通道去拿油，放到店长前的小台子。"
+
+[node name="WorldGeometry" parent="." unique_id=1874852254 instance=ExtResource("geometry")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="Player" parent="." unique_id=895368793 instance=ExtResource("player")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 1.1, -15)
+
+[node name="ExitPoint" type="Marker3D" parent="." unique_id=1056027509]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -12)
+
+[node name="Hole" parent="." unique_id=480893499 instance=ExtResource("hole")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.4952, -0.1668, 0.158)
+exit_point_path = NodePath("../ExitPoint")
+swallow_radius = 4.0
+player_fall_radius = 3.0
+
+[node name="Rim" parent="Hole" index="0"]
+visible = false
+
+[node name="Pit" parent="Hole" index="1"]
+visible = false
+
+[node name="Blood" parent="Hole" index="2"]
+visible = false
+
+[node name="Shape" parent="Hole/SwallowZone" index="0"]
+shape = SubResource("Swallow")
+
+[node name="Bottom" parent="Hole" index="5"]
+visible = false
+collision_layer = 0
+
+[node name="Shape" parent="Hole/Bottom" index="1"]
+disabled = true
+
+[node name="ShopRoom" parent="." unique_id=1094564211 instance=ExtResource("shop")]
+transform = Transform3D(0.9099613, 0, 0.41469324, 0, 1, 0, -0.41469324, 0, 0.9099613, -31.12, -0.8558, 16.02)
+
+[node name="StarterCleaningRoom" type="Node3D" parent="." unique_id=408525533]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1668, -14)
+
+[node name="RatSpawner" parent="StarterCleaningRoom" unique_id=51720745 instance=ExtResource("spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -1.2)
+monster_data = ExtResource("rat")
+max_alive = 3
+spawn_radius = 2.4
+
+[node name="Marker" type="MeshInstance3D" parent="StarterCleaningRoom/RatSpawner" unique_id=1585847009]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
+material_override = SubResource("SpawnerMat")
+mesh = SubResource("SpawnMarker")
+
+[node name="Sign" type="Label3D" parent="StarterCleaningRoom/RatSpawner" unique_id=1743340174]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+pixel_size = 0.008
+billboard = 1
+text = "主厅老鼠
+最多 3 只 / 每 3 秒"
+font = ExtResource("font")
+font_size = 28
+
+[node name="Torch" parent="." unique_id=1844778873 instance=ExtResource("torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, -0.1668, -3.2)
+
+[node name="VineGate" type="Node3D" parent="." unique_id=484492715]
+transform = Transform3D(-8.742278e-08, 0, 2, 0, 2, 0, -2, 0, -8.742278e-08, 15.1, 0.0306, 0)
+
+[node name="Vines1" parent="VineGate" unique_id=1664361915 instance=ExtResource("vines")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 0)
+
+[node name="Vines2" parent="VineGate" unique_id=1940563833 instance=ExtResource("vines")]
+
+[node name="Vines3" parent="VineGate" unique_id=479180249 instance=ExtResource("vines")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 0)
+
+[node name="GrassPatch" type="Node3D" parent="." unique_id=44541767]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.0306, 0)
+
+[node name="Grass1" parent="GrassPatch" unique_id=1289036841 instance=ExtResource("grass")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.8, 0, 3.7)
+
+[node name="Grass2" parent="GrassPatch" unique_id=1075222281 instance=ExtResource("grass")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, 0, 3.7)
+
+[node name="Grass3" parent="GrassPatch" unique_id=1237002821 instance=ExtResource("grass")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8, 0, 3.7)
+
+[node name="CockroachSpawner" parent="." unique_id=904424840 instance=ExtResource("spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.8, 0.0306, -1.6)
+enabled = false
+max_alive = 3
+spawn_interval = 4.0
+spawn_radius = 1.6
+
+[node name="Marker" type="MeshInstance3D" parent="CockroachSpawner" unique_id=664291936]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
+material_override = SubResource("SpawnerMat")
+mesh = SubResource("SpawnMarker")
+
+[node name="Sign" type="Label3D" parent="CockroachSpawner" unique_id=630220315]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+pixel_size = 0.008
+billboard = 1
+text = "清扫区蟑螂
+最多 3 只 / 每 4 秒"
+font = ExtResource("font")
+font_size = 28
+
+[node name="RatSpawner" parent="." unique_id=1193554757 instance=ExtResource("spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6, 0.0306, 4.8)
+monster_data = ExtResource("rat")
+enabled = false
+max_alive = 2
+spawn_interval = 6.0
+spawn_radius = 1.6
+
+[node name="Marker" type="MeshInstance3D" parent="RatSpawner" unique_id=2040527479]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
+material_override = SubResource("SpawnerMat")
+mesh = SubResource("SpawnMarker")
+
+[node name="Sign" type="Label3D" parent="RatSpawner" unique_id=54352566]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+pixel_size = 0.008
+billboard = 1
+text = "清扫区老鼠
+最多 2 只 / 每 6 秒"
+font = ExtResource("font")
+font_size = 28
+
+[node name="HoleSign" type="Label3D" parent="." unique_id=1082980151]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 2, 0.16)
+pixel_size = 0.016
+billboard = 1
+text = "献祭洞"
+font = ExtResource("font")
+font_size = 30
+
+[node name="ShopSign" type="Label3D" parent="." unique_id=943539901]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.4, 7, 2)
+pixel_size = 0.016
+billboard = 1
+text = "商店通道"
+font = ExtResource("font")
+font_size = 30
+
+[node name="TorchSign" type="Label3D" parent="." unique_id=1585415876]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, 4.8, -3.2)
+pixel_size = 0.016
+billboard = 1
+text = "火把"
+font = ExtResource("font")
+font_size = 28
+
+[node name="GateSign" type="Label3D" parent="." unique_id=560206436]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.1, 6.9, 0)
+pixel_size = 0.016
+billboard = 1
+text = "用火烧开清扫区"
+font = ExtResource("font")
+font_size = 30
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1068489741]
+environment = SubResource("Environment")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=112391175]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+light_energy = 0.35
+shadow_enabled = true
+
+[node name="MainLight" type="OmniLight3D" parent="." unique_id=1461701226]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -10)
+light_color = Color(0.78, 0.86, 1, 1)
+light_energy = 1.6
+shadow_enabled = true
+shadow_bias = 0.05
+shadow_normal_bias = 0.3
+omni_range = 24.0
+
+[node name="PitLight" type="OmniLight3D" parent="." unique_id=2054554251]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 8)
+light_color = Color(1, 0.78, 0.62, 1)
+light_energy = 1.1
+shadow_enabled = true
+shadow_bias = 0.05
+shadow_normal_bias = 0.3
+omni_range = 18.0
+
+[node name="CleaningLight" type="OmniLight3D" parent="." unique_id=2111289418]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 5, 2)
+light_color = Color(0.8, 0.9, 1, 1)
+light_energy = 1.4
+shadow_enabled = true
+shadow_bias = 0.05
+shadow_normal_bias = 0.3
+omni_range = 14.0
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=101729306]
+
+[node name="MoneyUI" parent="HUD" unique_id=1108601200 instance=ExtResource("money")]
+
+[node name="Objective" type="Label" parent="HUD" unique_id=1157503923]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 1100.0
+offset_bottom = 105.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 22
+
+[node name="Hint" type="Label" parent="HUD" unique_id=1013752885]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -98.0
+offset_right = 1250.0
+offset_bottom = -18.0
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 18
+
+[node name="ShopMessage" type="Label" parent="HUD" unique_id=818859187]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -165.0
+offset_right = 1250.0
+offset_bottom = -105.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.85, 0.48, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 20
+
+[node name="Crosshair" parent="HUD" unique_id=996515823 instance=ExtResource("crosshair")]
+layout_mode = 3
+
+[editable path="Hole"]

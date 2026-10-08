@@ -1,0 +1,160 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/enemies/monster_spawner.tscn" id="spawner"]
+[ext_resource type="Resource" path="res://resources/enemies/monster_rat.tres" id="rat"]
+
+[sub_resource type="StandardMaterial3D" id="FloorMat"]
+albedo_color = Color(0.25, 0.25, 0.24, 1)
+
+[sub_resource type="StandardMaterial3D" id="WallMat"]
+albedo_color = Color(0.3, 0.29, 0.26, 1)
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(12, 1, 12)
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(12, 1, 12)
+
+[sub_resource type="BoxMesh" id="NorthWallMesh"]
+size = Vector3(12, 4, 0.5)
+
+[sub_resource type="BoxShape3D" id="NorthWallShape"]
+size = Vector3(12, 4, 0.5)
+
+[sub_resource type="BoxMesh" id="SouthWallMesh"]
+size = Vector3(12, 4, 0.5)
+
+[sub_resource type="BoxShape3D" id="SouthWallShape"]
+size = Vector3(12, 4, 0.5)
+
+[sub_resource type="BoxMesh" id="WestWallMesh"]
+size = Vector3(0.5, 4, 12.5)
+
+[sub_resource type="BoxShape3D" id="WestWallShape"]
+size = Vector3(0.5, 4, 12.5)
+
+[sub_resource type="BoxMesh" id="EntryNorthMesh"]
+size = Vector3(0.5, 4, 4.5)
+
+[sub_resource type="BoxShape3D" id="EntryNorthShape"]
+size = Vector3(0.5, 4, 4.5)
+
+[sub_resource type="BoxMesh" id="EntrySouthMesh"]
+size = Vector3(0.5, 4, 4.5)
+
+[sub_resource type="BoxShape3D" id="EntrySouthShape"]
+size = Vector3(0.5, 4, 4.5)
+
+[sub_resource type="BoxMesh" id="EntryLintelMesh"]
+size = Vector3(0.5, 0.8, 4)
+
+[sub_resource type="BoxShape3D" id="EntryLintelShape"]
+size = Vector3(0.5, 0.8, 4)
+
+[node name="StarterCleaningRoom" type="Node3D"]
+
+[node name="Geometry" type="Node3D" parent="."]
+
+[node name="Floor" type="StaticBody3D" parent="Geometry"]
+position = Vector3(0, -0.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/Floor"]
+mesh = SubResource("FloorMesh")
+material_override = SubResource("FloorMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/Floor"]
+shape = SubResource("FloorShape")
+
+[node name="NorthWall" type="StaticBody3D" parent="Geometry"]
+position = Vector3(0, 2, -6.25)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/NorthWall"]
+mesh = SubResource("NorthWallMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/NorthWall"]
+shape = SubResource("NorthWallShape")
+
+[node name="SouthWall" type="StaticBody3D" parent="Geometry"]
+position = Vector3(0, 2, 6.25)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/SouthWall"]
+mesh = SubResource("SouthWallMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/SouthWall"]
+shape = SubResource("SouthWallShape")
+
+[node name="WestWall" type="StaticBody3D" parent="Geometry"]
+position = Vector3(-6.25, 2, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/WestWall"]
+mesh = SubResource("WestWallMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/WestWall"]
+shape = SubResource("WestWallShape")
+
+[node name="EntryNorth" type="StaticBody3D" parent="Geometry"]
+position = Vector3(6.25, 2, -4.25)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/EntryNorth"]
+mesh = SubResource("EntryNorthMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/EntryNorth"]
+shape = SubResource("EntryNorthShape")
+
+[node name="EntrySouth" type="StaticBody3D" parent="Geometry"]
+position = Vector3(6.25, 2, 4.25)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/EntrySouth"]
+mesh = SubResource("EntrySouthMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/EntrySouth"]
+shape = SubResource("EntrySouthShape")
+
+[node name="EntryLintel" type="StaticBody3D" parent="Geometry"]
+position = Vector3(6.25, 3.6, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Geometry/EntryLintel"]
+mesh = SubResource("EntryLintelMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Geometry/EntryLintel"]
+shape = SubResource("EntryLintelShape")
+
+[node name="RatSpawner" parent="." instance=ExtResource("spawner")]
+position = Vector3(-1, 0, -1)
+monster_data = ExtResource("rat")
+max_alive = 3
+spawn_interval = 3.0
+spawn_radius = 2.0
+
+[node name="Sign" type="Label3D" parent="."]
+position = Vector3(0, 2.6, -2)
+billboard = 1
+font_size = 32
+pixel_size = 0.004
+text = "初始清扫区\n杀鼠、拿尸体、回中央洞献祭赚金币"
+
+[node name="Light" type="OmniLight3D" parent="."]
+position = Vector3(0, 3.2, 0)
+light_color = Color(0.78, 0.85, 1, 1)
+light_energy = 1.6
+omni_range = 11.0

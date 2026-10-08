@@ -1,0 +1,9 @@
+[gd_resource type="FontVariation" format=3 uid="uid://devl8p2neeq6s"]
+
+[ext_resource type="FontFile" uid="uid://c66o7vwgi5vwd" path="res://assets/fonts/noto_sans_sc.ttf" id="font"]
+
+[resource]
+base_font = ExtResource("font")
+variation_opentype = {
+2003265652: 400.0
+}

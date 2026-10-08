@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/shop/shopkeeper.gd" id="script"]
+
+[sub_resource type="StandardMaterial3D" id="Coat"]
+albedo_color = Color(0.18, 0.27, 0.32, 1)
+
+[sub_resource type="CapsuleMesh" id="Body"]
+radius = 0.4
+height = 1.4
+
+[sub_resource type="SphereMesh" id="Head"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="CapsuleShape3D" id="Shape"]
+radius = 0.4
+height = 1.9
+
+[node name="Shopkeeper" type="StaticBody3D"]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("script")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.85, 0)
+mesh = SubResource("Body")
+material_override = SubResource("Coat")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.75, 0)
+mesh = SubResource("Head")
+
+[node name="Shape" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.95, 0)
+shape = SubResource("Shape")
+
+[node name="Sign" type="Label3D" parent="."]
+position = Vector3(0, 2.3, 0)
+font_size = 28
+pixel_size = 0.004
+text = "店长"

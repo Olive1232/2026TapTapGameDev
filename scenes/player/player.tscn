@@ -1,0 +1,95 @@
+[gd_scene format=3 uid="uid://b1nf44seup0a5"]
+
+[ext_resource type="Script" uid="uid://cmwcekupfobxd" path="res://scripts/player/player.gd" id="1_s0eop"]
+[ext_resource type="Script" uid="uid://biql2e566gdbh" path="res://scripts/weapons/sword.gd" id="2_sword"]
+[ext_resource type="Script" uid="uid://wdn5mc6idjps" path="res://scripts/interact/grabber.gd" id="3_h54ih"]
+[ext_resource type="Script" path="res://scripts/elements/element_component.gd" id="4_element"]
+
+[sub_resource type="BoxShape3D" id="Blade_contact"]
+size = Vector3(0.2, 0.3, 1.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hit"]
+size = Vector3(1.4, 1, 2.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_blade"]
+size = Vector3(0.05, 0.12, 1.8)
+
+[sub_resource type="StandardMaterial3D" id="Mat_blade"]
+albedo_color = Color(0.78, 0.8, 0.85, 1)
+metallic = 0.7
+roughness = 0.25
+
+[sub_resource type="BoxMesh" id="BoxMesh_guard"]
+size = Vector3(0.34, 0.06, 0.07)
+
+[sub_resource type="StandardMaterial3D" id="Mat_guard"]
+albedo_color = Color(0.3, 0.24, 0.18, 1)
+metallic = 0.3
+roughness = 0.6
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_body"]
+size = Vector3(1, 2, 1)
+
+[node name="Player" type="CharacterBody3D" unique_id=665088727]
+collision_layer = 2
+script = ExtResource("1_s0eop")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=548008557]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.55, 0)
+current = true
+fov = 80.0
+
+[node name="WeaponRig" type="Node3D" parent="Camera3D" unique_id=1538534004]
+
+[node name="WeaponPivot" type="Node3D" parent="Camera3D/WeaponRig" unique_id=883115563]
+
+[node name="HitAnchor" type="Node3D" parent="Camera3D/WeaponRig/WeaponPivot" unique_id=1515704815]
+
+[node name="HitRig" type="Node3D" parent="Camera3D/WeaponRig/WeaponPivot/HitAnchor" unique_id=755765499]
+
+[node name="Hitbox" type="Area3D" parent="Camera3D/WeaponRig/WeaponPivot/HitAnchor/HitRig" unique_id=17306941]
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Camera3D/WeaponRig/WeaponPivot/HitAnchor/HitRig/Hitbox" unique_id=1871014069]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8)
+shape = SubResource("BoxShape3D_hit")
+
+[node name="Mount" type="Node3D" parent="Camera3D/WeaponRig/WeaponPivot" unique_id=1359059736]
+script = ExtResource("2_sword")
+
+[node name="Pivot" type="Node3D" parent="Camera3D/WeaponRig/WeaponPivot/Mount" unique_id=647472966]
+
+[node name="Mesh" type="MeshInstance3D" parent="Camera3D/WeaponRig/WeaponPivot/Mount/Pivot" unique_id=649893894]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.1)
+mesh = SubResource("BoxMesh_blade")
+surface_material_override/0 = SubResource("Mat_blade")
+
+[node name="Guard" type="MeshInstance3D" parent="Camera3D/WeaponRig/WeaponPivot/Mount/Pivot" unique_id=1812398805]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.2)
+mesh = SubResource("BoxMesh_guard")
+surface_material_override/0 = SubResource("Mat_guard")
+
+[node name="ElementComponent" type="Area3D" parent="Camera3D/WeaponRig/WeaponPivot/Mount/Pivot"]
+position = Vector3(0, 0, -1.1)
+collision_layer = 32
+collision_mask = 32
+script = ExtResource("4_element")
+tags = PackedStringArray("indestructible")
+burn_duration = 0.0
+flame_scale = 0.5
+
+[node name="Shape" type="CollisionShape3D" parent="Camera3D/WeaponRig/WeaponPivot/Mount/Pivot/ElementComponent"]
+shape = SubResource("Blade_contact")
+
+[node name="Grabber" type="Node3D" parent="Camera3D" unique_id=2022178397]
+script = ExtResource("3_h54ih")
+
+[node name="HoldPoint" type="Node3D" parent="Camera3D/Grabber" unique_id=2138488378]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, -0.35, -1.2)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1323641875]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_body")

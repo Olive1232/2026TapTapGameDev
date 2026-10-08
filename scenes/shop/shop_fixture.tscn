@@ -1,0 +1,138 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/shop/shop_room.gd" id="script"]
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_shelf.tscn" id="shelf"]
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_counter.tscn" id="counter"]
+[ext_resource type="PackedScene" path="res://scenes/shop/shopkeeper.tscn" id="keeper"]
+
+[sub_resource type="StandardMaterial3D" id="WallMat"]
+albedo_color = Color(0.3, 0.29, 0.26, 1)
+
+[sub_resource type="StandardMaterial3D" id="CurtainMat"]
+albedo_color = Color(0.32, 0.06, 0.07, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="CurtainMesh"]
+size = Vector3(3.2, 2.6, 0.08)
+
+[sub_resource type="BoxMesh" id="BladeMesh"]
+size = Vector3(0.09, 1.3, 0.08)
+
+[sub_resource type="BoxMesh" id="GuardMesh"]
+size = Vector3(0.45, 0.07, 0.09)
+
+[sub_resource type="BoxMesh" id="HandleMesh"]
+size = Vector3(0.1, 0.45, 0.1)
+
+[sub_resource type="BoxMesh" id="BoothBackMesh"]
+size = Vector3(3.8, 3.4, 0.2)
+
+[sub_resource type="BoxShape3D" id="BoothBackShape"]
+size = Vector3(3.8, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="BoothLeftMesh"]
+size = Vector3(0.2, 3.3, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoothLeftShape"]
+size = Vector3(0.2, 3.3, 0.3)
+
+[sub_resource type="BoxMesh" id="BoothRightMesh"]
+size = Vector3(0.2, 3.3, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoothRightShape"]
+size = Vector3(0.2, 3.3, 0.3)
+
+[sub_resource type="BoxMesh" id="BoothTopMesh"]
+size = Vector3(3.6, 0.2, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoothTopShape"]
+size = Vector3(3.6, 0.2, 0.3)
+
+[node name="ShopFixture" type="Node3D"]
+script = ExtResource("script")
+
+[node name="Shelf" parent="." instance=ExtResource("shelf")]
+position = Vector3(-2.5, 0, 3)
+
+[node name="Counter" parent="." instance=ExtResource("counter")]
+position = Vector3(0, 0, -2)
+
+[node name="Shopkeeper" parent="." instance=ExtResource("keeper")]
+position = Vector3(0, 0, -3)
+
+[node name="Booth" type="Node3D" parent="."]
+
+[node name="Back" type="StaticBody3D" parent="Booth"]
+position = Vector3(0, 1.7, -4.75)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Booth/Back"]
+mesh = SubResource("BoothBackMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Booth/Back"]
+shape = SubResource("BoothBackShape")
+
+[node name="Left" type="StaticBody3D" parent="Booth"]
+position = Vector3(-1.7, 1.65, -2.7)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Booth/Left"]
+mesh = SubResource("BoothLeftMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Booth/Left"]
+shape = SubResource("BoothLeftShape")
+
+[node name="Right" type="StaticBody3D" parent="Booth"]
+position = Vector3(1.7, 1.65, -2.7)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Booth/Right"]
+mesh = SubResource("BoothRightMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Booth/Right"]
+shape = SubResource("BoothRightShape")
+
+[node name="Top" type="StaticBody3D" parent="Booth"]
+position = Vector3(0, 3.25, -2.7)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Booth/Top"]
+mesh = SubResource("BoothTopMesh")
+material_override = SubResource("WallMat")
+
+[node name="Shape" type="CollisionShape3D" parent="Booth/Top"]
+shape = SubResource("BoothTopShape")
+
+[node name="Curtain" type="MeshInstance3D" parent="Booth"]
+position = Vector3(0, 3.05, -2.55)
+scale = Vector3(1, 0.08, 1)
+mesh = SubResource("CurtainMesh")
+material_override = SubResource("CurtainMat")
+
+[node name="PreviewSword" type="Node3D" parent="Booth"]
+visible = false
+position = Vector3(0.7, 1.35, -2.95)
+
+[node name="Blade" type="MeshInstance3D" parent="Booth/PreviewSword"]
+mesh = SubResource("BladeMesh")
+
+[node name="Guard" type="MeshInstance3D" parent="Booth/PreviewSword"]
+position = Vector3(0, -0.4, 0)
+mesh = SubResource("GuardMesh")
+
+[node name="Handle" type="MeshInstance3D" parent="Booth/PreviewSword"]
+position = Vector3(0, -0.65, 0)
+mesh = SubResource("HandleMesh")
+
+[node name="Light" type="OmniLight3D" parent="."]
+position = Vector3(0, 3.2, 1)
+light_color = Color(1, 0.84, 0.61, 1)
+light_energy = 1.8
+omni_range = 11.0

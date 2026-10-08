@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://ccoin00000001"]
+
+[ext_resource type="Script" path="res://scripts/economy/coin.gd" id="1_coin"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_coin"]
+size = Vector3(0.2, 0.05, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="Mat_coin"]
+albedo_color = Color(0.76, 0.48, 0.22, 1)
+emission_enabled = true
+emission = Color(0.76, 0.48, 0.22, 1)
+emission_energy_multiplier = 0.5
+
+[node name="Coin" type="Area3D"]
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+script = ExtResource("1_coin")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_coin")
+surface_material_override/0 = SubResource("Mat_coin")

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://b2vq0hpndtlo4"]
+
+[ext_resource type="Script" uid="uid://drersog8aq6oe" path="res://resources/types/monster_data.gd" id="1_monsterdata"]
+
+[resource]
+script = ExtResource("1_monsterdata")
+id = &"cockroach"
+display_name = "蟑螂"
+hit_stun = 0.08
+move_speed = 2.1
+walk_duration_min = 0.5
+walk_duration_max = 1.6
+idle_duration_min = 0.15
+idle_duration_max = 0.6
+corpse_weight = 0.6
+body_size = Vector3(0.42, 0.2, 0.55)
+body_color = Color(0.32, 0.2, 0.14, 1)
+corpse_size = Vector3(0.42, 0.12, 0.55)
+corpse_color = Color(0.26, 0.16, 0.11, 1)

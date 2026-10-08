@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/elements/flammable_prop.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/elements/element_component.gd" id="2"]
+
+[sub_resource type="BoxShape3D" id="Solid"]
+size = Vector3(1.2, 3.2, 0.35)
+
+[sub_resource type="SphereShape3D" id="Contact"]
+radius = 0.85
+
+[node name="FlammableVines" type="StaticBody3D"]
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("1")
+
+[node name="Shape" type="CollisionShape3D" parent="."]
+position = Vector3(0, 1.6, 0)
+shape = SubResource("Solid")
+
+[node name="ElementComponent" type="Area3D" parent="."]
+position = Vector3(0, 1.6, 0)
+collision_layer = 32
+collision_mask = 32
+script = ExtResource("2")
+
+[node name="Shape" type="CollisionShape3D" parent="ElementComponent"]
+shape = SubResource("Contact")

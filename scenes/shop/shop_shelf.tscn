@@ -1,0 +1,37 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/shop/shop_shelf.gd" id="script"]
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.27, 0.17, 0.1, 1)
+
+[sub_resource type="BoxMesh" id="Shelf"]
+size = Vector3(1.8, 1.4, 0.7)
+
+[sub_resource type="BoxShape3D" id="Shape"]
+size = Vector3(1.8, 1.4, 0.7)
+
+[node name="Shelf" type="Node3D"]
+script = ExtResource("script")
+
+[node name="Body" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Body"]
+position = Vector3(0, 0.7, 0)
+mesh = SubResource("Shelf")
+material_override = SubResource("Wood")
+
+[node name="Shape" type="CollisionShape3D" parent="Body"]
+position = Vector3(0, 0.7, 0)
+shape = SubResource("Shape")
+
+[node name="ItemSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 1.61, 0)
+
+[node name="Sign" type="Label3D" parent="."]
+position = Vector3(0, 2.35, 0)
+billboard = 1
+font_size = 32
+pixel_size = 0.004
