@@ -139,7 +139,10 @@ func _run() -> void:
 	_check(not is_instance_valid(corpse) and hole.pending_value == 1, "held corpse at height 1.8 is still sacrificed once")
 	_check(not grabber.is_holding() and player.carry_weight == 0.0, "automatic sacrifice clears held reference and weight")
 	await create_timer(4.0).timeout
-	_check(wallet.total == 2 and pool.active_count() == 0, "one-value offering still pays and collects two coins")
+	_check(wallet.total == 0 and pool.active_count() > 0, "offering coins stay on ground before contact")
+
+	_check(await load("res://tests/helpers/coin_collection.gd").collect_all(self, player), "walking into grounded coins collects them")
+	_check(wallet.total == 2, "one-value offering still pays two coins after contact")
 
 	# Capacity/reuse and separately freed coins must keep the pool consistent.
 	var previous_cap: int = pool.max_active
@@ -176,10 +179,9 @@ func _run() -> void:
 		var coin = pool.acquire()
 		_check(is_instance_valid(coin) and coin.get_parent() == _arena, "new coin belongs to reloaded arena")
 		var previous_total: int = wallet.total
-		coin.seek_target = _arena.get_node("Player")
-		coin.global_position = coin.seek_target.global_position + Vector3(0.0, 0.0, 0.1)
+		coin.global_position = _arena.get_node("Player").global_position + Vector3(0.0, -0.3, 0.1)
 		coin.launch(9, Color.WHITE, Vector3.ZERO, 0.0)
-		await create_timer(0.3).timeout
+		await create_timer(0.6).timeout
 		_check(wallet.total == previous_total + 9, "coin collects after reload " + str(iteration + 1))
 		_check(pool.active_count() == 0 and pool.free_count() == 1, "coin returns to pool after reload")
 

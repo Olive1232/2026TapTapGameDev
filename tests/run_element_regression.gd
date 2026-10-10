@@ -17,7 +17,7 @@ class HitRecorder extends StaticBody3D:
 
 
 func _initialize() -> void:
-	create_timer(30.0, true, false, true).timeout.connect(func():
+	create_timer(60.0, true, false, true).timeout.connect(func():
 		push_error("ELEMENT REGRESSION TIMEOUT")
 		quit(1))
 	call_deferred("_run")
@@ -253,7 +253,7 @@ func _test_room() -> void:
 	await _attack()
 	await _wait(0.6)
 	_check(vine.element.burning, "actual burning sword ignites doorway vines")
-	await _wait(4.8)
+	await _wait(10.8)
 	_check(room.is_gate_open() and room.get_node("VineGate").get_child_count() == 0, "fire opens entire vine gate")
 	player.position = Vector3(0, 0.5, -4.5)
 	_check(not player.test_move(player.global_transform, Vector3(0, 0, -3)), "cleared doorway is physically passable")
@@ -302,6 +302,7 @@ func _test_room() -> void:
 	await _frames()
 	_check(not is_instance_valid(corpse) and not grabber.is_holding() and is_zero_approx(player.carry_weight), "held corpse at hole height 1.8 is sacrificed and weight clears")
 	await _wait(4.0)
+	_check(await load("res://tests/helpers/coin_collection.gd").collect_all(self, player), "room coins are collected by walking into them")
 	_check(wallet.total == 2 and room.is_flow_complete(), "room sacrifice erupts coins and completes flow with unchanged value")
 	reload_current_scene()
 	await scene_changed

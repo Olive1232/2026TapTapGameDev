@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ccorpse000001"]
 
 [ext_resource type="Script" uid="uid://bswstinu3lmkh" path="res://scripts/enemies/corpse.gd" id="1_corpse"]
+[ext_resource type="Script" path="res://scripts/elements/element_component.gd" id="2_element"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_corpse"]
 size = Vector3(0.5, 0.15, 0.7)
@@ -11,6 +12,9 @@ roughness = 0.9
 
 [sub_resource type="BoxShape3D" id="BoxShape_corpse"]
 size = Vector3(0.5, 0.15, 0.7)
+
+[sub_resource type="BoxShape3D" id="BoxShape_contact"]
+size = Vector3(0.65, 0.3, 0.85)
 
 [node name="Corpse" type="RigidBody3D" unique_id=1178704674]
 collision_layer = 8
@@ -23,3 +27,13 @@ surface_material_override/0 = SubResource("Mat_corpse")
 
 [node name="Shape" type="CollisionShape3D" parent="." unique_id=548112194]
 shape = SubResource("BoxShape_corpse")
+
+[node name="ElementComponent" type="Area3D" parent="."]
+collision_layer = 32
+collision_mask = 32
+script = ExtResource("2_element")
+burn_duration = 10.0
+flame_scale = 0.45
+
+[node name="Shape" type="CollisionShape3D" parent="ElementComponent"]
+shape = SubResource("BoxShape_contact")

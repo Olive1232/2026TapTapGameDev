@@ -1,0 +1,304 @@
+[gd_scene format=3 uid="uid://dmwlk52vulvjr"]
+
+[ext_resource type="PackedScene" uid="uid://ccorpse000001" path="res://scenes/enemies/corpse.tscn" id="corpse"]
+[ext_resource type="PackedScene" path="res://scenes/ui/crosshair.tscn" id="crosshair"]
+[ext_resource type="FontVariation" uid="uid://devl8p2neeq6s" path="res://resources/ui/game_font.tres" id="font"]
+[ext_resource type="PackedScene" path="res://scenes/mechanisms/lift_gate.tscn" id="gate"]
+[ext_resource type="Script" uid="uid://duvo2hdo2grpq" path="res://scripts/debug/mechanism_lab.gd" id="lab"]
+[ext_resource type="PackedScene" path="res://scenes/mechanisms/weight_platform.tscn" id="platform"]
+[ext_resource type="PackedScene" uid="uid://b1nf44seup0a5" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="PackedScene" path="res://scenes/elements/torch.tscn" id="torch"]
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(16, 0.3, 24)
+
+[sub_resource type="StandardMaterial3D" id="FloorMat"]
+albedo_color = Color(0.14, 0.17, 0.21, 1)
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(16, 0.3, 24)
+
+[sub_resource type="BoxShape3D" id="LeftWallShape"]
+size = Vector3(0.3, 7, 24)
+
+[sub_resource type="StandardMaterial3D" id="WallMat"]
+albedo_color = Color(0.34, 0.37, 0.41, 1)
+
+[sub_resource type="BoxMesh" id="LeftWallMesh"]
+size = Vector3(0.3, 7, 24)
+
+[sub_resource type="BoxShape3D" id="RightWallShape"]
+size = Vector3(0.3, 7, 24)
+
+[sub_resource type="BoxMesh" id="RightWallMesh"]
+size = Vector3(0.3, 7, 24)
+
+[sub_resource type="BoxShape3D" id="BackWallShape"]
+size = Vector3(16, 7, 0.3)
+
+[sub_resource type="BoxMesh" id="BackWallMesh"]
+size = Vector3(16, 7, 0.3)
+
+[sub_resource type="BoxShape3D" id="FrontWallShape"]
+size = Vector3(16, 7, 0.3)
+
+[sub_resource type="BoxMesh" id="FrontWallMesh"]
+size = Vector3(16, 7, 0.3)
+
+[sub_resource type="BoxShape3D" id="BarrierLeftShape"]
+size = Vector3(8.8, 6.8, 0.4)
+
+[sub_resource type="BoxMesh" id="BarrierLeftMesh"]
+size = Vector3(8.8, 6.8, 0.4)
+
+[sub_resource type="BoxShape3D" id="BarrierRightShape"]
+size = Vector3(4, 6.8, 0.4)
+
+[sub_resource type="BoxMesh" id="BarrierRightMesh"]
+size = Vector3(4, 6.8, 0.4)
+
+[sub_resource type="BoxShape3D" id="LintelShape"]
+size = Vector3(3.2, 0.3, 0.5)
+
+[sub_resource type="BoxMesh" id="LintelMesh"]
+size = Vector3(3.2, 0.3, 0.5)
+
+[sub_resource type="BoxShape3D" id="PlatformStandShape"]
+size = Vector3(1.3, 2, 1.2)
+
+[sub_resource type="StandardMaterial3D" id="StandMat"]
+albedo_color = Color(0.16, 0.28, 0.35, 1)
+
+[sub_resource type="BoxMesh" id="PlatformStandMesh"]
+size = Vector3(1.3, 2, 1.2)
+
+[sub_resource type="BoxShape3D" id="GoalShape"]
+size = Vector3(3, 3, 2)
+
+[sub_resource type="StandardMaterial3D" id="GoalMat"]
+albedo_color = Color(0.18, 0.58, 0.34, 1)
+
+[sub_resource type="BoxMesh" id="GoalMesh"]
+size = Vector3(3, 0.02, 2)
+
+[sub_resource type="Environment" id="Environment"]
+background_mode = 1
+background_color = Color(0.07, 0.085, 0.12, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.8, 0.85, 1, 1)
+ambient_light_energy = 0.5
+
+[node name="MechanismLab" type="Node3D" unique_id=1792753005]
+script = ExtResource("lab")
+
+[node name="Player" parent="." unique_id=2092365770 instance=ExtResource("player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.5, 6)
+
+[node name="SpawnPoint" type="Marker3D" parent="." unique_id=820069655]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.5, 6)
+
+[node name="Floor" type="StaticBody3D" parent="." unique_id=276648043]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.15, -2)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Floor" unique_id=1305951394]
+shape = SubResource("FloorShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor" unique_id=567821087]
+material_override = SubResource("FloorMat")
+mesh = SubResource("FloorMesh")
+
+[node name="LeftWall" type="StaticBody3D" parent="." unique_id=1397404632]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 3.5, -2)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="LeftWall" unique_id=1995579052]
+shape = SubResource("LeftWallShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="LeftWall" unique_id=1535959856]
+material_override = SubResource("WallMat")
+mesh = SubResource("LeftWallMesh")
+
+[node name="RightWall" type="StaticBody3D" parent="." unique_id=1253948244]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 3.5, -2)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="RightWall" unique_id=897678553]
+shape = SubResource("RightWallShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="RightWall" unique_id=945278429]
+material_override = SubResource("WallMat")
+mesh = SubResource("RightWallMesh")
+
+[node name="BackWall" type="StaticBody3D" parent="." unique_id=1093003857]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -14)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="BackWall" unique_id=1894441951]
+shape = SubResource("BackWallShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="BackWall" unique_id=2092140105]
+material_override = SubResource("WallMat")
+mesh = SubResource("BackWallMesh")
+
+[node name="FrontWall" type="StaticBody3D" parent="." unique_id=2002349462]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 10)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="FrontWall" unique_id=1665995576]
+shape = SubResource("FrontWallShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="FrontWall" unique_id=895730831]
+material_override = SubResource("WallMat")
+mesh = SubResource("FrontWallMesh")
+
+[node name="BarrierLeft" type="StaticBody3D" parent="." unique_id=1114164131]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, 3.4, -5)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="BarrierLeft" unique_id=516102013]
+shape = SubResource("BarrierLeftShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="BarrierLeft" unique_id=534811145]
+material_override = SubResource("WallMat")
+mesh = SubResource("BarrierLeftMesh")
+
+[node name="BarrierRight" type="StaticBody3D" parent="." unique_id=2005429018]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 3.4, -5)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="BarrierRight" unique_id=1858304948]
+shape = SubResource("BarrierRightShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="BarrierRight" unique_id=554329244]
+material_override = SubResource("WallMat")
+mesh = SubResource("BarrierRightMesh")
+
+[node name="Lintel" type="StaticBody3D" parent="." unique_id=1813600533]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 6.65, -5)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Lintel" unique_id=535087159]
+shape = SubResource("LintelShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="Lintel" unique_id=741318064]
+material_override = SubResource("WallMat")
+mesh = SubResource("LintelMesh")
+
+[node name="PlatformStand" type="StaticBody3D" parent="." unique_id=752115030]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 1, -2.5)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="PlatformStand" unique_id=1277994717]
+shape = SubResource("PlatformStandShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="PlatformStand" unique_id=683389952]
+material_override = SubResource("StandMat")
+mesh = SubResource("PlatformStandMesh")
+
+[node name="WeightPlatform" parent="." unique_id=1401905208 instance=ExtResource("platform")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2.4, -2.5)
+
+[node name="LiftGate" parent="." unique_id=573092661 instance=ExtResource("gate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0.02, -5)
+platform_path = NodePath("../WeightPlatform")
+persistence_id = &"lab.weight_gate"
+
+[node name="PlatformSign" type="Label3D" parent="." unique_id=1833847242]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 3.5, -2.5)
+pixel_size = 0.009
+billboard = 1
+text = "高处配重平台
+将尸体投到台面上"
+font = ExtResource("font")
+font_size = 36
+
+[node name="GateSign" type="Label3D" parent="." unique_id=1475246136]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 5.2, -4.7)
+pixel_size = 0.009
+billboard = 1
+text = "升降门
+由左侧平台控制"
+font = ExtResource("font")
+font_size = 36
+
+[node name="Corpse1" parent="." unique_id=2136241261 instance=ExtResource("corpse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 0.3, 4)
+
+[node name="Corpse2" parent="." unique_id=466936333 instance=ExtResource("corpse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.3, 4)
+
+[node name="Corpse3" parent="." unique_id=759696016 instance=ExtResource("corpse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 0.3, 4)
+
+[node name="Torch" parent="." unique_id=1962007207 instance=ExtResource("torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 5)
+
+[node name="Goal" type="Area3D" parent="." unique_id=1537141822]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 1.5, -8)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Goal" unique_id=746322260]
+shape = SubResource("GoalShape")
+
+[node name="GoalMarker" type="MeshInstance3D" parent="." unique_id=1946507146]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0.01, -8)
+material_override = SubResource("GoalMat")
+mesh = SubResource("GoalMesh")
+
+[node name="GoalSign" type="Label3D" parent="." unique_id=264929339]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 2.1, -9.2)
+pixel_size = 0.01
+billboard = 1
+text = "穿过门，到达绿色区域"
+font = ExtResource("font")
+font_size = 40
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=578801446]
+environment = SubResource("Environment")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1234749905]
+transform = Transform3D(0.9135454, 0.30226424, -0.2721599, 0, 0.66913056, 0.74314487, 0.40673664, -0.6788966, 0.61128116, 0, 0, 0)
+light_energy = 1.4
+shadow_enabled = true
+
+[node name="FillLight" type="OmniLight3D" parent="." unique_id=1408091632]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.8, 3)
+light_energy = 1.5
+omni_range = 18.0
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=2057266050]
+
+[node name="Objective" type="Label" parent="HUD" unique_id=1997099844]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 1200.0
+offset_bottom = 105.0
+theme_override_colors/font_color = Color(0.93, 0.96, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("font")
+theme_override_font_sizes/font_size = 24
+text = "配重平台与升降门
+将尸体投上左侧高处平台，再穿过右侧升降门。"
+
+[node name="Hint" type="Label" parent="HUD" unique_id=479094952]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -110.0
+offset_right = 1240.0
+offset_bottom = -20.0
+theme_override_colors/font_color = Color(0.85, 0.94, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("font")
+theme_override_font_sizes/font_size = 22
+
+[node name="Crosshair" parent="HUD" unique_id=717534847 instance=ExtResource("crosshair")]
+layout_mode = 3

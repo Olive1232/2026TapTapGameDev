@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" path="res://scenes/shop/shop_shelf.tscn" id="shelf"]
 [ext_resource type="PackedScene" path="res://scenes/shop/shop_counter.tscn" id="counter"]
 [ext_resource type="PackedScene" path="res://scenes/shop/shopkeeper.tscn" id="keeper"]
+[ext_resource type="Resource" path="res://resources/shop/shop_item_corpse_value.tres" id="corpse_value_product"]
+[ext_resource type="Resource" path="res://resources/shop/shop_item_golden_coin.tres" id="golden_coin_product"]
 
 [sub_resource type="StandardMaterial3D" id="WallMat"]
 albedo_color = Color(0.3, 0.29, 0.26, 1)
@@ -53,6 +55,14 @@ script = ExtResource("script")
 
 [node name="Shelf" parent="." instance=ExtResource("shelf")]
 position = Vector3(-2.5, 0, 3)
+
+[node name="CorpseValueShelf" parent="." instance=ExtResource("shelf")]
+position = Vector3(-2.5, 0, 0)
+item_data = ExtResource("corpse_value_product")
+
+[node name="GoldenCoinShelf" parent="." instance=ExtResource("shelf")]
+position = Vector3(2.5, 0, 0)
+item_data = ExtResource("golden_coin_product")
 
 [node name="Counter" parent="." instance=ExtResource("counter")]
 position = Vector3(0, 0, -2)

@@ -66,7 +66,7 @@ func _process(_delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if not is_on_floor():
+	if not is_on_floor() or velocity.y > 0.0:
 		velocity.y -= gravity * delta
 
 	if Input.is_action_just_pressed("Jump") and is_on_floor():

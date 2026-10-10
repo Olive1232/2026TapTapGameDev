@@ -241,6 +241,7 @@ func _test_starter_income(starter) -> void:
 		await _frames()
 		_check(not is_instance_valid(corpse) and not _grabber.is_holding(), "held corpse at hole height 1.8 remains offered")
 		await _wait(4.0)
+		_check(await load("res://tests/helpers/coin_collection.gd").collect_all(self, _player), "starter coins require walking contact")
 		_check(_wallet.total == (cycle + 1) * 2, "starter corpse yields unchanged two coins")
 	_check(_wallet.total == 6 and not _room.is_flow_complete(), "zero gold can earn oil price without prematurely completing back route")
 
@@ -309,7 +310,7 @@ func _test_purchase() -> void:
 	await _mouse(MOUSE_BUTTON_LEFT)
 	await _wait(0.6)
 	_check(vine.element.burning, "purchased burning sword ignites actual gate")
-	await _wait(4.8)
+	await _wait(10.8)
 	_check(_room.is_gate_open() and _room.get_node("RatSpawner").enabled, "purchased oil unlocks original back route")
 	await _key(KEY_R)
 	_bind_room()

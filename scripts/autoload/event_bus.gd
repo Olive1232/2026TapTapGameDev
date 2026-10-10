@@ -23,7 +23,7 @@ signal corpse_grabbed(corpse: Node3D)
 signal corpse_released(corpse: Node3D)
 ## 尸体被献祭给洞。base_value 是这具尸体的基础价值，洞据此决定涌现多少币。
 signal corpse_offered(corpse: Node3D, base_value: int)
-## 尸体因超时被回收；所有持有引用的系统必须在此释放。
+## 尸体因燃烧被销毁；普通尸体不超时。所有持有引用的系统必须在此释放。
 signal corpse_expired(corpse: Node3D)
 
 # ---- 钱币 / 钱包 ----------------------------------------------------------

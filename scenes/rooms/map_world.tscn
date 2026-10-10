@@ -1,5 +1,8 @@
 [gd_scene format=3 uid="uid://c7h21wl1k4iji"]
 
+[ext_resource type="PackedScene" path="res://scenes/economy/corpse_return_outlet.tscn" id="corpse_outlet"]
+[ext_resource type="Resource" path="res://resources/shop/shop_item_corpse_return.tres" id="corpse_return_product"]
+[ext_resource type="Resource" path="res://resources/shop/shop_item_charged_throw.tres" id="charged_throw_product"]
 [ext_resource type="PackedScene" path="res://scenes/ui/crosshair.tscn" id="crosshair"]
 [ext_resource type="FontVariation" uid="uid://devl8p2neeq6s" path="res://resources/ui/game_font.tres" id="font"]
 [ext_resource type="PackedScene" uid="uid://dcxrgc436iq7t" path="res://scenes/environment/map_v2_geometry.tscn" id="geometry"]
@@ -9,14 +12,23 @@
 [ext_resource type="PackedScene" uid="uid://b1nf44seup0a5" path="res://scenes/player/player.tscn" id="player"]
 [ext_resource type="Resource" uid="uid://6g0i0fluavl3" path="res://resources/enemies/monster_rat.tres" id="rat"]
 [ext_resource type="Script" uid="uid://dk2kylwpxjl15" path="res://scripts/rooms/map_world.gd" id="room"]
+[ext_resource type="Script" uid="uid://l0ptrx5cbq8p" path="res://scripts/rooms/room_exit_trigger.gd" id="room_exit"]
 [ext_resource type="PackedScene" path="res://scenes/shop/shop_fixture.tscn" id="shop"]
 [ext_resource type="PackedScene" uid="uid://bd2b8m71ej6u5" path="res://scenes/enemies/monster_spawner.tscn" id="spawner"]
 [ext_resource type="PackedScene" path="res://scenes/elements/torch.tscn" id="torch"]
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_shelf.tscn" id="upgrade_shelf"]
 [ext_resource type="PackedScene" path="res://scenes/elements/flammable_vines.tscn" id="vines"]
+[ext_resource type="Script" path="res://scripts/elements/vine_gate.gd" id="vine_gate"]
 
 [sub_resource type="CylinderShape3D" id="Swallow"]
 height = 5.0
 radius = 3.15
+
+[sub_resource type="BoxShape3D" id="CleaningExit"]
+size = Vector3(2, 10, 5)
+
+[sub_resource type="BoxShape3D" id="ShopExit"]
+size = Vector3(2, 10, 5.6)
 
 [sub_resource type="StandardMaterial3D" id="SpawnerMat"]
 albedo_color = Color(0.08, 0.04, 0.025, 1)
@@ -53,9 +65,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -12)
 
 [node name="Hole" parent="." unique_id=480893499 instance=ExtResource("hole")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.4952, -0.1668, 0.158)
-exit_point_path = NodePath("../ExitPoint")
 swallow_radius = 4.0
-player_fall_radius = 3.0
+player_fall_radius = 6.5
+coin_landing_radius = 7.5
+corpse_return_outlet_path = NodePath("../CorpseReturnOutlet")
 
 [node name="Rim" parent="Hole" index="0"]
 visible = false
@@ -78,6 +91,63 @@ disabled = true
 
 [node name="ShopRoom" parent="." unique_id=1094564211 instance=ExtResource("shop")]
 transform = Transform3D(0.9099613, 0, 0.41469324, 0, 1, 0, -0.41469324, 0, 0.9099613, -31.12, -0.8558, 16.02)
+
+[node name="CorpseReturnShelf" parent="ShopRoom" unique_id=2057761615 instance=ExtResource("upgrade_shelf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 3)
+item_data = ExtResource("corpse_return_product")
+
+[node name="ChargedThrowShelf" parent="ShopRoom" instance=ExtResource("upgrade_shelf")]
+position = Vector3(0, 0, 5.8)
+item_data = ExtResource("charged_throw_product")
+
+[node name="CleaningRoomExit" type="Area3D" parent="." unique_id=1112804445]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.8, 3, 0)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_floor_path = NodePath("../WorldGeometry/Collision/CleaningFloor")
+
+[node name="Shape" type="CollisionShape3D" parent="CleaningRoomExit" unique_id=1532924018]
+shape = SubResource("CleaningExit")
+
+[node name="MainRoomExitCleaning" type="Area3D" parent="." unique_id=2047664245]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.8, 3, 0)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_id = &"main"
+room_direction = Vector3(-1, 0, 0)
+room_floor_path = NodePath("../WorldGeometry/Collision/MainFloor")
+
+[node name="Shape" type="CollisionShape3D" parent="MainRoomExitCleaning" unique_id=348986398]
+shape = SubResource("CleaningExit")
+
+[node name="MainRoomExitShop" type="Area3D" parent="." unique_id=1334853171]
+transform = Transform3D(-0.91755563, 0, -0.39760742, 0, 1, 0, 0.39760742, 0, -0.91755563, -22, 3, 4.6)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_id = &"main"
+room_direction = Vector3(-1, 0, 0)
+room_floor_path = NodePath("../WorldGeometry/Collision/MainFloor")
+
+[node name="Shape" type="CollisionShape3D" parent="MainRoomExitShop" unique_id=1014077741]
+shape = SubResource("ShopExit")
+
+[node name="ShopRoomExit" type="Area3D" parent="." unique_id=950001573]
+transform = Transform3D(-0.91755563, 0, -0.39760742, 0, 1, 0, 0.39760742, 0, -0.91755563, -22, 3, 4.6)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_id = &"shop"
+room_floor_path = NodePath("../WorldGeometry/Collision/ShopFloor")
+
+[node name="Shape" type="CollisionShape3D" parent="ShopRoomExit" unique_id=104790769]
+shape = SubResource("ShopExit")
+
+[node name="CorpseReturnOutlet" parent="." unique_id=737617022 instance=ExtResource("corpse_outlet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, -0.1668, -12)
+room_paths = Array[NodePath]([NodePath("../CleaningRoomExit"), NodePath("../MainRoomExitCleaning"), NodePath("../MainRoomExitShop"), NodePath("../ShopRoomExit")])
 
 [node name="StarterCleaningRoom" type="Node3D" parent="." unique_id=408525533]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1668, -14)
@@ -107,6 +177,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, -0.1668, -3.2)
 
 [node name="VineGate" type="Node3D" parent="." unique_id=484492715]
 transform = Transform3D(-8.742278e-08, 0, 2, 0, 2, 0, -2, 0, -8.742278e-08, 15.1, 0.0306, 0)
+script = ExtResource("vine_gate")
+persistence_id = &"world.cleaning.vines"
 
 [node name="Vines1" parent="VineGate" unique_id=1664361915 instance=ExtResource("vines")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 0)

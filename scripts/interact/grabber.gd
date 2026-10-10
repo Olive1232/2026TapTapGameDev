@@ -6,7 +6,7 @@ extends Node3D
 ## 挂在 Player/Camera3D/Grabber 下。它自己**不持有物体**——
 ## 被抓的东西（尸体等）由自己负责软跟随，本节点只负责：
 ##   1. 射线探测准星指向的可抓取物
-##   2. 右键按下 → 抓住 / 松开
+##   2. 右键点按 → 抓住 / 松开；购买升级后长按蓄力投掷尸体
 ##   3. 告诉玩家"现在扛着多重"，让玩家自己算移速
 ##
 ## 一次只能抓一个（策划需求：主角一次只能抓取一个物品）。
@@ -48,6 +48,16 @@ extends Node3D
 ## 设为 false 可退回"射线跟着手走"的旧行为，方便对比手感。
 @export var ray_from_screen_center: bool = true
 
+## 以下均为可调试玩值，尚不是正式平衡数值。
+@export_range(0.1, 1.0, 0.05) var throw_hold_threshold := 0.3
+@export_range(0.1, 3.0, 0.1) var throw_charge_duration := 1.2
+@export_range(1.0, 30.0, 0.5) var throw_min_speed := 8.0
+@export_range(1.0, 30.0, 0.5) var throw_max_speed := 16.0
+var charged_throw_enabled := false
+var _throw_pressed := false
+var _throw_elapsed := 0.0
+var _trajectory: ThrowTrajectory
+
 ## 球体扫掠用的形状，**只建一次**并复用——每帧新建 Resource 会产生垃圾。
 var _pad_shape: SphereShape3D = null
 
@@ -58,7 +68,11 @@ var _current: Node3D = null
 var _hold_point: Node3D = null
 var _player: Node3D = null
 var _camera: Camera3D = null
-var interaction_locked := false
+var interaction_locked := false:
+	set(value):
+		interaction_locked = value
+		if value:
+			cancel_throw_charge()
 
 
 func _ready() -> void:
@@ -78,6 +92,10 @@ func _ready() -> void:
 	if ray_from_screen_center and _camera == null:
 		push_warning("Grabber：没找到 Camera3D，探测射线将退回从持有点发出（会偏离准星）。")
 	_update_ray_origin()
+	_trajectory = ThrowTrajectory.new()
+	_trajectory.name = "ThrowTrajectory"
+	add_child(_trajectory)
+	_trajectory.hide()
 
 
 ## 沿父链向上找第一个 Camera3D。
@@ -120,10 +138,96 @@ func _unhandled_input(event: InputEvent) -> void:
 	if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 		return
 	if event.is_action_pressed("Grab"):
-		if is_holding():
+		handle_grab_input(true)
+	elif event.is_action_released("Grab"):
+		handle_grab_input(false)
+
+
+## 与真实输入共用入口；点按商品与未解锁操作沿用旧行为。
+func handle_grab_input(pressed: bool) -> void:
+	if interaction_locked:
+		return
+	if pressed:
+		if _throw_pressed:
+			return
+		if charged_throw_enabled and get_held() is Corpse:
+			_throw_pressed = true
+			_throw_elapsed = 0.0
+		elif is_holding():
 			drop()
 		else:
 			try_grab()
+	elif _throw_pressed:
+		var should_throw := _throw_elapsed >= throw_hold_threshold
+		var velocity := get_throw_velocity()
+		cancel_throw_charge()
+		if should_throw and get_held() is Corpse:
+			var corpse := get_held() as Corpse
+			if corpse.launch(velocity):
+				_clear_current()
+		else:
+			drop()
+
+
+func _physics_process(delta: float) -> void:
+	if not _throw_pressed:
+		return
+	if interaction_locked or not charged_throw_enabled or not get_held() is Corpse or get_held().is_queued_for_deletion():
+		cancel_throw_charge()
+		return
+	_throw_elapsed += delta
+	if is_charging_throw():
+		_trajectory.predict(get_held() as Corpse, get_throw_velocity())
+		_trajectory.show()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		cancel_throw_charge()
+
+
+func can_apply_upgrade(tag: String) -> bool:
+	return tag == "charged_throw" and not charged_throw_enabled and is_inside_tree() and not is_queued_for_deletion()
+
+
+func has_upgrade(tag: String) -> bool:
+	return tag == "charged_throw" and charged_throw_enabled
+
+
+func apply_upgrade(tag: String) -> bool:
+	if not can_apply_upgrade(tag):
+		return false
+	charged_throw_enabled = true
+	return true
+
+
+func is_charging_throw() -> bool:
+	return _throw_pressed and _throw_elapsed >= throw_hold_threshold
+
+
+func get_throw_charge() -> float:
+	return clampf((_throw_elapsed - throw_hold_threshold) / maxf(throw_charge_duration, 0.01), 0.0, 1.0)
+
+
+func get_throw_velocity() -> Vector3:
+	var direction := -_camera.global_basis.z if _camera != null else -global_basis.z
+	var inherited := (_player as CharacterBody3D).velocity * 0.5 if _player is CharacterBody3D else Vector3.ZERO
+	return direction.normalized() * lerpf(throw_min_speed, throw_max_speed, get_throw_charge()) + inherited
+
+
+func get_throw_prompt() -> String:
+	if not charged_throw_enabled:
+		return ""
+	if is_charging_throw():
+		return "投掷蓄力 %d%% · 松开右键投出 · Esc 取消蓄力" % roundi(get_throw_charge() * 100.0)
+	return "右键点按放下 · 长按蓄力投掷尸体" if get_held() is Corpse else "蓄力投掷：已解锁 · 拿起尸体后长按右键"
+
+
+func cancel_throw_charge() -> void:
+	_throw_pressed = false
+	_throw_elapsed = 0.0
+	if is_instance_valid(_trajectory):
+		_trajectory.hide()
 
 
 func _on_held_tree_exiting() -> void:
@@ -156,6 +260,7 @@ func try_grab() -> bool:
 func drop(throw_forward: bool = false) -> void:
 	if interaction_locked or _current == null:
 		return
+	cancel_throw_charge()
 	if not throw_forward and _current.has_method("try_place_on_counter") and _current.try_place_on_counter(_camera):
 		_clear_current()
 		return
@@ -174,6 +279,7 @@ func get_held() -> Node3D:
 
 
 func _clear_current() -> void:
+	cancel_throw_charge()
 	if is_instance_valid(_current) and _current.tree_exiting.is_connected(_on_held_tree_exiting):
 		_current.tree_exiting.disconnect(_on_held_tree_exiting)
 	_current = null

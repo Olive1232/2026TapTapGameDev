@@ -13,8 +13,8 @@ extends RigidBody3D
 @export var value: int = 1
 ## 重量——影响玩家扛着它时的移速。
 @export var weight: float = 1.0
-## 存在时长（秒）。<=0 表示永不超时。
-@export var lifetime: float = 30.0
+## 普通尸体永不超时；点燃后按此时长烧毁。10 秒为当前试玩值。
+@export_range(0.1, 60.0, 0.1) var burn_duration: float = 10.0
 
 ## 被抓住时，多远算"拿在手上"（用于判断是否已到位）。
 const HOLD_ARRIVE_EPSILON := 0.15
@@ -28,11 +28,12 @@ var is_held: bool = false
 
 var _holder: Node3D = null
 var _hold_point: Node3D = null
-var _age: float = 0.0
 var _material: StandardMaterial3D
+@onready var element: ElementComponent = $ElementComponent
 
 
 func _ready() -> void:
+	add_to_group("corpses")
 	# 尸体属于 PICKUP 层（供抓取射线探测），与地形和玩家碰撞。
 	# 不与武器层（ENEMY）碰撞——尸体不该被剑砍。
 	collision_layer = CollisionLayers.PICKUP
@@ -40,6 +41,8 @@ func _ready() -> void:
 	gravity_scale = 1.0
 	# 静置后休眠，省性能；被抓住时唤醒。
 	can_sleep = true
+	element.ignited.connect(_on_ignited)
+	element.burned_down.connect(_on_burned_down)
 	_apply_visual()
 
 
@@ -47,7 +50,7 @@ func _ready() -> void:
 func setup(data: MonsterData) -> void:
 	value = data.corpse_value
 	weight = data.corpse_weight
-	lifetime = data.corpse_lifetime
+	burn_duration = data.corpse_burn_duration
 	_pending_data = data
 	if is_inside_tree():
 		_apply_visual()
@@ -78,14 +81,14 @@ func _apply_visual() -> void:
 		var bs := BoxShape3D.new()
 		bs.size = box.size
 		shape.shape = bs
+	element.burn_duration = burn_duration
+	var contact := BoxShape3D.new()
+	contact.size = box.size + Vector3.ONE * 0.15
+	(element.get_node("Shape") as CollisionShape3D).shape = contact
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if not is_held:
-		if lifetime > 0.0:
-			_age += delta
-			if _age >= lifetime:
-				_expire()
 		return
 
 	if _hold_point == null:
@@ -111,7 +114,6 @@ func grab(holder: Node3D, hold_point: Node3D) -> void:
 	is_held = true
 	_holder = holder
 	_hold_point = hold_point
-	_age = 0.0
 	# 持有期间不与玩家碰撞，否则会把玩家顶飞/卡住。
 	collision_mask = CollisionLayers.WORLD
 	# 关掉重力，否则它会被拽在地上"拖行"，而不是被提起来。
@@ -144,14 +146,43 @@ func _holder_velocity() -> Vector3:
 	return Vector3.ZERO
 
 
+## 蓄力投掷复用当前尸体；不重建数据或燃烧计时。
+func launch(velocity: Vector3) -> bool:
+	if not is_held or is_queued_for_deletion():
+		return false
+	freeze = false
+	release()
+	linear_velocity = velocity
+	angular_velocity = Vector3.ZERO
+	continuous_cd = true
+	sleeping = false
+	return true
+
+
 ## 供抓取射线判断"是不是能拿的东西"。
 func can_be_grabbed() -> bool:
 	return not is_held
 
 
-func _expire() -> void:
-	# 超时回收。持有引用的系统必须借此释放。
+## 离房升级复用同一具尸体：保留类型、价值、燃烧状态及剩余计时。
+func relocate_for_return(at: Transform3D) -> bool:
+	if is_held or is_queued_for_deletion():
+		return false
+	freeze = false
+	linear_velocity = Vector3.ZERO
+	angular_velocity = Vector3.ZERO
+	global_transform = at
+	reset_physics_interpolation()
+	sleeping = false
+	return true
+
+
+func _on_ignited() -> void:
+	_material.albedo_color = _material.albedo_color.darkened(0.4)
+
+
+func _on_burned_down() -> void:
+	# 烧毁前释放持有状态；实际销毁由 ElementComponent 完成。
 	EventBus.corpse_expired.emit(self)
 	if is_held:
 		release()
-	queue_free()

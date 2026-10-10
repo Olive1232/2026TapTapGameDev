@@ -124,7 +124,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 4.5)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.6, 6)
 
 [node name="Hole" parent="." unique_id=280354073 instance=ExtResource("5_hole")]
-exit_point_path = NodePath("../ExitPoint")
 debug_print = true
 
 [node name="Dummy1" parent="." unique_id=1705618038 instance=ExtResource("3_dummy")]

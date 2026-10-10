@@ -104,7 +104,7 @@ func _run() -> void:
 	_check(_room.get_node("WorldGeometry/Collision").get_child_count() == 10, "model collision and both passage ramps are baked")
 	_check(_room.get_node("WorldGeometry").scale.is_equal_approx(Vector3(2, 2, 2)), "map geometry and baked collision are twice their original size")
 	_check(_player.scale.is_equal_approx(Vector3.ONE) and _shop.scale.is_equal_approx(Vector3.ONE), "player and shop fixtures retain their original size")
-	_check(_room.get_node("Hole").swallow_radius == 4.0 and _room.get_node("Hole").player_fall_radius == 3.0, "pit detection matches the enlarged opening")
+	_check(_room.get_node("Hole").swallow_radius == 4.0 and _room.get_node("Hole").player_fall_radius == 6.5 and _room.get_node("Hole").coin_landing_radius == 7.5, "pit fall and coin landing distances match actual opening")
 	_check(_room.get_node("VineGate").scale.is_equal_approx(Vector3(2, 2, 2)), "vines cover the enlarged cleaning doorway")
 	_check(not _shop.has_node("Geometry"), "shop uses fixture without old box building")
 	_check(not _room.get_node("Hole/Rim").visible and _room.get_node("Hole/Bottom/Shape").disabled, "offering logic uses model pit without old pit geometry")
@@ -158,6 +158,7 @@ func _run() -> void:
 		await _frames()
 		_check(not is_instance_valid(corpse) and not _grabber.is_holding() and is_zero_approx(_player.carry_weight), "held corpse at 1.8 meters is offered and carrier cleared")
 		await _wait(4.0)
+		_check(await load("res://tests/helpers/coin_collection.gd").collect_all(self, _player), "coins land on model floor and walking contact collects them")
 		_check(_wallet.total == (cycle + 1) * 2, "unchanged offering yields two coins")
 	_check(_wallet.total == 6 and not _room.is_flow_complete(), "initial income covers price without completing gated route")
 
@@ -197,7 +198,7 @@ func _run() -> void:
 	await _mouse(MOUSE_BUTTON_LEFT)
 	await _wait(0.6)
 	_check(vine.element.burning, "burning sweep ignites model doorway vines")
-	await _wait(4.8)
+	await _wait(10.8)
 	_check(_room.is_gate_open() and _room.get_node("RatSpawner").enabled and _room.get_node("CockroachSpawner").enabled, "burned gate enables both cleaning spawners")
 	_player.position = _map_stance(Vector3(0, 0.55, -7.5))
 	_player.velocity = Vector3.ZERO
@@ -237,11 +238,15 @@ func _run() -> void:
 			_player.position = _map_stance(Vector3(0, 0.417, -6))
 			corpse.global_position = _room.get_node("Hole").global_position + Vector3(0, 1.8, 0)
 			await _wait(4.0)
+			_check(await load("res://tests/helpers/coin_collection.gd").collect_all(self, _player), "cleaning offering coins collect by walking")
 			_check(_room.is_flow_complete() and _wallet.total > 1, "post gate offering pays and completes migrated objective")
 	var earned: int = _wallet.total
-	_player.global_position = _room.get_node("Hole").global_position + Vector3(0, -1, 0)
+	var fall_position: Vector3 = _room.get_node("Hole").global_position + Vector3(0, -1, 0)
+	_player.global_position = fall_position
+	_player.velocity = Vector3(1, -5, 2)
 	await _frames()
-	_check(_player.global_position.is_equal_approx(_room.get_node("ExitPoint").global_position), "model pit ejects falling player to safe exit")
+	_check(_player.global_position.is_equal_approx(fall_position) and _player.velocity.y == _room.get_node("Hole").player_eject_speed, "model pit gives upward velocity without teleporting")
+	_check(_player.velocity.x == 1 and _player.velocity.z == 2, "pit ejection preserves horizontal velocity")
 	_player.position = Vector3(30, -15, 30) * _map_scale
 	await _frames()
 	_check(_player.global_position.is_equal_approx(_room.get_node("ExitPoint").global_position), "out of bounds fall recovers player")

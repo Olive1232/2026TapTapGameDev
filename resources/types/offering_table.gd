@@ -22,10 +22,10 @@ class Rule extends Resource:
 	## 品质抽签权重，与 qualities 数组一一对应。
 	## 长度不足时自动补 1.0，所以短数组也能用（例如只写「金币占 20%」）。
 	@export var quality_weights: PackedFloat32Array = PackedFloat32Array([1.0, 0.4, 0.15])
-	## 向外抛射的初速度范围（米/秒）。
+	## 喷出速度档位（米/秒）；洞据此取上升速度，水平速度按实际落点计算。
 	@export var eject_speed_min: float = 3.0
 	@export var eject_speed_max: float = 7.5
-	## 抛射阶段最短时长（秒），之后才转入吸附。
+	## 喷出后最早允许拾取的时间（秒）；仍须实际落地并与玩家接触。
 	@export var eject_min_time: float = 0.3
 
 

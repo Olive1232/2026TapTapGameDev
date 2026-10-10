@@ -1,0 +1,180 @@
+[gd_scene format=3 uid="uid://dpcrdq4y5paes"]
+
+[ext_resource type="PackedScene" uid="uid://ccorpse000001" path="res://scenes/enemies/corpse.tscn" id="corpse"]
+[ext_resource type="PackedScene" path="res://scenes/ui/crosshair.tscn" id="crosshair"]
+[ext_resource type="Script" uid="uid://c54733bfhclor" path="res://scripts/elements/element_component.gd" id="element"]
+[ext_resource type="FontVariation" uid="uid://devl8p2neeq6s" path="res://resources/ui/game_font.tres" id="font"]
+[ext_resource type="Script" uid="uid://bn35w0whjc063" path="res://scripts/debug/throw_lab.gd" id="lab"]
+[ext_resource type="PackedScene" uid="uid://b1nf44seup0a5" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="PackedScene" path="res://scenes/elements/torch.tscn" id="torch"]
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(40, 0.2, 40)
+
+[sub_resource type="StandardMaterial3D" id="FloorMat"]
+albedo_color = Color(0.13, 0.16, 0.2, 1)
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(40, 0.2, 40)
+
+[sub_resource type="BoxShape3D" id="PlatformShape"]
+size = Vector3(4, 0.6, 3)
+
+[sub_resource type="StandardMaterial3D" id="PlatformMat"]
+albedo_color = Color(0.23, 0.48, 0.6, 1)
+
+[sub_resource type="BoxMesh" id="PlatformMesh"]
+size = Vector3(4, 0.6, 3)
+
+[sub_resource type="BoxShape3D" id="TargetShape"]
+size = Vector3(1.4, 1.4, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="TargetMat"]
+albedo_color = Color(0.58, 0.32, 0.12, 1)
+
+[sub_resource type="BoxMesh" id="TargetMesh"]
+size = Vector3(1.4, 1.4, 0.4)
+
+[sub_resource type="BoxShape3D" id="TargetContact"]
+size = Vector3(1.55, 1.55, 0.55)
+
+[sub_resource type="BoxShape3D" id="WallShape"]
+size = Vector3(3, 3, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="WallMat"]
+albedo_color = Color(0.35, 0.37, 0.4, 1)
+
+[sub_resource type="BoxMesh" id="WallMesh"]
+size = Vector3(3, 3, 0.4)
+
+[sub_resource type="Environment" id="Environment"]
+background_mode = 1
+background_color = Color(0.065, 0.08, 0.11, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.8, 0.85, 1, 1)
+ambient_light_energy = 0.5
+
+[node name="ThrowLab" type="Node3D" unique_id=762540521]
+script = ExtResource("lab")
+
+[node name="Player" parent="." unique_id=1927501872 instance=ExtResource("player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 7)
+
+[node name="Floor" type="StaticBody3D" parent="." unique_id=1547221220]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Floor" unique_id=1344348491]
+shape = SubResource("FloorShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor" unique_id=1645861229]
+material_override = SubResource("FloorMat")
+mesh = SubResource("FloorMesh")
+
+[node name="HighPlatform" type="StaticBody3D" parent="." unique_id=23929741]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -4)
+
+[node name="Shape" type="CollisionShape3D" parent="HighPlatform" unique_id=994792711]
+shape = SubResource("PlatformShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="HighPlatform" unique_id=2102637328]
+material_override = SubResource("PlatformMat")
+mesh = SubResource("PlatformMesh")
+
+[node name="Sign" type="Label3D" parent="HighPlatform" unique_id=1996016712]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+pixel_size = 0.01
+billboard = 1
+text = "高处落点
+将尸体投到平台上"
+font = ExtResource("font")
+font_size = 40
+
+[node name="RemoteTarget" type="StaticBody3D" parent="." unique_id=1544482617]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.7, -4)
+
+[node name="Shape" type="CollisionShape3D" parent="RemoteTarget" unique_id=1766119545]
+shape = SubResource("TargetShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="RemoteTarget" unique_id=826182803]
+material_override = SubResource("TargetMat")
+mesh = SubResource("TargetMesh")
+
+[node name="ElementComponent" type="Area3D" parent="RemoteTarget" unique_id=645158589]
+script = ExtResource("element")
+burn_duration = 10.0
+
+[node name="Shape" type="CollisionShape3D" parent="RemoteTarget/ElementComponent" unique_id=1185952344]
+shape = SubResource("TargetContact")
+
+[node name="Sign" type="Label3D" parent="RemoteTarget" unique_id=1841378181]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+pixel_size = 0.01
+billboard = 1
+text = "远端可燃目标
+投出燃烧尸体点燃"
+font = ExtResource("font")
+font_size = 40
+
+[node name="Wall" type="StaticBody3D" parent="." unique_id=437601917]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1.5, -4)
+
+[node name="Shape" type="CollisionShape3D" parent="Wall" unique_id=765987360]
+shape = SubResource("WallShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="Wall" unique_id=239325422]
+material_override = SubResource("WallMat")
+mesh = SubResource("WallMesh")
+
+[node name="Corpse1" parent="." unique_id=809012341 instance=ExtResource("corpse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.3, 5)
+
+[node name="Corpse2" parent="." unique_id=2052439406 instance=ExtResource("corpse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.3, 5)
+
+[node name="Corpse3" parent="." unique_id=2137372427 instance=ExtResource("corpse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 0.3, 5)
+
+[node name="Torch" parent="." unique_id=1638985366 instance=ExtResource("torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 6)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2010875143]
+environment = SubResource("Environment")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1817420297]
+transform = Transform3D(0.90630776, 0.3237444, -0.2716538, 0, 0.64278764, 0.76604444, 0.42261827, -0.69427204, 0.5825634, 0, 0, 0)
+light_energy = 1.3
+shadow_enabled = true
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=102727778]
+
+[node name="Objective" type="Label" parent="HUD" unique_id=1189823164]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 880.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.93, 0.96, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("font")
+theme_override_font_sizes/font_size = 24
+text = "投掷试验场
+先拿尸体；用火把点燃后可尝试远端传火。"
+
+[node name="Hint" type="Label" parent="HUD" unique_id=634179624]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -110.0
+offset_right = 1200.0
+offset_bottom = -20.0
+theme_override_colors/font_color = Color(0.85, 0.94, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("font")
+theme_override_font_sizes/font_size = 22
+
+[node name="Crosshair" parent="HUD" unique_id=437933310 instance=ExtResource("crosshair")]
+layout_mode = 3

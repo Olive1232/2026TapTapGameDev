@@ -65,6 +65,8 @@ func _process(_delta: float) -> void:
 
 
 func _update_hud() -> void:
+	var hole := get_node_or_null("Hole") as Hole
+	var auto_return := hole != null and hole.has_upgrade("corpse_return")
 	var price: int = _shop.shelf.item_data.price
 	var task := initial_task % price
 	if Wallet.can_afford(price):
@@ -74,9 +76,9 @@ func _update_hud() -> void:
 	if _reward_received:
 		task = "流程完成！继续战斗献祭，或按 Esc 手动存档。"
 	elif _offered:
-		task = "献祭完成，稍等洞喷出钱币并收取。"
+		task = "献祭完成，等待金币落地，再走近碰到金币拾取。"
 	elif _kills > 0:
-		task = "右键点一下拿尸体，带回主房间中央的洞。"
+		task = "离开当前房间，让遗留尸体自动入洞；等待金币落地再拾取。" if auto_return else "右键点一下拿尸体，带回主房间中央的洞。"
 	elif _gate_remaining == 0:
 		task = "通路已打开，进入后方房间，左键攻击怪物。"
 	elif _ever_ignited:
@@ -84,7 +86,7 @@ func _update_hud() -> void:
 	elif _sword.oiled:
 		task = "走到火把旁，让剑身接触火焰。"
 	if _shop.busy:
-		task = "店长正在强化；完成交剑时扣款。"
+		task = "店长正在处理商品；完成时扣款。"
 	_objective.text = room_title + "\n" + task
 	var state := "未涂油"
 	if _sword.is_burning():
@@ -92,6 +94,12 @@ func _update_hud() -> void:
 	elif _sword.oiled:
 		state = "已涂油 · 可接触火把重新点燃"
 	_hint.text = "剑：%s\nWASD 移动 · 空格跳跃 · 左键挥剑 · 右键点按拿起/放下 · Esc 菜单 · R 重置房间" % state
+	if auto_return:
+		_hint.text += "\n尸体自动入洞：已启用 · 离开任一房间后回收该房间遗留尸体"
+	var grabber := _player.get_node("Camera3D/Grabber") as Grabber
+	var throw_prompt := grabber.get_throw_prompt()
+	if not throw_prompt.is_empty():
+		_hint.text += "\n" + throw_prompt
 	var prompt: String = _shop.get_prompt()
 	$HUD/ShopMessage.text = _shop.get_status_message()
 	if not prompt.is_empty():

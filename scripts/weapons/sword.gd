@@ -463,16 +463,22 @@ func _apply_upgrade_tags() -> void:
 		apply_oil()
 
 
-## 强化时收起剑，伤害与火焰接触暂停，避免隐藏剑仍产生交互。
-func set_forge_locked(value: bool) -> void:
+## 交易锁定时立即关闭当前伤害窗口，保留手上剑和元素状态。
+func set_interaction_locked(value: bool) -> void:
 	interaction_locked = value
-	visible = not value
-	if not is_instance_valid(element) or not element.is_inside_tree():
-		return
 	if value:
 		_state = State.IDLE
 		_t = 0.0
 		_close_hitbox()
+
+
+## 剑强化另行收起模型并暂停火焰接触，避免隐藏剑仍产生交互。
+func set_forge_locked(value: bool) -> void:
+	set_interaction_locked(value)
+	visible = not value
+	if not is_instance_valid(element) or not element.is_inside_tree():
+		return
+	if value:
 		element.extinguish()
 		element.set_physics_process(false)
 		element.set_deferred("monitorable", false)

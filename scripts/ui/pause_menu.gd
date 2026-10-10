@@ -17,7 +17,7 @@ func open() -> void:
 	%Root.show()
 	%Card.show()
 	%Settings.hide()
-	%SaveStatus.text = "金币仅在手动存档时保存"
+	%SaveStatus.text = "金币、已购升级与关卡进度仅在手动存档时保存"
 	%SaveButton.grab_focus()
 
 

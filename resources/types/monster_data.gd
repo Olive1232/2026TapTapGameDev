@@ -31,8 +31,8 @@ extends Resource
 @export_group("尸体")
 ## 尸体的**价值**——洞据此决定喷多少钱。
 @export var corpse_value: int = 1
-## 尸体存在时长（秒）。<=0 表示永不超时。
-@export var corpse_lifetime: float = 30.0
+## 尸体点燃后烧毁的时长。未点燃的尸体永久保留；10 秒为试玩值。
+@export_range(0.1, 60.0, 0.1) var corpse_burn_duration: float = 10.0
 ## 尸体重量，影响玩家扛着它时的移速。1.0 为基准。
 @export var corpse_weight: float = 1.0
 

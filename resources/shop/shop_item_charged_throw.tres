@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ShopItemData" format=3 uid="uid://b6yfkprj55lvo"]
+
+[ext_resource type="Script" uid="uid://cf3nm6e5dbvhw" path="res://resources/types/shop_item_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"charged_throw"
+display_name = "棒球手套"
+description = "现在你的右手更有力气了"
+price = 200
+tint = Color(0.2, 0.65, 0.85, 1)
+upgrade_tag = "charged_throw"
+upgrade_target = 2

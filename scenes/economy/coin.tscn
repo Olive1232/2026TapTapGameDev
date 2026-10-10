@@ -11,13 +11,30 @@ emission_enabled = true
 emission = Color(0.76, 0.48, 0.22, 1)
 emission_energy_multiplier = 0.5
 
-[node name="Coin" type="Area3D"]
+[sub_resource type="BoxShape3D" id="BoxShape_coin"]
+size = Vector3(0.2, 0.05, 0.2)
+
+[sub_resource type="SphereShape3D" id="SphereShape_pickup"]
+radius = 0.2
+
+[node name="Coin" type="CharacterBody3D"]
 collision_layer = 0
-collision_mask = 0
-monitoring = false
-monitorable = false
+collision_mask = 1
+safe_margin = 0.005
 script = ExtResource("1_coin")
 
 [node name="Mesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_coin")
 surface_material_override/0 = SubResource("Mat_coin")
+
+[node name="Shape" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape_coin")
+
+[node name="Pickup" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Pickup"]
+shape = SubResource("SphereShape_pickup")

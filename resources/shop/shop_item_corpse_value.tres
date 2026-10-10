@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ShopItemData" format=3]
+
+[ext_resource type="Script" path="res://resources/types/shop_item_data.gd" id="script"]
+
+[resource]
+script = ExtResource("script")
+id = &"corpse_value"
+display_name = "不点金石头"
+description = "让尸体更贵"
+price = 10
+price_step = 5
+purchase_limit = 0
+tint = Color(0.46, 0.48, 0.63, 1)
+upgrade_tag = "corpse_value"
+upgrade_target = 1

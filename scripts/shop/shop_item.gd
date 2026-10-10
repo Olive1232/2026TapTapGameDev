@@ -7,6 +7,7 @@ signal returned_to_shelf(item: ShopItem)
 @export var data: ShopItemData = preload("res://resources/shop/shop_item_oil.tres")
 var is_held := false
 var locked := false
+var purchase_count := 0
 var counter: Node3D
 var weight: float:
 	get:
@@ -28,8 +29,24 @@ func _ready() -> void:
 	material.albedo_color = data.tint if data != null else Color.YELLOW
 	material.metallic = 0.35
 	$Mesh.material_override = material
-	$Price.text = "%s · %d 金币\n右键拿起" % [data.display_name, data.price] if data != null else "商品未配置"
+	_refresh_price()
 	$Price.hide()
+
+
+func set_purchase_count(count: int) -> void:
+	if count == purchase_count:
+		return
+	purchase_count = count
+	if is_node_ready():
+		_refresh_price()
+
+
+func _refresh_price() -> void:
+	$Price.text = "%s · %d 金币\n右键拿起" % [data.display_name, data.get_price(purchase_count)] if data != null else "商品未配置"
+	if data != null and data.is_repeatable():
+		$Price.text += "\n" + data.get_level_description(purchase_count)
+	if data != null and not data.description.is_empty():
+		$Price.text += "\n" + data.description
 
 
 func can_be_grabbed() -> bool:

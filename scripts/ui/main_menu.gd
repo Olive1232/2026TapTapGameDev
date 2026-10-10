@@ -11,7 +11,7 @@ func _ready() -> void:
 	%AboutBackButton.pressed.connect(_close_about)
 	%Settings.closed.connect(_close_settings)
 	%LoadGameButton.disabled = not SaveGame.has_save()
-	%SaveInfo.text = "已有金币存档" if SaveGame.has_save() else "暂无存档 · 新建游戏开始旅程"
+	%SaveInfo.text = "已有存档" if SaveGame.has_save() else "暂无存档 · 新建游戏开始旅程"
 	%NewGameButton.grab_focus()
 
 
