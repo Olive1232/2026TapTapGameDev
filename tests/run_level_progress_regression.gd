@@ -132,7 +132,7 @@ func _verify_world() -> void:
 	_check(_gate.get_child_count() == 0 and _gate.is_persistently_open() and _room.is_gate_open(), "loaded vine bodies and visuals removed")
 	_check(_room.get_node("RatSpawner").enabled and _room.get_node("CockroachSpawner").enabled and _room.get_node("GateSign").text == "通路已打开", "loaded world updates spawners and gate hint")
 	_check(_events.is_empty() and not _room.is_flow_complete(), "restore does not replay break or reward events")
-	_check(_wallet.total == 12345 and _flow.get_purchased_upgrades() == {"oil": true, "corpse_return": true, "charged_throw": true}, "coins and all purchased upgrades restore with gate progress")
+	_check(_wallet.total == 12345 and _flow.get_purchased_upgrades() == {"oil": true, "corpse_return": true, "charged_throw": true, "mirror": false}, "coins and all purchased upgrades restore with gate progress")
 	_player.position = Vector3(13.0, 0.75, 0)
 	_player.velocity = Vector3(5, 0, 0)
 	_player.reset_physics_interpolation()
@@ -278,7 +278,7 @@ func _test_ids_and_validation() -> void:
 	_gate.persistence_id = &""
 	await _enter()
 	var previous_scene = current_scene
-	var payload := {"version": 4, "coins": "100", "upgrades": _save.empty_upgrades(), "level": "world", "opened_gates": {}}
+	var payload := {"version": 4, "coins": "100", "upgrades": {"oil": false, "corpse_return": false, "charged_throw": false}, "level": "world", "opened_gates": {}}
 	for invalid in [null, [], {"world.cleaning.vines": false}, {"world.cleaning.vines": 1}, {"world.cleaning.vines": "true"}, {"": true}, {"bad/id": true}, {"x".repeat(65): true}]:
 		payload.opened_gates = invalid
 		_write_raw(payload)
@@ -301,7 +301,7 @@ func _test_ids_and_validation() -> void:
 		_write_raw(legacy)
 		await _enter(true)
 		_check(_room.scene_file_path == _flow.GAME_SCENE and not _room.is_gate_open() and _wallet.total == 9007199254740993, "legacy v%d keeps exact coins and starts gate closed" % version)
-		_check(_flow.get_purchased_upgrades() == {"oil": version == 3, "corpse_return": version >= 2, "charged_throw": version >= 2}, "legacy v%d retains recorded upgrades" % version)
+		_check(_flow.get_purchased_upgrades() == {"oil": version == 3, "corpse_return": version >= 2, "charged_throw": version >= 2, "mirror": false}, "legacy v%d retains recorded upgrades" % version)
 		_check(_save.save_game().ok and _save.read_save().opened_gates.is_empty(), "legacy migrates only on manual save")
 
 

@@ -13,6 +13,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/money_ui.tscn" id="money"]
 [ext_resource type="PackedScene" path="res://scenes/ui/crosshair.tscn" id="crosshair"]
 
+[ext_resource type="PackedScene" path="res://scenes/ui/bottom_text.tscn" id="bottom_text"]
+
 [sub_resource type="StandardMaterial3D" id="FloorMat"]
 albedo_color = Color(0.24, 0.26, 0.27, 1)
 roughness = 0.9
@@ -120,7 +122,6 @@ size = Vector3(0.5, 0.8, 4)
 script = ExtResource("room")
 
 [node name="Geometry" type="Node3D" parent="."]
-
 
 [node name="FloorWest" type="StaticBody3D" parent="Geometry"]
 position = Vector3(-3.7, -0.5, -4.5)
@@ -305,7 +306,6 @@ shape = SubResource("DoorLintelShape")
 [node name="Player" parent="." instance=ExtResource("player")]
 position = Vector3(0, 0.6, 7)
 
-
 [node name="ExitPoint" type="Marker3D" parent="."]
 position = Vector3(0, 0.6, 3.5)
 
@@ -332,40 +332,30 @@ font_size = 32
 pixel_size = 0.004
 text = "← 初始清扫区"
 
-
 [node name="Torch" parent="." instance=ExtResource("torch")]
 position = Vector3(-2.5, 0, -3.8)
 
-
 [node name="VineGate" type="Node3D" parent="."]
-
 
 [node name="Vines1" parent="VineGate" instance=ExtResource("vines")]
 position = Vector3(-1.2, 0, -6)
 
-
 [node name="Vines2" parent="VineGate" instance=ExtResource("vines")]
 position = Vector3(0, 0, -6)
-
 
 [node name="Vines3" parent="VineGate" instance=ExtResource("vines")]
 position = Vector3(1.2, 0, -6)
 
-
 [node name="GrassPatch" type="Node3D" parent="."]
-
 
 [node name="Grass1" parent="GrassPatch" instance=ExtResource("grass")]
 position = Vector3(4.5, 0, -8.5)
 
-
 [node name="Grass2" parent="GrassPatch" instance=ExtResource("grass")]
 position = Vector3(4.5, 0, -9.5)
 
-
 [node name="Grass3" parent="GrassPatch" instance=ExtResource("grass")]
 position = Vector3(4.5, 0, -10.5)
-
 
 [node name="CockroachSpawner" parent="." instance=ExtResource("spawner")]
 position = Vector3(-3.5, 0, -13.5)
@@ -449,9 +439,7 @@ omni_range = 12.0
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
-
 [node name="MoneyUI" parent="HUD" instance=ExtResource("money")]
-
 
 [node name="Objective" type="Label" parent="HUD"]
 offset_left = 24.0
@@ -463,35 +451,7 @@ theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 22
 mouse_filter = 2
 
-[node name="Hint" type="Label" parent="HUD"]
-anchors_preset = 12
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -98.0
-offset_right = 1220.0
-offset_bottom = -18.0
-grow_vertical = 0
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 18
-mouse_filter = 2
-
 [node name="Crosshair" parent="HUD" instance=ExtResource("crosshair")]
 layout_mode = 3
 
-[node name="ShopMessage" type="Label" parent="HUD"]
-anchors_preset = 12
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -165.0
-offset_right = 1200.0
-offset_bottom = -105.0
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 0.85, 0.48, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 20
-mouse_filter = 2
-
+[node name="BottomText" parent="HUD" instance=ExtResource("bottom_text")]

@@ -20,6 +20,8 @@
 [ext_resource type="PackedScene" path="res://scenes/elements/flammable_vines.tscn" id="vines"]
 [ext_resource type="Script" path="res://scripts/elements/vine_gate.gd" id="vine_gate"]
 
+[ext_resource type="PackedScene" path="res://scenes/ui/bottom_text.tscn" id="bottom_text"]
+
 [sub_resource type="CylinderShape3D" id="Swallow"]
 height = 5.0
 radius = 3.15
@@ -323,34 +325,9 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 22
 
-[node name="Hint" type="Label" parent="HUD" unique_id=1013752885]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -98.0
-offset_right = 1250.0
-offset_bottom = -18.0
-grow_vertical = 0
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 18
-
-[node name="ShopMessage" type="Label" parent="HUD" unique_id=818859187]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -165.0
-offset_right = 1250.0
-offset_bottom = -105.0
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 0.85, 0.48, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 20
-
 [node name="Crosshair" parent="HUD" unique_id=996515823 instance=ExtResource("crosshair")]
 layout_mode = 3
+
+[node name="BottomText" parent="HUD" instance=ExtResource("bottom_text")]
 
 [editable path="Hole"]

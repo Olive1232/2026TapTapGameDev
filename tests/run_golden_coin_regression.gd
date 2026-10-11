@@ -199,7 +199,7 @@ func _run() -> void:
 	_world.get_node("VineGate").restore_persistent_open()
 	await _save_from_pause()
 	var snapshot := FileAccess.get_file_as_string(_save.save_path)
-	_check(JSON.parse_string(snapshot).version == 6 and JSON.parse_string(snapshot).upgrade_levels == {"corpse_value": "3", "golden_coin": "3"}, "v6 stores independent levels as exact decimal strings")
+	_check(JSON.parse_string(snapshot).version == _save.FORMAT_VERSION and JSON.parse_string(snapshot).upgrade_levels == {"corpse_value": "3", "golden_coin": "3"}, "current format stores independent levels as exact decimal strings")
 	await _menu_load()
 	_verify_gold(3, 1905)
 	_check(_hole.get_corpse_value_level() == 3 and _hole.has_upgrade("corpse_return") and _world.is_gate_open(), "loading gold retains existing upgrades and opened gate")
@@ -246,7 +246,7 @@ func _reject_max() -> void:
 
 
 func _test_gold_migration() -> void:
-	var payload := {"version": 6, "coins": "123", "upgrades": _save.empty_upgrades(), "upgrade_levels": {"corpse_value": "3", "golden_coin": "3"}, "level": "world", "opened_gates": {}}
+	var payload := {"version": 6, "coins": "123", "upgrades": {"oil": false, "corpse_return": false, "charged_throw": false}, "upgrade_levels": {"corpse_value": "3", "golden_coin": "3"}, "level": "world", "opened_gates": {}}
 	var previous_scene = current_scene
 	for invalid in [null, [], {}, {"corpse_value": "0"}, {"corpse_value": "0", "golden_coin": true}, {"corpse_value": "0", "golden_coin": 3}, {"corpse_value": "0", "golden_coin": "-1"}, {"corpse_value": "0", "golden_coin": "21"}, {"corpse_value": "0", "golden_coin": "03"}, {"corpse_value": "0", "golden_coin": "3.0"}, {"corpse_value": "0", "golden_coin": "9223372036854775808"}, {"corpse_value": "0", "golden_coin": "3", "unknown": "0"}]:
 		payload.upgrade_levels = invalid
@@ -271,7 +271,7 @@ func _test_gold_migration() -> void:
 		await _enter(true)
 		_verify_gold(0, 9007199254740993)
 		_check(_hole.get_corpse_value_level() == (3 if version == 5 else 0) and _world.is_gate_open() == (version >= 4) and _sword.oiled == (version >= 3), "v%d keeps previous level, capabilities and gates" % version)
-		_check(_save.save_game().ok and _save.read_save().upgrade_levels.golden_coin == 0 and JSON.parse_string(FileAccess.get_file_as_string(_save.save_path)).version == 6, "legacy upgrades on manual save without free gold")
+		_check(_save.save_game().ok and _save.read_save().upgrade_levels.golden_coin == 0 and JSON.parse_string(FileAccess.get_file_as_string(_save.save_path)).version == _save.FORMAT_VERSION, "legacy upgrades on manual save without free gold")
 	await _enter()
 	_check(_hole.apply_upgrade("golden_coin") and _flow.get_purchased_upgrade_levels().golden_coin == 0, "free gold debug grant is excluded from purchases")
 	_check(_save.save_game().ok and _save.read_save().upgrade_levels.golden_coin == 0, "save only counts completed paid gold levels")

@@ -293,7 +293,7 @@ func _run() -> void:
 	if _phase == "full":
 		await _save_from_pause()
 		var in_flight: Dictionary = _save.read_save()
-		_check(in_flight.ok and in_flight.coins == 1000 and in_flight.upgrades == {"oil": false, "corpse_return": false, "charged_throw": false}, "in-flight save neither charges nor records incomplete purchase")
+		_check(in_flight.ok and in_flight.coins == 1000 and in_flight.upgrades == {"oil": false, "corpse_return": false, "charged_throw": false, "mirror": false}, "in-flight save neither charges nor records incomplete purchase")
 	await _wait(3.0)
 	_check(_wallet.total == 995 and _hole.has_upgrade("corpse_return"), "completed egg purchase charges five")
 	if _phase == "full":
@@ -303,7 +303,7 @@ func _run() -> void:
 	if _phase == "write":
 		await _buy("Shelf")
 		await _save_from_pause()
-		_check(_wallet.total == 790 and _save.read_save().upgrades == {"oil": true, "corpse_return": true, "charged_throw": true}, "write process stores all three completed purchases")
+		_check(_wallet.total == 790 and _save.read_save().upgrades == {"oil": true, "corpse_return": true, "charged_throw": true, "mirror": false}, "write process stores all three completed purchases")
 		_finish()
 		return
 	_check(_save.read_save().coins == 995 and not _save.read_save().upgrades.charged_throw, "unsaved glove purchase leaves previous snapshot intact")
@@ -340,7 +340,7 @@ func _run() -> void:
 	await _frames()
 	await _key(KEY_E)
 	_check(current_scene.get_node("Player/Camera3D/Grabber").has_upgrade("charged_throw"), "lab E grants free debug ability")
-	_check(_save.save_game().ok and _save.read_save().upgrades == {"oil": false, "corpse_return": false, "charged_throw": false}, "free debug ability is excluded from purchased progress")
+	_check(_save.save_game().ok and _save.read_save().upgrades == {"oil": false, "corpse_return": false, "charged_throw": false, "mirror": false}, "free debug ability is excluded from purchased progress")
 	_check(_flow.load_game().ok, "load lab save")
 	await scene_changed
 	await _frames()
@@ -381,7 +381,7 @@ func _test_oil_save() -> void:
 	await _buy("Shelf")
 	_check(_wallet.total == 995 and _sword.oiled and not _save.read_save().upgrades.oil, "oil purchase completes once without overwriting unsaved progress")
 	await _save_from_pause()
-	_check(_save.read_save().upgrades == {"oil": true, "corpse_return": false, "charged_throw": false}, "oil-only snapshot records purchased sword upgrade")
+	_check(_save.read_save().upgrades == {"oil": true, "corpse_return": false, "charged_throw": false, "mirror": false}, "oil-only snapshot records purchased sword upgrade")
 	await _menu_load()
 	_verify_owned(false, false, 995, true)
 	_check(_shop.completed_purchases == 0 and not _sword.is_burning() and _sword.data.id == &"starter_oil", "oil-only load restores sword data without replay or auto ignition")
@@ -407,7 +407,7 @@ func _test_oil_save() -> void:
 	await _buy("ChargedThrowShelf")
 	await _save_from_pause()
 	var saved_text := FileAccess.get_file_as_string(_save.save_path)
-	_check(_save.read_save().upgrades == {"oil": true, "corpse_return": true, "charged_throw": true}, "all implemented paid upgrades share one complete snapshot")
+	_check(_save.read_save().upgrades == {"oil": true, "corpse_return": true, "charged_throw": true, "mirror": false}, "all implemented paid upgrades share one complete snapshot")
 	await _menu_load()
 	_verify_owned(true, true, 790, true)
 	_check(_shop.completed_purchases == 0, "all-upgrade load restores without repeating purchases")

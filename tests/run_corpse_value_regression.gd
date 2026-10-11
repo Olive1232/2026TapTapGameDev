@@ -194,7 +194,7 @@ func _run() -> void:
 	_finish()
 
 
-func _test_actual_return() -> void:
+func _test_actual_return(expected_value: int = 5) -> void:
 	var corpse = _new_corpse(2, _shop.to_global(Vector3(2.5, 0.45, 1.5)))
 	corpse.freeze = false
 	corpse.element.ignite()
@@ -224,7 +224,7 @@ func _test_actual_return() -> void:
 	var transfers: Array = _transferred.filter(func(entry): return entry.id == id)
 	var offers: Array = _offered.filter(func(entry): return entry.id == id)
 	_check(transfers.size() == 1 and transfers[0].base == 2 and transfers[0].burning and transfers[0].room == &"shop", "actual room exit returns burning corpse once and preserves base value")
-	_check(offers.size() == 1 and offers[0].value == 5 and offers[0].base == 2, "returned burning corpse receives exactly current level bonus at intake")
+	_check(offers.size() == 1 and offers[0].value == expected_value and offers[0].base == 2, "returned burning corpse receives exactly current level bonus at intake")
 	await _wait(2.3)
 	_check(await load("res://tests/helpers/coin_collection.gd").collect_all(self, _player), "returned upgraded revenue lands and can be collected")
 	_check(_hole.get_corpse_value_level() == 3, "automatic return never increments upgrade level")
@@ -232,7 +232,7 @@ func _test_actual_return() -> void:
 
 func _test_migration_and_invalid() -> void:
 	var previous_scene = current_scene
-	var payload := {"version": 5, "coins": "123", "upgrades": _save.empty_upgrades(), "upgrade_levels": {"corpse_value": "3"}, "level": "world", "opened_gates": {}}
+	var payload := {"version": 5, "coins": "123", "upgrades": {"oil": false, "corpse_return": false, "charged_throw": false}, "upgrade_levels": {"corpse_value": "3"}, "level": "world", "opened_gates": {}}
 	for invalid in [null, [], {}, {"corpse_value": true}, {"corpse_value": 3}, {"corpse_value": 3.0}, {"corpse_value": "-1"}, {"corpse_value": "03"}, {"corpse_value": "3.0"}, {"corpse_value": "9223372036854775808"}, {"corpse_value": str(ShopItemData.MAX_CORPSE_VALUE_LEVEL + 1)}, {"unknown": "3"}, {"corpse_value": "3", "unknown": "0"}]:
 		payload.upgrade_levels = invalid
 		_write_raw(JSON.stringify(payload))

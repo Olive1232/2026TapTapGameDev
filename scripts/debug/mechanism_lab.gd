@@ -27,7 +27,7 @@ func _process(_delta: float) -> void:
 	if gate.is_blocked():
 		status = "门的移动路径被挡住，移开障碍后会继续。"
 	$HUD/Objective.text = "配重平台与升降门\n" + status
-	$HUD/Hint.text = "WASD 移动 · 空格跳跃 · 右键点按拿放 · Esc 暂停 · R 重置\n" + (grabber.get_throw_prompt() if grabber.charged_throw_enabled else "E 解锁投掷（仅本试验场）· 拿起尸体后长按右键，松开投出")
+	$HUD/BottomText.set_message(&"guidance", "WASD 移动 · 空格跳跃 · 右键点按拿放 · Esc 暂停 · R 重置\n" + (grabber.get_throw_prompt() if grabber.charged_throw_enabled else "E 解锁投掷（仅本试验场）· 拿起尸体后长按右键，松开投出"), BottomText.GUIDANCE)
 	$PlatformSign.text = "高处配重平台\n落稳尸体：%d · %s" % [platform.get_corpse_count(), "已触发" if platform.is_pressed() else "等待投掷"]
 	$GateSign.text = "升降门\n" + ("已开启" if gate.is_open() else "由左侧平台控制")
 	if $Player.position.y < -10.0:

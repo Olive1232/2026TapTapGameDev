@@ -1,12 +1,7 @@
-[gd_resource type="Resource" script_class="ShopItemData" format=3]
+[gd_resource type="Resource" script_class="ShopItemData" format=3 uid="uid://dwvqu4p4lddmi"]
 
-[ext_resource type="Script" path="res://resources/types/shop_item_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://cf3nm6e5dbvhw" path="res://resources/types/shop_item_data.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
-id = &"oil"
-display_name = "油"
-price = 5
-weight = 0.3
-tint = Color(0.85, 0.62, 0.12, 1)
-upgrade_tag = "oil"
+description = "剑身涂油后接触火把即可点燃，用燃烧的剑烧开藤蔓。"

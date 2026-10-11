@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dmwlk52vulvjr"]
 
+[ext_resource type="PackedScene" path="res://scenes/ui/bottom_text.tscn" id="bottom_text"]
 [ext_resource type="PackedScene" uid="uid://ccorpse000001" path="res://scenes/enemies/corpse.tscn" id="corpse"]
 [ext_resource type="PackedScene" path="res://scenes/ui/crosshair.tscn" id="crosshair"]
 [ext_resource type="FontVariation" uid="uid://devl8p2neeq6s" path="res://resources/ui/game_font.tres" id="font"]
@@ -285,20 +286,7 @@ theme_override_font_sizes/font_size = 24
 text = "配重平台与升降门
 将尸体投上左侧高处平台，再穿过右侧升降门。"
 
-[node name="Hint" type="Label" parent="HUD" unique_id=479094952]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -110.0
-offset_right = 1240.0
-offset_bottom = -20.0
-theme_override_colors/font_color = Color(0.85, 0.94, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("font")
-theme_override_font_sizes/font_size = 22
-
 [node name="Crosshair" parent="HUD" unique_id=717534847 instance=ExtResource("crosshair")]
 layout_mode = 3
+
+[node name="BottomText" parent="HUD" unique_id=688829576 instance=ExtResource("bottom_text")]

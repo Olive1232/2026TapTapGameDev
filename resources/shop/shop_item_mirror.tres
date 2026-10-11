@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ShopItemData" format=3]
+
+[ext_resource type="Script" path="res://resources/types/shop_item_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"mirror"
+display_name = "镜子"
+description = "尸体入洞价值 ×2，每具只复制一次"
+price = 200
+tint = Color(0.72, 0.85, 0.94, 1)
+upgrade_tag = "mirror"
+upgrade_target = 1
+purchase_limit = 1

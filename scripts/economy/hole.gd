@@ -267,7 +267,11 @@ func _item_value(body: Node) -> int:
 		var base := maxi(0, int(body.value))
 		# 在统一入口计算当前等级，已存在 / 新生成 / 转移的尸体都只加一次。
 		if body is Corpse:
-			return mini(base, ShopItemData.MAX_INT - _corpse_value_level) + _corpse_value_level
+			var value := mini(base, ShopItemData.MAX_INT - _corpse_value_level) + _corpse_value_level
+			# 镜子只复制本次尸体献祭的价值，不生成第二具尸体或修改原始价值。
+			if has_upgrade("mirror"):
+				return value + mini(value, ShopItemData.MAX_INT - value)
+			return value
 		return base
 	return 0
 
@@ -444,6 +448,8 @@ func can_apply_upgrade(tag: String) -> bool:
 	var limit := ShopItemData.get_level_limit(tag)
 	if limit >= 0:
 		return get_upgrade_level(tag) < limit
+	if tag == "mirror":
+		return not has_upgrade(tag)
 	if tag != "corpse_return" or has_upgrade(tag) or corpse_return_outlet_path.is_empty():
 		return false
 	var outlet := get_node_or_null(corpse_return_outlet_path)
@@ -455,8 +461,9 @@ func apply_upgrade(tag: String) -> bool:
 		return false
 	if ShopItemData.get_level_limit(tag) >= 0:
 		return restore_upgrade_level(tag, get_upgrade_level(tag) + 1)
-	var outlet := get_node(corpse_return_outlet_path)
-	outlet.enable()
+	if tag == "corpse_return":
+		var outlet := get_node(corpse_return_outlet_path)
+		outlet.enable()
 	upgrade_tags.append(tag)
 	return true
 

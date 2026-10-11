@@ -13,7 +13,7 @@ var _ever_ignited := false
 @onready var _player: CharacterBody3D = $Player
 @onready var _sword: Sword = $Player/Camera3D/WeaponRig/WeaponPivot/Mount
 @onready var _objective: Label = $HUD/Objective
-@onready var _hint: Label = $HUD/Hint
+@onready var _bottom_text: BottomText = $HUD/BottomText
 @onready var _shop: Node3D = $ShopRoom
 
 
@@ -93,17 +93,16 @@ func _update_hud() -> void:
 		state = "燃烧中 · 剩余 %d 次挥砍" % _sword.fire_swings_remaining
 	elif _sword.oiled:
 		state = "已涂油 · 可接触火把重新点燃"
-	_hint.text = "剑：%s\nWASD 移动 · 空格跳跃 · 左键挥剑 · 右键点按拿起/放下 · Esc 菜单 · R 重置房间" % state
-	if auto_return:
-		_hint.text += "\n尸体自动入洞：已启用 · 离开任一房间后回收该房间遗留尸体"
+	var guidance := "剑：%s\nWASD 移动 · 空格跳跃 · 左键挥剑 · 右键拿放 · Esc 菜单 · R 重置" % state
 	var grabber := _player.get_node("Camera3D/Grabber") as Grabber
 	var throw_prompt := grabber.get_throw_prompt()
 	if not throw_prompt.is_empty():
-		_hint.text += "\n" + throw_prompt
-	var prompt: String = _shop.get_prompt()
-	$HUD/ShopMessage.text = _shop.get_status_message()
-	if not prompt.is_empty():
-		$HUD/ShopMessage.text += "\n" + prompt
+		guidance += "\n" + throw_prompt
+	if auto_return:
+		guidance += "\n灵魂鸡蛋：离开房间后回收遗留尸体"
+	_bottom_text.set_message(&"guidance", guidance, BottomText.GUIDANCE)
+	_bottom_text.set_message(&"shop_description", _shop.get_context_text(), BottomText.DESCRIPTION)
+	_bottom_text.set_message(&"shop_feedback", _shop.get_status_message(), BottomText.FEEDBACK)
 
 
 func is_gate_open() -> bool:

@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/shop/shopkeeper.tscn" id="keeper"]
 [ext_resource type="Resource" path="res://resources/shop/shop_item_corpse_value.tres" id="corpse_value_product"]
 [ext_resource type="Resource" path="res://resources/shop/shop_item_golden_coin.tres" id="golden_coin_product"]
+[ext_resource type="Resource" path="res://resources/shop/shop_item_mirror.tres" id="mirror_product"]
 
 [sub_resource type="StandardMaterial3D" id="WallMat"]
 albedo_color = Color(0.3, 0.29, 0.26, 1)
@@ -63,6 +64,13 @@ item_data = ExtResource("corpse_value_product")
 [node name="GoldenCoinShelf" parent="." instance=ExtResource("shelf")]
 position = Vector3(2.5, 0, 0)
 item_data = ExtResource("golden_coin_product")
+
+[node name="MirrorShelf" parent="." instance=ExtResource("shelf")]
+position = Vector3(-2.5, 0, 5.8)
+item_data = ExtResource("mirror_product")
+
+[node name="Sign" parent="MirrorShelf" index="2"]
+position = Vector3(0, 2.65, 0)
 
 [node name="Counter" parent="." instance=ExtResource("counter")]
 position = Vector3(0, 0, -2)

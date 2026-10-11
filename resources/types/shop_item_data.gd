@@ -53,7 +53,7 @@ func get_price(purchase_count: int = 0) -> int:
 func is_supported() -> bool:
 	if price <= 0 or price_step < 0 or purchase_limit < 0 or (purchase_limit == 0 and not is_repeatable()):
 		return false
-	return (upgrade_target == UpgradeTarget.SWORD and upgrade_tag == "oil") or (upgrade_target == UpgradeTarget.HOLE and upgrade_tag in ["corpse_return", "corpse_value", "golden_coin"]) or (upgrade_target == UpgradeTarget.GRABBER and upgrade_tag == "charged_throw")
+	return (upgrade_target == UpgradeTarget.SWORD and upgrade_tag == "oil") or (upgrade_target == UpgradeTarget.HOLE and upgrade_tag in ["corpse_return", "corpse_value", "golden_coin", "mirror"]) or (upgrade_target == UpgradeTarget.GRABBER and upgrade_tag == "charged_throw")
 
 
 func make_upgraded_sword(base: SwordData) -> SwordData:

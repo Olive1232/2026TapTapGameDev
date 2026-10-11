@@ -4,6 +4,7 @@ extends SceneTree
 var _passed := 0
 var _failed := 0
 var _font: FontVariation
+var _pixel_font: FontVariation
 var _characters := {}
 var _chinese := RegEx.new()
 
@@ -53,7 +54,8 @@ func _check_text_nodes(node: Node) -> void:
 		font = node.font if node.font != null else ThemeDB.fallback_font
 		text = node.text
 	if not text.is_empty():
-		_check(font == _font, "bundled font used by " + str(node.get_path()))
+		var expected: Font = _pixel_font if node.get_parent() != null and node.get_parent().get_parent() is BottomText else _font
+		_check(font == expected, "bundled font used by " + str(node.get_path()))
 		if font != null:
 			var missing := _missing(font, text)
 			_check(missing.is_empty(), "no missing glyphs in %s: %s" % [node.get_path(), missing])
@@ -64,6 +66,9 @@ func _check_text_nodes(node: Node) -> void:
 func _run() -> void:
 	await process_frame
 	_font = load("res://resources/ui/game_font.tres")
+	_pixel_font = load("res://resources/ui/pixel_font.tres")
+	_check(_pixel_font != null and _pixel_font.base_font is FontFile, "bundled pixel font loads")
+	_check(not _pixel_font.base_font.allow_system_fallback and not _pixel_font.base_font.multichannel_signed_distance_field and _pixel_font.base_font.antialiasing == 0, "pixel font renders without smoothing or system fallback")
 	_check(_font != null and _font.base_font is FontFile, "bundled font loads")
 	_check(not _font.base_font.allow_system_fallback, "glyph coverage is independent of system fonts")
 	var server := TextServerManager.get_primary_interface()
@@ -79,6 +84,11 @@ func _run() -> void:
 		if not _font.has_char(code):
 			missing += String.chr(code)
 	_check(_characters.size() > 100 and missing.is_empty(), "project Chinese glyph coverage: " + missing)
+	missing = ""
+	for code in _characters:
+		if not _pixel_font.has_char(code):
+			missing += String.chr(code)
+	_check(missing.is_empty(), "pixel font Chinese glyph coverage: " + missing)
 	var menu = load("res://scenes/ui/main_menu.tscn").instantiate()
 	root.add_child(menu)
 	current_scene = menu

@@ -126,7 +126,7 @@ func restore_purchased_upgrades(upgrades: Dictionary, levels: Dictionary = {}) -
 				if not target.apply_upgrade(product.upgrade_tag):
 					return false
 		_purchase_counts[product.id] = 1
-		# 油沿用成交后补货、已强化拒绝再次购买的规则；另外两件售罄移除。
+		# 油沿用成交后补货、已强化拒绝再次购买的规则；其余单次商品售罄移除。
 		if product.upgrade_target != ShopItemData.UpgradeTarget.SWORD:
 			stock.restore_purchase()
 	for product_id in levels:
@@ -169,7 +169,7 @@ func _purchase_error(product: ShopItemData) -> String:
 	if (_owns_upgrade(product) and not product.is_repeatable()) or (product.purchase_limit > 0 and count >= product.purchase_limit):
 		return "剑已涂油，无需重复购买。" if product.upgrade_target == ShopItemData.UpgradeTarget.SWORD else "%s已启用，限购 %d 次。" % [product.display_name, product.purchase_limit]
 	if product.upgrade_target == ShopItemData.UpgradeTarget.HOLE and (not is_instance_valid(_hole) or not _hole.can_apply_upgrade(product.upgrade_tag)):
-		return "洞无法继续强化此升级。" if product.is_repeatable() else "尸体出口尚未配置，无法购买此升级。"
+		return "尸体出口尚未配置，无法购买此升级。" if product.upgrade_tag == "corpse_return" else "洞无法继续强化此升级。"
 	if product.upgrade_target == ShopItemData.UpgradeTarget.GRABBER and (not is_instance_valid(_grabber) or not _grabber.can_apply_upgrade(product.upgrade_tag)):
 		return "搬运能力尚未就绪，无法购买此升级。"
 	var price := get_product_price(product)
@@ -288,6 +288,8 @@ func _finish_purchase() -> void:
 			elif product.is_repeatable():
 				var level := get_purchase_count(product.id)
 				_show_message("不点金石头升至 %d 级！每具尸体价值 +%d，下次购买 %d 金币。" % [level, level, get_product_price(product)])
+			elif product.upgrade_tag == "mirror":
+				_show_message("镜子已启用！尸体入洞按两份价值结算，每具只复制一次。")
 			else:
 				_show_message("灵魂鸡蛋已启用！离开任一房间，该房间遗留尸体将自动入洞。")
 		ShopItemData.UpgradeTarget.GRABBER:
@@ -350,6 +352,8 @@ func _working_message() -> String:
 		return "店长正在配置投掷能力，请稍候。"
 	if is_instance_valid(_transaction_item) and _transaction_item.data.is_repeatable():
 		return "店长正在强化点金概率，请稍候。" if _transaction_item.data.upgrade_tag == "golden_coin" else "店长正在强化尸体价值，请稍候。"
+	if is_instance_valid(_transaction_item) and _transaction_item.data.upgrade_tag == "mirror":
+		return "店长正在配置镜子，请稍候。"
 	return "店长正在开启尸体出口，请稍候。"
 
 
@@ -362,20 +366,10 @@ func get_prompt() -> String:
 		if _grabber.get_held() is ShopItem and counter.can_place_from(_player.get_node("Camera3D")):
 			return "右键放到台面，再左键挥剑命中店长"
 		return ""
-	if counter.item != null and _player.global_position.distance_to(counter.global_position) < 3.5:
-		return "左键挥剑命中店长 · 右键可取回台面商品"
-	var nearest: Node3D
-	var distance := 3.5
 	var camera := _player.get_node("Camera3D") as Camera3D
-	for stock in _shelves:
-		# 相邻货架不能让身后的商品抢走当前朝向的操作提示。
-		var offset: Vector3 = stock.get_node("ItemSpawn").global_position - camera.global_position
-		if offset.dot(-camera.global_basis.z) <= 0.0:
-			continue
-		var candidate := _player.global_position.distance_to(stock.global_position)
-		if candidate < distance:
-			nearest = stock
-			distance = candidate
+	if is_instance_valid(counter.item) and _looks_at(camera, counter.item.global_position) and _clear_view(camera, counter.item.global_position, counter):
+		return "左键挥剑命中店长 · 右键可取回台面商品"
+	var nearest := _get_focused_shelf()
 	if nearest != null and nearest.item_data != null:
 		if nearest.sold_out:
 			if nearest.item_data.is_repeatable():
@@ -383,3 +377,85 @@ func get_prompt() -> String:
 			return "%s已售罄 · 限购 %d 次" % [nearest.item_data.display_name, nearest.item_data.purchase_limit]
 		return "右键拿%s · %d 金币 · 拿到忏悔室前的小台子" % [nearest.item_data.display_name, get_product_price(nearest.item_data)]
 	return ""
+
+
+## 描述与操作放在同一条消息内；交易反馈由 HUD 的更高优先级来源覆盖。
+func get_context_text() -> String:
+	if not is_instance_valid(_player) or not is_instance_valid(_grabber) or busy:
+		return ""
+	var held := _grabber.get_held() as ShopItem
+	if held != null:
+		var operation := get_prompt()
+		if operation.is_empty():
+			operation = "右键放下 · 将商品带到忏悔室前的小台子"
+		return _describe_product(held.data, false, operation)
+	var camera := _player.get_node("Camera3D") as Camera3D
+	if is_instance_valid(counter.item) and _looks_at(camera, counter.item.global_position) and _clear_view(camera, counter.item.global_position, counter):
+		return _describe_product(counter.item.data, false, "左键挥剑命中店长 · 右键可取回商品")
+	# 放在地面的商品也可以通过准星查看；世界碰撞挡住射线即不显示。
+	var ray := PhysicsRayQueryParameters3D.create(camera.global_position, camera.global_position - camera.global_basis.z * 3.5, CollisionLayers.WORLD | CollisionLayers.PICKUP)
+	ray.exclude = [_player.get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(ray)
+	var item := hit.get("collider") as ShopItem
+	if item != null and not item.is_queued_for_deletion():
+		return _describe_product(item.data, false, "右键拿起 · 将商品带到忏悔室前的小台子")
+	var stock := _get_focused_shelf()
+	if stock != null:
+		return _describe_product(stock.item_data, stock.sold_out, get_prompt())
+	return ""
+
+
+func _describe_product(product: ShopItemData, sold_out: bool, operation: String) -> String:
+	if product == null:
+		return ""
+	var price := get_product_price(product)
+	var header := "%s · %d 金币" % [product.display_name, price] if price >= 0 else product.display_name
+	if sold_out:
+		header = product.display_name + (" · 已满级" if product.is_repeatable() else " · 已售罄")
+	elif _owns_upgrade(product) and not product.is_repeatable():
+		header += " · 已启用"
+	if product.is_repeatable():
+		header += " · " + product.get_level_description(get_purchase_count(product.id))
+	var text := header
+	if not product.description.is_empty():
+		text += "\n" + product.description
+	if not operation.is_empty():
+		text += "\n" + operation
+	return text
+
+
+func _looks_at(camera: Camera3D, at: Vector3) -> bool:
+	var offset := at - camera.global_position
+	return offset.length() <= 3.5 and offset.normalized().dot(-camera.global_basis.z) >= cos(deg_to_rad(20.0))
+
+
+func _clear_view(camera: Camera3D, at: Vector3, allowed_root: Node) -> bool:
+	var ray := PhysicsRayQueryParameters3D.create(camera.global_position, at, CollisionLayers.WORLD)
+	ray.exclude = [_player.get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(ray)
+	var blocker := hit.get("collider") as Node
+	return blocker == null or allowed_root.is_ancestor_of(blocker)
+
+
+func _get_focused_shelf() -> Node3D:
+	if not is_instance_valid(_player):
+		return null
+	var camera := _player.get_node("Camera3D") as Camera3D
+	var nearest: Node3D
+	var best_alignment := cos(deg_to_rad(20.0))
+	for stock in _shelves:
+		if not is_instance_valid(stock) or stock.item_data == null:
+			continue
+		# 允许看商品或货架文字；仅在近处且正对时显示，身后货架不参与。
+		for marker in [stock.get_node("ItemSpawn"), stock.get_node("Sign")]:
+			var at: Vector3 = marker.global_position
+			if not _looks_at(camera, at):
+				continue
+			var alignment := (at - camera.global_position).normalized().dot(-camera.global_basis.z)
+			if alignment < best_alignment:
+				continue
+			if not _clear_view(camera, at, stock):
+				continue
+			nearest = stock
+			best_alignment = alignment
+	return nearest

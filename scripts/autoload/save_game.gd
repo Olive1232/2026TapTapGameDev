@@ -1,10 +1,11 @@
 extends Node
 
-## 单存档位，保存金币、已购升级、重复购买等级与永久通路；兼容 v1—v5。
-const FORMAT_VERSION := 6
+## 单存档位，保存金币、已购升级、重复购买等级与永久通路；兼容 v1—v6。
+const FORMAT_VERSION := 7
 ## 保存、校验、读取与商店恢复共用清单，新增已实现升级时在此注册。
-const UPGRADE_IDS := ["oil", "corpse_return", "charged_throw"]
+const UPGRADE_IDS := ["oil", "corpse_return", "charged_throw", "mirror"]
 const VERSION_2_UPGRADE_IDS := ["corpse_return", "charged_throw"]
+const VERSION_3_TO_6_UPGRADE_IDS := ["oil", "corpse_return", "charged_throw"]
 const LEVEL_UPGRADE_IDS := ["corpse_value", "golden_coin"]
 const VERSION_5_LEVEL_UPGRADE_IDS := ["corpse_value"]
 const AtomicFile := preload("res://scripts/persistence/atomic_file.gd")
@@ -78,7 +79,7 @@ func read_save() -> Dictionary:
 		return _invalid_save()
 	var data: Dictionary = json.data
 	var version: Variant = data.get("version")
-	if not (version is int or version is float) or (version != 1 and version != 2 and version != 3 and version != 4 and version != 5 and version != FORMAT_VERSION):
+	if not (version is int or version is float) or (version != 1 and version != 2 and version != 3 and version != 4 and version != 5 and version != 6 and version != FORMAT_VERSION):
 		return {"ok": false, "message": "存档版本不兼容。"}
 	var coins: Variant = data.get("coins")
 	# 十进制字符串保留 int64 精度；往返校验也拒绝溢出和负值。
@@ -89,7 +90,11 @@ func read_save() -> Dictionary:
 		return _invalid_save()
 	var upgrades := empty_upgrades()
 	if version != 1:
-		var expected_ids: Array = VERSION_2_UPGRADE_IDS if version == 2 else UPGRADE_IDS
+		var expected_ids: Array = UPGRADE_IDS
+		if version == 2:
+			expected_ids = VERSION_2_UPGRADE_IDS
+		elif version != FORMAT_VERSION:
+			expected_ids = VERSION_3_TO_6_UPGRADE_IDS
 		var saved_upgrades: Variant = data.get("upgrades")
 		if not saved_upgrades is Dictionary or saved_upgrades.size() != expected_ids.size():
 			return _invalid_save()
@@ -100,7 +105,7 @@ func read_save() -> Dictionary:
 	var level := "world"
 	var opened_gates := {}
 	var upgrade_levels := empty_upgrade_levels()
-	if version == 5 or version == FORMAT_VERSION:
+	if version == 5 or version == 6 or version == FORMAT_VERSION:
 		var expected_ids: Array = VERSION_5_LEVEL_UPGRADE_IDS if version == 5 else LEVEL_UPGRADE_IDS
 		var saved_levels: Variant = data.get("upgrade_levels")
 		if not saved_levels is Dictionary or saved_levels.size() != expected_ids.size():
@@ -112,7 +117,7 @@ func read_save() -> Dictionary:
 			upgrade_levels[product_id] = count.to_int()
 		if not is_valid_upgrade_levels(upgrade_levels):
 			return _invalid_save()
-	if version == 4 or version == 5 or version == FORMAT_VERSION:
+	if version == 4 or version == 5 or version == 6 or version == FORMAT_VERSION:
 		var saved_level: Variant = data.get("level")
 		var saved_gates: Variant = data.get("opened_gates")
 		if not saved_level is String or not GameFlow.SAVE_LEVELS.has(saved_level) or not LevelProgress.is_valid_progress(saved_gates):
