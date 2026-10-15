@@ -10,6 +10,7 @@ var _flow
 var _wallet
 var _directory := ""
 var _phase := "full"
+var _capture_directory := ""
 
 
 func _initialize() -> void:
@@ -30,6 +31,15 @@ func _check(condition: bool, message: String) -> void:
 func _frames() -> void:
 	await process_frame
 	await process_frame
+
+
+func _wait_window_mode(mode: DisplayServer.WindowMode) -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	# macOS 原生全屏通过动画异步切换，不能用两个游戏帧假定窗口已完成切换。
+	var deadline := Time.get_ticks_msec() + 4000
+	while DisplayServer.window_get_mode() != mode and Time.get_ticks_msec() < deadline:
+		await create_timer(0.05, true, false, true).timeout
 
 
 func _click(button: Control) -> void:
@@ -66,6 +76,13 @@ func _write_raw(text: String) -> void:
 	file.close()
 
 
+func _capture(name: String) -> void:
+	if _capture_directory.is_empty() or DisplayServer.get_name() == "headless":
+		return
+	RenderingServer.force_draw(true)
+	_check(root.get_texture().get_image().save_png(_capture_directory.path_join(name + ".png")) == OK, "capture " + name)
+
+
 func _run() -> void:
 	await process_frame
 	for argument in OS.get_cmdline_user_args():
@@ -73,11 +90,15 @@ func _run() -> void:
 			_directory = argument.trim_prefix("--data-dir=")
 		elif argument.begins_with("--phase="):
 			_phase = argument.trim_prefix("--phase=")
+		elif argument.begins_with("--capture-dir=/tmp/"):
+			_capture_directory = argument.trim_prefix("--capture-dir=")
 	if _directory.is_empty():
 		push_error("Use --data-dir pointing to an isolated test directory")
 		quit(1)
 		return
 	DirAccess.make_dir_recursive_absolute(_directory)
+	if not _capture_directory.is_empty():
+		DirAccess.make_dir_recursive_absolute(_capture_directory)
 	_save = root.get_node("SaveGame")
 	_settings = root.get_node("GameSettings")
 	_flow = root.get_node("GameFlow")
@@ -142,7 +163,7 @@ func _run() -> void:
 	# Check small-window containment; the actual render is also inspected in editor.
 	root.size = Vector2i(960, 640)
 	await _frames()
-	_check(menu.get_node("%QuitButton").get_global_rect().end.y <= root.size.y, "all options fit minimum window")
+	_check(root.get_visible_rect().encloses(menu.get_node("%QuitButton").get_global_rect()), "all options fit minimum window")
 	root.size = Vector2i(1280, 720)
 	await _frames()
 	await _click(menu.get_node("%AboutButton"))
@@ -155,12 +176,14 @@ func _run() -> void:
 	settings_ui.get_node("%WindowMode").select(1)
 	settings_ui.get_node("%WindowMode").item_selected.emit(1)
 	await _frames()
+	await _wait_window_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	_check(_settings.fullscreen, "fullscreen option reaches settings")
 	if DisplayServer.get_name() != "headless":
 		_check(DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN, "native fullscreen applied")
 	settings_ui.get_node("%WindowMode").select(0)
 	settings_ui.get_node("%WindowMode").item_selected.emit(0)
 	await _frames()
+	await _wait_window_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 	_check(not _settings.fullscreen, "windowed option reaches settings")
 	if DisplayServer.get_name() != "headless":
 		_check(DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_WINDOWED, "native windowed applied")
@@ -186,10 +209,12 @@ func _run() -> void:
 	DirAccess.remove_absolute(_save.save_path + ".tmp")
 	await _click(menu.get_node("%NewGameButton"))
 	_check(_flow.is_in_game() and _wallet.total == 0, "new game starts from zero")
+	_check(current_scene.scene_file_path == "res://scenes/rooms/main_world.tscn", "main menu new game enters main_world")
 	_check(_save.read_save().coins == 17, "new game preserves disk save")
 	if DisplayServer.get_name() != "headless":
 		_check(Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED, "game captures mouse")
 	var player = current_scene.get_node("Player")
+	_capture("01_new_game")
 	_check(is_equal_approx(player.mouse_sensitivity, 0.25), "player uses menu sensitivity")
 	var sword = player.get_node("Camera3D/WeaponRig/WeaponPivot/Mount")
 	var pose: Vector3 = player.rotation
@@ -210,8 +235,16 @@ func _run() -> void:
 	_check(player._look_delta == Vector2.ZERO, "pause clears pending look input")
 	var pause_menu = _flow.get_node("PauseMenu")
 	_check(pause_menu.get_node("%Root").visible, "pause menu visible")
-	for button_name in ["SaveButton", "MainMenuButton", "SettingsButton", "QuitButton"]:
+	for button_name in ["ResumeButton", "SaveButton", "MainMenuButton", "SettingsButton", "QuitButton"]:
 		_check(pause_menu.get_node("%" + button_name) is Button, "pause menu has " + button_name)
+	_check(root.gui_get_focus_owner() == pause_menu.get_node("%ResumeButton"), "pause focuses continue button")
+	_capture("02_pause")
+	root.size = Vector2i(960, 640)
+	await _frames()
+	_check(root.get_visible_rect().encloses(pause_menu.get_node("%Card").get_global_rect()), "pause options fit minimum window")
+	_capture("03_pause_minimum")
+	root.size = Vector2i(1280, 720)
+	await _frames()
 	var before: Vector3 = player.global_position
 	var scene_id: int = current_scene.get_instance_id()
 	var old_sword_state: int = sword._state
@@ -227,9 +260,16 @@ func _run() -> void:
 	_check(paused and _save.read_save().coins == 481, "save works while paused")
 	_check(pause_menu.get_node("%SaveStatus").text.contains("存档成功"), "successful save feedback")
 	_check(sword._state == old_sword_state, "menu click does not swing sword")
+	DirAccess.make_dir_absolute(_save.save_path + ".tmp")
+	_wallet.add(1)
+	await _click(pause_menu.get_node("%SaveButton"))
+	_check(paused and _save.read_save().coins == 481 and pause_menu.get_node("%SaveStatus").text.contains("存档失败"), "paused save failure preserves previous disk snapshot and shows error")
+	DirAccess.remove_absolute(_save.save_path + ".tmp")
+	_wallet.set_total(481)
 	await _click(pause_menu.get_node("%SettingsButton"))
 	settings_ui = pause_menu.get_node("%Settings")
 	_check(paused and settings_ui.visible, "pause settings keep game paused")
+	_capture("04_pause_settings")
 	settings_ui.get_node("%Sensitivity").value = 1.5
 	_check(is_equal_approx(player.mouse_sensitivity, 0.15), "pause slider changes existing player")
 	await _key(KEY_ESCAPE)
@@ -239,6 +279,21 @@ func _run() -> void:
 	if DisplayServer.get_name() != "headless":
 		_check(Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED, "resume recaptures mouse")
 	_check(player._look_delta == Vector2.ZERO, "resume avoids stale look input")
+	await _key(KEY_ESCAPE)
+	await _click(pause_menu.get_node("%ResumeButton"))
+	_check(not paused and not pause_menu.get_node("%Root").visible, "continue button resumes main_world")
+	_check(sword._state == old_sword_state, "continue click does not attack")
+	await _key(KEY_ESCAPE)
+	await _key(KEY_SPACE)
+	_check(not paused, "space activates focused continue button")
+	_check(player.velocity.y <= 0.0, "keyboard continue does not jump: velocity=%s" % player.velocity)
+	Input.action_press("Jump")
+	for frame in 3:
+		await physics_frame
+	Input.action_release("Jump")
+	_check(player.velocity.y > 0.0, "normal jump remains available after menu confirmation")
+	for frame in 65:
+		await physics_frame
 
 	var pool = root.get_node("CoinPool")
 	pool.acquire()
@@ -250,6 +305,7 @@ func _run() -> void:
 	_wallet.add(10)
 	await _click(current_scene.get_node("%LoadGameButton"))
 	_check(_flow.is_in_game() and _wallet.total == 481, "load button restores saved coins")
+	_check(current_scene.scene_file_path == "res://scenes/rooms/main_world.tscn", "main menu load enters main_world")
 	_check(current_scene.get_node("HUD/MoneyUI")._label.text == "481", "loaded amount immediately appears on HUD")
 	var coin = pool.acquire()
 	_check(coin.get_parent() == current_scene, "coin pool works in loaded scene")

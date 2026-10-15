@@ -1,7 +1,7 @@
 extends Node
 
 const MAIN_MENU := "res://scenes/ui/main_menu.tscn"
-const GAME_SCENE := "res://scenes/rooms/map_world.tscn"
+const GAME_SCENE := "res://scenes/rooms/main_world.tscn"
 const SHOP_LAB := "res://scenes/rooms/element_test_room.tscn"
 const DEBUG_SCENE := "res://scenes/debug/test_arena.tscn"
 const ELEMENT_LAB := "res://scenes/debug/element_lab.tscn"
@@ -83,22 +83,20 @@ func is_in_game() -> bool:
 
 
 func start_new_game() -> Dictionary:
-	return _enter_game(0)
+	return _enter_game(0, {}, "world", {}, {}, "controls")
 
 
 func load_game() -> Dictionary:
 	var result := SaveGame.read_save()
 	if not result.ok:
 		return result
-	return _enter_game(result.coins, result.upgrades, result.level, result.opened_gates, result.upgrade_levels)
+	return _enter_game(result.coins, result.upgrades, result.level, result.opened_gates, result.upgrade_levels, result.tutorial_stage)
 
 
 func get_purchased_upgrades() -> Dictionary:
-	var scene := get_tree().current_scene
-	if scene != null and scene.scene_file_path in [GAME_SCENE, SHOP_LAB]:
-		var shop := scene.get_node_or_null("ShopRoom")
-		if shop != null and shop.has_method("get_purchased_upgrades"):
-			return shop.get_purchased_upgrades()
+	var owner := _get_upgrade_owner(get_tree().current_scene)
+	if owner != null:
+		return owner.get_purchased_upgrades()
 	return SaveGame.empty_upgrades()
 
 
@@ -112,20 +110,34 @@ func get_level_snapshot() -> Dictionary:
 
 
 func get_purchased_upgrade_levels() -> Dictionary:
-	var scene := get_tree().current_scene
-	if scene != null and scene.scene_file_path in [GAME_SCENE, SHOP_LAB]:
-		var shop := scene.get_node_or_null("ShopRoom")
-		if shop != null and shop.has_method("get_purchased_upgrade_levels"):
-			return shop.get_purchased_upgrade_levels()
+	var owner := _get_upgrade_owner(get_tree().current_scene)
+	if owner != null:
+		return owner.get_purchased_upgrade_levels()
 	return SaveGame.empty_upgrade_levels()
 
 
-func _enter_game(coins: int, upgrades: Dictionary = {}, level: String = "world", opened_gates: Dictionary = {}, upgrade_levels: Dictionary = {}) -> Dictionary:
+func _get_upgrade_owner(scene: Node) -> Node:
+	if scene == null:
+		return null
+	if scene.scene_file_path == GAME_SCENE:
+		return scene
+	if scene.scene_file_path == SHOP_LAB:
+		return scene.get_node_or_null("ShopRoom")
+	return null
+
+
+func get_tutorial_stage() -> String:
+	var scene := get_tree().current_scene
+	var hints := scene.get_node_or_null("HUD/OnboardingHints") if scene != null else null
+	return hints.get_stage() if hints != null else "complete"
+
+
+func _enter_game(coins: int, upgrades: Dictionary = {}, level: String = "world", opened_gates: Dictionary = {}, upgrade_levels: Dictionary = {}, tutorial_stage: String = "complete") -> Dictionary:
 	if _transitioning:
 		return {"ok": false, "message": "正在进入游戏..."}
 	var previous := Wallet.total
 	Wallet.set_total(coins)
-	var result := _change_scene(SAVE_LEVELS[level], upgrades, opened_gates, upgrade_levels)
+	var result := _change_scene(SAVE_LEVELS[level], upgrades, opened_gates, upgrade_levels, tutorial_stage)
 	if not result.ok:
 		Wallet.set_total(previous)
 	return result
@@ -135,7 +147,14 @@ func return_to_main_menu() -> Dictionary:
 	return _change_scene(MAIN_MENU)
 
 
-func _change_scene(path: String, upgrades: Dictionary = {}, opened_gates: Dictionary = {}, upgrade_levels: Dictionary = {}) -> Dictionary:
+## 开发重置只重建场景，保留本轮新手引导阶段，不读写磁盘存档。
+func reset_current_game() -> Dictionary:
+	if not is_in_game():
+		return {"ok": false, "message": "当前不在游戏中。"}
+	return _change_scene(get_tree().current_scene.scene_file_path, {}, {}, {}, get_tutorial_stage())
+
+
+func _change_scene(path: String, upgrades: Dictionary = {}, opened_gates: Dictionary = {}, upgrade_levels: Dictionary = {}, tutorial_stage: String = "complete") -> Dictionary:
 	if _transitioning:
 		return {"ok": false, "message": "正在切换场景..."}
 	_transitioning = true
@@ -150,44 +169,50 @@ func _change_scene(path: String, upgrades: Dictionary = {}, opened_gates: Dictio
 	# 场景离开时可能正在顿帧，避免把慢速状态带到主菜单或新游戏。
 	Engine.time_scale = 1.0
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	_finish_transition(upgrades.duplicate(), opened_gates.duplicate(), upgrade_levels.duplicate())
+	_finish_transition(upgrades.duplicate(), opened_gates.duplicate(), upgrade_levels.duplicate(), tutorial_stage)
 	return {"ok": true, "message": ""}
 
 
-func _finish_transition(upgrades: Dictionary, opened_gates: Dictionary, upgrade_levels: Dictionary) -> void:
+func _finish_transition(upgrades: Dictionary, opened_gates: Dictionary, upgrade_levels: Dictionary, tutorial_stage: String) -> void:
 	await get_tree().scene_changed
 	var scene := get_tree().current_scene
+	var hints := scene.get_node_or_null("HUD/OnboardingHints")
+	if hints != null:
+		hints.restore_stage(tutorial_stage)
 	if not LevelProgress.restore(scene, opened_gates):
 		push_error("无法恢复关卡进度，请检查机关的固定存档编号与配置。")
 	if not upgrades.is_empty() or not upgrade_levels.is_empty():
-		var shop := scene.get_node_or_null("ShopRoom")
-		if (shop == null and (true in upgrades.values() or upgrade_levels.values().any(func(count): return count > 0))) or (shop != null and not shop.restore_purchased_upgrades(upgrades, upgrade_levels)):
-			push_error("无法恢复已购升级，请检查正式地图的商店、洞与尸体出口配置。")
+		var owner := _get_upgrade_owner(scene)
+		if (owner == null and (true in upgrades.values() or upgrade_levels.values().any(func(count): return count > 0))) or (owner != null and not owner.restore_purchased_upgrades(upgrades, upgrade_levels)):
+			push_error("无法恢复已购升级，请检查当前场景的升级存档配置。")
 	_transitioning = false
 
 
 func pause_game() -> void:
 	if not is_in_game() or _transitioning:
 		return
-	_reset_player_look()
+	_reset_player_input()
 	get_tree().paused = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	_pause_menu.open()
 
 
 func resume_game() -> void:
-	_reset_player_look()
+	_reset_player_input()
 	_pause_menu.close()
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
-func _reset_player_look() -> void:
+func _reset_player_input() -> void:
 	var scene := get_tree().current_scene
 	if scene != null:
 		var player := scene.get_node_or_null("Player")
-		if player != null and player.has_method("reset_look_input"):
-			player.reset_look_input()
+		if player != null:
+			if player.has_method("reset_gameplay_input"):
+				player.reset_gameplay_input()
+			elif player.has_method("reset_look_input"):
+				player.reset_look_input()
 
 
 func quit_game() -> void:

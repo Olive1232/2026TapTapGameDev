@@ -49,6 +49,8 @@ const PLAYER_FALL_HEIGHT := 0.35
 @export_range(0.1, 10.0, 0.1) var player_fall_radius: float = PLAYER_FALL_RADIUS
 ## 喷币落点到洞心的距离；按实际地形配置，不能用吞噬半径代替洞口尺寸。
 @export_range(1.0, 20.0, 0.1) var coin_landing_radius: float = 2.4
+## 复杂白模可指定安全落币点；为空时沿用随机圆形喷射。
+@export var coin_landing_points: Array[NodePath] = []
 @export var corpse_return_outlet_path: NodePath
 var upgrade_tags := PackedStringArray()
 var _corpse_value_level := 0
@@ -416,22 +418,27 @@ func _spawn_coins(values: PackedInt32Array, weights: PackedFloat32Array, speed_m
 		var angle := _rng.randf_range(0.0, TAU)
 		var radial := Vector3(cos(angle), 0, sin(angle))
 		var landing := origin + radial * coin_landing_radius
+		var authored: Node3D = null
+		if not coin_landing_points.is_empty():
+			authored = get_node_or_null(coin_landing_points[_rng.randi_range(0, coin_landing_points.size() - 1)]) as Node3D
 		# 旧测试场地也有非圆形开口，选择有实际地面的喷射方向。
 		for attempt in range(16):
-			landing = origin + radial * coin_landing_radius
-			var ray := PhysicsRayQueryParameters3D.create(landing, landing - Vector3.UP * 4.0, CollisionLayers.WORLD)
+			landing = authored.global_position if authored != null else origin + radial * coin_landing_radius
+			var ray := PhysicsRayQueryParameters3D.create(landing + Vector3.UP * 0.5, landing - Vector3.UP * 4.0, CollisionLayers.WORLD)
 			var floor_hit := get_world_3d().direct_space_state.intersect_ray(ray)
 			if not floor_hit.is_empty() and floor_hit.normal.y > 0.7:
 				landing.y = floor_hit.position.y + 0.03
 				break
 			angle += TAU / 16.0
 			radial = Vector3(cos(angle), 0, sin(angle))
+		var horizontal := Vector3(landing.x - origin.x, 0, landing.z - origin.z)
+		radial = horizontal.normalized()
 		var speed := _rng.randf_range(speed_min, speed_max)
 		var up_speed := maxf(3.0, speed * 0.85)
 		var drop_height := maxf(0.0, origin.y - landing.y)
 		var flight_time := (up_speed + sqrt(up_speed * up_speed + 2.0 * gravity * drop_height)) / gravity
 		# 抛物线按落点高度与距离计算，钱币仍通过自身的真实碰撞落地。
-		var outward_speed := coin_landing_radius / flight_time
+		var outward_speed := horizontal.length() / flight_time
 		coin.launch(coin_value, color, radial * outward_speed + Vector3.UP * up_speed, eject_time, golden)
 	return actual_total
 

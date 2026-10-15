@@ -47,6 +47,7 @@ var _fire_counted_this_swing := false
 var _base_material: Material
 var interaction_locked := false
 @onready var element: ElementComponent = $Pivot/ElementComponent
+@onready var _swing_audio: AudioStreamPlayer = $SwingAudio
 
 # 动画分两个节点，避免 yaw 与 pitch 互相覆盖：
 #   _yaw_node （子节点 Pivot） 负责水平横扫
@@ -229,6 +230,7 @@ func try_swing() -> bool:
 func _enter_active() -> void:
 	_state = State.ACTIVE
 	_t = 0.0
+	_swing_audio.play()
 	_open_hitbox()
 
 

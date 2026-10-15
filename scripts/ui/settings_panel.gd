@@ -43,5 +43,3 @@ func _update_value() -> void:
 
 func _show_save_result(error: Error) -> void:
 	_status.text = "设置已保存" if error == OK else "设置已生效，但保存失败"
-	if error == OK and GameSettings.fullscreen and DisplayServer.get_name() != "headless" and DisplayServer.window_get_mode() != DisplayServer.WINDOW_MODE_FULLSCREEN:
-		_status.text = "全屏设置已保存，请在独立窗口运行"

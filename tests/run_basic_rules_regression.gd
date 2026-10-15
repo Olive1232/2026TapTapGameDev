@@ -79,7 +79,8 @@ func _run() -> void:
 	_wallet = root.get_node("Wallet")
 	_pool = root.get_node("CoinPool")
 	_player.set_physics_process(false)
-	_player.global_position = Vector3(0, 0.5, -12)
+	_player.global_position = _room.get_node("GameplayAnchors/Combat").global_position
+	_player.rotation = Vector3.ZERO
 	await _test_corpses()
 	await _test_coins()
 	await _test_ejection()
@@ -91,7 +92,7 @@ func _test_corpses() -> void:
 	var corpses: Array = []
 	for species in ["rat", "cockroach"]:
 		var data = load("res://resources/enemies/monster_" + species + ".tres")
-		var corpse = _corpse(Vector3(4 + corpses.size() * 2, 1, -12), data)
+		var corpse = _corpse(_room.get_node("GameplayAnchors/Entry").global_position + Vector3(corpses.size() * 2, 0.4, 0), data)
 		corpses.append(corpse)
 		_check(corpse.value == 1 and corpse.element.burn_duration == 10.0, species + " keeps value and configurable burn duration")
 	await _wait(32.0)
@@ -105,7 +106,7 @@ func _test_corpses() -> void:
 	_check(burning.element.burning, "real torch contact ignites corpse")
 	_check(is_equal_approx(burning.element.burn_duration, 10.0), "prototype n is 10 seconds")
 	# 将已经点燃的尸体移到远离火把的藤蔓旁，确认火由尸体传播。
-	burning.global_position = Vector3(8, 1.6, -12)
+	burning.global_position = _room.get_node("GameplayAnchors/Entry").global_position + Vector3(1, 1, 1)
 	var vine = load("res://scenes/elements/flammable_vines.tscn").instantiate()
 	_room.add_child(vine)
 	vine.global_position = burning.global_position + Vector3(0.7, -1.6, 0)
@@ -145,14 +146,15 @@ func _test_corpses() -> void:
 
 func _test_coins() -> void:
 	# 主厅与商店位于不同高度，必须各自按碰撞地面落地。
-	for at in [Vector3(4, 2, -12), _room.get_node("ShopRoom").global_transform * Vector3(0, 2, 3)]:
+	for at in [_room.get_node("GameplayAnchors/Entry").global_position + Vector3.UP, _room.get_node("ShopRoom").global_transform * Vector3(0, 2, 3)]:
 		var coin = _pool.acquire()
 		coin.global_position = at
 		coin.launch(7, Color(1, 0.84, 0.28), Vector3.ZERO)
 		var before: int = _wallet.total
 		await _wait(2.0)
 		var floor_hit := _floor(coin.global_position)
-		_check(coin.is_grounded() and not floor_hit.is_empty() and absf(coin.global_position.y - floor_hit.position.y - 0.025) < 0.015, "coin rests on actual floor at " + str(coin.global_position.y))
+		var half_height: float = coin.get_node("Shape").shape.size.y * 0.5
+		_check(coin.is_grounded() and not floor_hit.is_empty() and absf(coin.global_position.y - floor_hit.position.y - half_height) < 0.015, "coin rests on actual floor at " + str(coin.global_position.y))
 		var landed: Vector3 = coin.global_position
 		await _wait(1.0)
 		_check(coin.global_position.is_equal_approx(landed) and _wallet.total == before, "grounded coin stays still and does not seek player")
@@ -183,7 +185,7 @@ func _test_coins() -> void:
 func _test_ejection() -> void:
 	var hole = _room.get_node("Hole")
 	_player.rotation = Vector3.ZERO
-	var below: Vector3 = hole.global_position + Vector3(4.5, -1, 0)
+	var below: Vector3 = hole.global_position + Vector3(hole.player_fall_radius * 0.65, -1, 0)
 	_player.global_position = below
 	_player.velocity = Vector3(2, -9, 3)
 	await _frames()
@@ -192,7 +194,7 @@ func _test_ejection() -> void:
 	_player.velocity.y = 4.0
 	await _frames(10)
 	_check(_player.velocity.y == 4.0, "same fall does not repeatedly add upward speed")
-	_player.global_position = hole.global_position + Vector3(4.5, 2, 0)
+	_player.global_position = hole.global_position + Vector3(hole.player_fall_radius * 0.65, 2, 0)
 	await _frames()
 	_player.global_position = below
 	_player.velocity = Vector3(0, -8, 0)

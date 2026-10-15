@@ -130,17 +130,18 @@ func _open_lab() -> void:
 func _verify_world() -> void:
 	_check(_room.scene_file_path == _flow.GAME_SCENE, "world save restores safe world entrance")
 	_check(_gate.get_child_count() == 0 and _gate.is_persistently_open() and _room.is_gate_open(), "loaded vine bodies and visuals removed")
-	_check(_room.get_node("RatSpawner").enabled and _room.get_node("CockroachSpawner").enabled and _room.get_node("GateSign").text == "通路已打开", "loaded world updates spawners and gate hint")
+	_check(_room.get_node("RatSpawner").enabled and _room.get_node("EntryRatSpawner").enabled and _room.get_node("HUD/Objective").text.contains("东侧房间"), "loaded world updates spawners and gate hint")
 	_check(_events.is_empty() and not _room.is_flow_complete(), "restore does not replay break or reward events")
 	_check(_wallet.total == 12345 and _flow.get_purchased_upgrades() == {"oil": true, "corpse_return": true, "charged_throw": true, "mirror": false}, "coins and all purchased upgrades restore with gate progress")
-	_player.position = Vector3(13.0, 0.75, 0)
+	var world_scale: float = _room.get_node("WorldGeometry").scale.x
+	_player.global_position = _room.get_node("GameplayAnchors/VineBefore").global_position + Vector3.UP * 0.05
 	_player.velocity = Vector3(5, 0, 0)
 	_player.reset_physics_interpolation()
 	await _frames()
-	for frame in range(Engine.physics_ticks_per_second):
+	for frame in range(int(Engine.physics_ticks_per_second * world_scale)):
 		_player.move_and_slide()
 		await physics_frame
-	_check(_player.position.x > 17.0, "real player moves through restored vine doorway")
+	_check(_player.position.x > -3.5 * world_scale, "real player moves through restored vine doorway")
 
 
 func _verify_lab() -> void:

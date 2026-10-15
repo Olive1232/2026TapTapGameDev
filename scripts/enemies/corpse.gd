@@ -59,6 +59,10 @@ func setup(data: MonsterData) -> void:
 var _pending_data: MonsterData = null
 
 
+func get_monster_id() -> StringName:
+	return _pending_data.id if _pending_data != null else &""
+
+
 func _apply_visual() -> void:
 	var mesh := get_node_or_null("Mesh") as MeshInstance3D
 	if mesh == null:

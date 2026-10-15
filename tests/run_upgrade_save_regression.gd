@@ -66,7 +66,8 @@ func _enter(load_saved: bool = false) -> void:
 
 
 func _stand(at: Vector3) -> void:
-	var query := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 2.0, at - Vector3.UP * 2.0, 1)
+	var world_scale: float = _world.get_node("WorldGeometry").scale.y
+	var query := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 2.0, at - Vector3.UP * 12.0 * world_scale, 1)
 	var hit: Dictionary = _world.get_world_3d().direct_space_state.intersect_ray(query)
 	if not hit.is_empty():
 		at.y = hit.position.y + 0.5 + _player.safe_margin
@@ -204,7 +205,7 @@ func _verify_oil_ignition() -> void:
 
 func _verify_effects() -> void:
 	# 载入后真实抓取、蓄力、轨迹与刚体速度，无再次手动授予能力。
-	_stand(Vector3(6, 0.5, -14))
+	_stand(_world.get_node("GameplayAnchors/Combat").global_position)
 	_camera.rotation = Vector3.ZERO
 	var corpse = load("res://scenes/enemies/corpse.tscn").instantiate()
 	corpse.freeze = true

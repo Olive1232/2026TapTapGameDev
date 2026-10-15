@@ -19,6 +19,8 @@ const PLACEMENT_ATTEMPTS := 12
 ## 关闭时停止计时；重新启用后等待一个完整间隔。
 @export var enabled: bool = true:
 	set(value):
+		if enabled == value:
+			return
 		enabled = value
 		_elapsed = 0.0
 ## 本点的存活上限。0 = 不生成；降低上限不会销毁已有怪物。
@@ -45,6 +47,10 @@ var _rng := RandomNumberGenerator.new()
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
+	# 紫色圆柱仅用于编辑器摆点，运行时不显示调试标记。
+	var marker := get_node_or_null("MeshInstance3D") as MeshInstance3D
+	if marker != null:
+		marker.hide()
 	_rng.randomize()
 	EventBus.enemy_died.connect(_on_enemy_died)
 

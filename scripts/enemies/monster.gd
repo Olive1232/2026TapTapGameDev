@@ -29,11 +29,13 @@ var _direction: Vector3 = Vector3.ZERO
 var _rng := RandomNumberGenerator.new()
 var _material: StandardMaterial3D
 var _dead: bool = false
+var _voice_delay := 0.0
 ## 与自主游走分开保存，避免僵直或下一帧游走覆盖受击冲量。
 var _knockback_velocity: Vector3 = Vector3.ZERO
 
 @onready var _mesh: MeshInstance3D = $Mesh
 @onready var _shape: CollisionShape3D = $Shape
+@onready var _voice: AudioStreamPlayer3D = $Voice
 
 
 func _ready() -> void:
@@ -42,6 +44,8 @@ func _ready() -> void:
 		data = MonsterData.new()
 		push_warning("Monster「%s」没有设置 MonsterData，已用默认数值兜底。" % name)
 	health = data.max_health
+	_voice.stream = data.voice_stream
+	_voice_delay = _rng.randf_range(1.5, 6.0)
 	# 生物属于 ENEMY 层，被剑的伤害区域探测；与地形碰撞。
 	collision_layer = CollisionLayers.ENEMY
 	collision_mask = CollisionLayers.WORLD | CollisionLayers.PLAYER
@@ -71,6 +75,7 @@ func _apply_visual() -> void:
 func _physics_process(delta: float) -> void:
 	if _dead:
 		return
+	_update_voice(delta)
 
 	# 僵直只暂停自主游走；击退、重力与碰撞仍由物理帧处理。
 	var walk_velocity := Vector3.ZERO
@@ -94,6 +99,15 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	_knockback_velocity = _knockback_velocity.move_toward(Vector3.ZERO, KNOCKBACK_DECELERATION * delta)
 	_handle_wall_contact()
+
+
+func _update_voice(delta: float) -> void:
+	if _voice.stream == null:
+		return
+	_voice_delay -= delta
+	if _voice_delay <= 0.0 and not _voice.playing:
+		_voice.play()
+		_voice_delay = _voice.stream.get_length() + _rng.randf_range(8.0, 16.0)
 
 
 ## 撞墙就换方向。没有这个的话怪物会一直顶着墙抖。
@@ -149,7 +163,7 @@ func take_hit(info: HitInfo) -> void:
 	_knockback_velocity += Vector3(impulse.x, 0.0, impulse.z)
 	velocity += impulse
 	if health <= 0.0:
-		_die()
+		_die(info.source)
 
 
 func get_hit_center() -> Vector3:
@@ -171,9 +185,10 @@ func _flash() -> void:
 	tween.tween_property(_material, "albedo_color", base, 0.12)
 
 
-func _die() -> void:
+func _die(by: Node3D = null) -> void:
 	_dead = true
 	EventBus.enemy_died.emit(self)
+	EventBus.enemy_killed.emit(self, by)
 	_spawn_corpse()
 	queue_free()
 

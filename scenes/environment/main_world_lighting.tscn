@@ -1,0 +1,784 @@
+[gd_scene format=3]
+
+[ext_resource type="Environment" path="res://resources/environment/main_world_environment.tres" id="environment"]
+
+[node name="WorldLighting" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("environment")
+
+[node name="Moonlight" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-1.05, -0.65, 0)
+light_color = Color(0.78, 0.86, 1, 1)
+light_energy = 0.45
+light_specular = 0.35
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.4
+directional_shadow_max_distance = 100.0
+
+[node name="Cave" type="Node3D" parent="."]
+
+[node name="MainKey" type="OmniLight3D" parent="Cave"]
+position = Vector3(-40, 11.298, -12.5)
+light_color = Color(1, 0.83, 0.62, 1)
+light_energy = 1.8
+light_specular = 0.35
+omni_range = 46.0
+omni_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="NorthFill" type="OmniLight3D" parent="Cave"]
+position = Vector3(-45, 10.8725, -45)
+light_color = Color(0.7, 0.82, 1, 1)
+light_energy = 1.5
+light_specular = 0.0
+omni_range = 33.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="WestKey" type="OmniLight3D" parent="Cave"]
+position = Vector3(-65, 9.87252, -17.5)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.7
+light_specular = 0.35
+omni_range = 33.0
+omni_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="SouthFill" type="OmniLight3D" parent="Cave"]
+position = Vector3(-47.5, 8.87252, 12.5)
+light_color = Color(0.7, 0.82, 1, 1)
+light_energy = 1.15
+light_specular = 0.0
+omni_range = 34.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="EastGateFill" type="OmniLight3D" parent="Cave"]
+position = Vector3(-22.5, 9.17551, -12.5)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.0
+light_specular = 0.0
+omni_range = 26.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="NorthWestFill" type="OmniLight3D" parent="Cave"]
+position = Vector3(-70, 8.37252, -40)
+light_color = Color(0.62, 0.77, 1, 1)
+light_energy = 0.9
+light_specular = 0.0
+omni_range = 28.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="Shop" type="Node3D" parent="."]
+
+[node name="CounterKey" type="OmniLight3D" parent="Shop"]
+position = Vector3(-87.5, 6.81499, 5)
+light_color = Color(1, 0.77, 0.49, 1)
+light_energy = 1.9
+light_specular = 0.35
+omni_range = 28.0
+omni_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="WestAlcove" type="OmniLight3D" parent="Shop"]
+position = Vector3(-105, 6.31499, 0)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.25
+light_specular = 0.0
+omni_range = 25.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="NorthApproach" type="OmniLight3D" parent="Shop"]
+position = Vector3(-90, 7.815, -25)
+light_color = Color(0.7, 0.82, 1, 1)
+light_energy = 1.4
+light_specular = 0.35
+omni_range = 31.0
+omni_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="SouthAlcove" type="OmniLight3D" parent="Shop"]
+position = Vector3(-95, 5.81499, 22.5)
+light_color = Color(1, 0.83, 0.62, 1)
+light_energy = 0.85
+light_specular = 0.0
+omni_range = 22.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="WestBack" type="OmniLight3D" parent="Shop"]
+position = Vector3(-110, 6.815, -25)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 0.85
+light_specular = 0.0
+omni_range = 25.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="Threshold" type="OmniLight3D" parent="Shop"]
+position = Vector3(-77.5, 7.87252, -2.5)
+light_color = Color(1, 0.83, 0.62, 1)
+light_energy = 1.0
+light_specular = 0.0
+omni_range = 24.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="EntryRoom" type="Node3D" parent="."]
+
+[node name="RoomKey" type="OmniLight3D" parent="EntryRoom"]
+position = Vector3(10, 13.2565, -25)
+light_color = Color(0.7, 0.82, 1, 1)
+light_energy = 2.2
+light_specular = 0.35
+omni_range = 34.0
+omni_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="NearGate" type="OmniLight3D" parent="EntryRoom"]
+position = Vector3(2.5, 10.2565, -5)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.1
+light_specular = 0.0
+omni_range = 26.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="NorthNiche" type="OmniLight3D" parent="EntryRoom"]
+position = Vector3(2.5, 9.25651, -42.5)
+light_color = Color(0.62, 0.77, 1, 1)
+light_energy = 0.8
+light_specular = 0.0
+omni_range = 22.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="CleaningRoom" type="Node3D" parent="."]
+
+[node name="RoomKey" type="OmniLight3D" parent="CleaningRoom"]
+position = Vector3(55, 15.5925, -20)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 2.2
+light_specular = 0.35
+omni_range = 35.0
+omni_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="NorthFill" type="OmniLight3D" parent="CleaningRoom"]
+position = Vector3(57.5, 12.5925, -40)
+light_color = Color(0.7, 0.82, 1, 1)
+light_energy = 1.0
+light_specular = 0.0
+omni_range = 25.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="RampFill" type="OmniLight3D" parent="CleaningRoom"]
+position = Vector3(37.5, 12.5925, -22.5)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.2
+light_specular = 0.0
+omni_range = 21.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="DeepRoom" type="Node3D" parent="."]
+
+[node name="RoomKey" type="OmniLight3D" parent="DeepRoom"]
+position = Vector3(95, 13.5925, -17.5)
+light_color = Color(0.7, 0.82, 1, 1)
+light_energy = 2.0
+light_specular = 0.35
+omni_range = 31.0
+omni_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="NorthFill" type="OmniLight3D" parent="DeepRoom"]
+position = Vector3(95, 11.5925, -40)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.2
+light_specular = 0.0
+omni_range = 25.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="RockNiche" type="OmniLight3D" parent="DeepRoom"]
+position = Vector3(105, 8.9925, -30)
+light_color = Color(1, 0.83, 0.62, 1)
+light_energy = 0.9
+light_specular = 0.0
+omni_range = 14.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="Gallery" type="Node3D" parent="."]
+
+[node name="WestKey" type="OmniLight3D" parent="Gallery"]
+position = Vector3(2.5, 11.2565, 25)
+light_color = Color(1, 0.83, 0.62, 1)
+light_energy = 1.8
+light_specular = 0.35
+omni_range = 31.0
+omni_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="MiddleKey" type="OmniLight3D" parent="Gallery"]
+position = Vector3(35, 11.2565, 20)
+light_color = Color(0.7, 0.82, 1, 1)
+light_energy = 1.6
+light_specular = 0.35
+omni_range = 30.0
+omni_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="EastKey" type="OmniLight3D" parent="Gallery"]
+position = Vector3(70, 11.2565, 30)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.8
+light_specular = 0.35
+omni_range = 33.0
+omni_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="SouthRim" type="OmniLight3D" parent="Gallery"]
+position = Vector3(45, 8.2565, 47.5)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.05
+light_specular = 0.0
+omni_range = 26.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="FarEast" type="OmniLight3D" parent="Gallery"]
+position = Vector3(82.5, 8.2565, 10)
+light_color = Color(0.7, 0.82, 1, 1)
+light_energy = 1.0
+light_specular = 0.0
+omni_range = 22.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="Connections" type="Node3D" parent="."]
+
+[node name="MainDoor" type="OmniLight3D" parent="Connections"]
+position = Vector3(-10, 8.25651, -15)
+light_color = Color(1, 0.83, 0.62, 1)
+light_energy = 0.9
+light_specular = 0.0
+omni_range = 18.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="EntryGallery" type="OmniLight3D" parent="Connections"]
+position = Vector3(17.5, 9.25651, 2.5)
+light_color = Color(0.7, 0.82, 1, 1)
+light_energy = 1.0
+light_specular = 0.0
+omni_range = 20.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="CleaningGallery" type="OmniLight3D" parent="Connections"]
+position = Vector3(55, 9.2565, 7.5)
+light_color = Color(1, 0.83, 0.62, 1)
+light_energy = 1.1
+light_specular = 0.0
+omni_range = 21.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="DeepDoor" type="OmniLight3D" parent="Connections"]
+position = Vector3(80, 12.5925, -22.5)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.1
+light_specular = 0.0
+omni_range = 18.0
+omni_attenuation = 1.2
+shadow_enabled = false
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="PitAccent" type="SpotLight3D" parent="Cave"]
+position = Vector3(-47.46, 12, -19.29)
+rotation = Vector3(-1.5707963, 0, 0)
+light_color = Color(1, 0.64, 0.36, 1)
+light_energy = 1.3
+light_specular = 0.35
+spot_range = 20.0
+spot_angle = 48.0
+spot_angle_attenuation = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+shadow_normal_bias = 1.0
+shadow_blur = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 65.0
+distance_fade_shadow = 35.0
+distance_fade_length = 15.0
+
+[node name="PitBounce" type="OmniLight3D" parent="Cave"]
+position = Vector3(-47.46, 0.4, -19.29)
+light_color = Color(1, 0.63, 0.35, 1)
+light_energy = 0.55
+light_specular = 0.0
+omni_range = 11.0
+omni_attenuation = 1.5
+distance_fade_enabled = true
+distance_fade_begin = 40.0
+distance_fade_length = 12.0
+
+[node name="Alcoves" type="Node3D" parent="."]
+
+[node name="GalleryAlcove01" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(-2.5, 7.0565, 15)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="ShopAlcove02" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(-105, 5.615, -20)
+light_color = Color(1.0, 0.92, 0.78, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="GalleryAlcove03" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(10, 7.0565, 40)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="ShopAlcove04" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(-77.5, 6.67252, -32.5)
+light_color = Color(1.0, 0.92, 0.78, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="CaveAlcove05" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(-27.5, 6.67252, -47.5)
+light_color = Color(1.0, 0.92, 0.78, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="ShopAlcove06" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(-102.5, 5.61499, 12.5)
+light_color = Color(1.0, 0.92, 0.78, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="GalleryAlcove07" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(17.5, 7.0565, 17.5)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="CaveAlcove08" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(-72.5, 6.67252, 10)
+light_color = Color(1.0, 0.92, 0.78, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="CaveAlcove09" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(-52.5, 6.67251, 20)
+light_color = Color(1.0, 0.92, 0.78, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="EntryAlcove10" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(22.5, 7.05651, -42.5)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="GalleryAlcove11" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(82.5, 7.0565, 42.5)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="GalleryAlcove12" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(27.5, 7.0565, 35)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="ShopAlcove13" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(-110, 5.61499, 27.5)
+light_color = Color(1.0, 0.92, 0.78, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="DeepAlcove14" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(102.5, 10.3925, -45)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="ShopAlcove15" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(-80, 5.61499, 22.5)
+light_color = Color(1.0, 0.92, 0.78, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="GalleryAlcove16" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(20, 7.0565, 45)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="ShopAlcove17" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(-87.5, 5.615, -15)
+light_color = Color(1.0, 0.92, 0.78, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="GalleryAlcove18" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(22.5, 7.0565, 17.5)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="GalleryAlcove19" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(50, 7.0565, 47.5)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"
+
+[node name="GalleryAlcove20" type="OmniLight3D" parent="Alcoves"]
+position = Vector3(45, 7.0565, 37.5)
+light_color = Color(0.86, 0.92, 1.0, 1)
+light_energy = 0.8
+omni_range = 24.0
+omni_attenuation = 1.2
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_length = 12.0
+metadata/lighting_role = "occluded_corner_fill"

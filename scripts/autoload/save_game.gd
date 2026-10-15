@@ -10,7 +10,8 @@ const LEVEL_UPGRADE_IDS := ["corpse_value", "golden_coin"]
 const VERSION_5_LEVEL_UPGRADE_IDS := ["corpse_value"]
 const AtomicFile := preload("res://scripts/persistence/atomic_file.gd")
 const LevelProgress := preload("res://scripts/persistence/level_progress.gd")
-var save_path: String = "user://savegame.json"
+## 游戏名未定，固定沿用原存档目录，避免清空或更改项目名后丢失已有存档。
+var save_path: String = OS.get_user_data_dir().get_base_dir().path_join("2026聚光灯/savegame.json")
 
 
 func has_save() -> bool:
@@ -58,6 +59,7 @@ func save_game() -> Dictionary:
 		"upgrade_levels": saved_levels,
 		"level": progress.level,
 		"opened_gates": progress.opened_gates,
+		"tutorial_stage": GameFlow.get_tutorial_stage(),
 	}
 	var error := AtomicFile.write_text(save_path, JSON.stringify(data, "\t"))
 	if error != OK:
@@ -127,7 +129,11 @@ func read_save() -> Dictionary:
 			return _invalid_save()
 		level = saved_level
 		opened_gates = saved_gates
-	return {"ok": true, "coins": amount, "upgrades": upgrades, "upgrade_levels": upgrade_levels, "level": level, "opened_gates": opened_gates, "message": "载入成功"}
+	# v7 的可选扩展：旧存档没有此字段，不补播新手引导。
+	var tutorial_stage: Variant = data.get("tutorial_stage", "complete")
+	if not tutorial_stage is String or tutorial_stage not in ["controls", "pickup", "complete"]:
+		return _invalid_save()
+	return {"ok": true, "coins": amount, "upgrades": upgrades, "upgrade_levels": upgrade_levels, "level": level, "opened_gates": opened_gates, "tutorial_stage": tutorial_stage, "message": "载入成功"}
 
 
 func _invalid_save() -> Dictionary:

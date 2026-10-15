@@ -43,6 +43,7 @@ theme_override_constants/margin_bottom = 28
 
 [node name="Rows" type="VBoxContainer" parent="Root/Center/Card/Margin"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Title" type="Label" parent="Root/Center/Card/Margin/Rows"]
 layout_mode = 2
@@ -57,6 +58,12 @@ text = "按 Esc 继续游戏"
 
 [node name="Separator" type="HSeparator" parent="Root/Center/Card/Margin/Rows"]
 layout_mode = 2
+
+[node name="ResumeButton" type="Button" parent="Root/Center/Card/Margin/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+text = "继续游戏"
 
 [node name="SaveButton" type="Button" parent="Root/Center/Card/Margin/Rows"]
 unique_name_in_owner = true
@@ -88,7 +95,7 @@ custom_minimum_size = Vector2(356, 44)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.75, 0.64, 1)
 theme_override_font_sizes/font_size = 16
-text = "金币、已购升级与关卡进度仅在手动存档时保存"
+text = "手动保存金币、已购升级与关卡进度；载入后回到出生点。"
 autowrap_mode = 2
 
 [node name="Settings" parent="Root" instance=ExtResource("3")]

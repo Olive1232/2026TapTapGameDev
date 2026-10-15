@@ -11,7 +11,7 @@ extends CharacterBody3D
 ## 鼠标灵敏度。
 @export var mouse_sensitivity: float = 0.1
 ## 基础移动速度（米/秒）。
-@export var move_speed: float = 5.0
+@export var move_speed: float = 10.0
 ## 跳跃初速度。
 @export var jump_velocity: float = 4.5
 
@@ -29,8 +29,10 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 ## 但视角旋转是按渲染帧来的。如果旋转也写在输入回调里，两条路径的时间基准不一致，
 ## 画面会抖动。所以统一在渲染帧 _process 里按累积量应用一次。
 var _look_delta: Vector2 = Vector2.ZERO
+var _suppress_jump_once := false
 
 @onready var camera: Camera3D = $Camera3D
+@onready var _footsteps: AudioStreamPlayer = $Footsteps
 
 
 func _ready() -> void:
@@ -46,6 +48,12 @@ func _apply_settings() -> void:
 
 func reset_look_input() -> void:
 	_look_delta = Vector2.ZERO
+
+
+func reset_gameplay_input() -> void:
+	reset_look_input()
+	# 菜单的空格确认与跳跃共用按键，恢复后的首个物理帧忽略这次确认。
+	_suppress_jump_once = true
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -69,8 +77,9 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor() or velocity.y > 0.0:
 		velocity.y -= gravity * delta
 
-	if Input.is_action_just_pressed("Jump") and is_on_floor():
+	if Input.is_action_just_pressed("Jump") and not _suppress_jump_once and is_on_floor():
 		velocity.y = jump_velocity
+	_suppress_jump_once = false
 
 	var input_dir := Input.get_vector("Left", "Right", "Up", "Down")
 
@@ -87,6 +96,20 @@ func _physics_process(delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0, speed)
 
 	move_and_slide()
+	_update_footsteps(direction != Vector3.ZERO)
+
+
+func _update_footsteps(has_move_input: bool) -> void:
+	# 用碰撞后的实际速度判断，顶墙、原地转向和腾空时不播放脚步。
+	var actual_velocity := get_real_velocity()
+	var horizontal_speed := Vector2(actual_velocity.x, actual_velocity.z).length()
+	if not has_move_input or not is_on_floor() or horizontal_speed < 0.15:
+		_footsteps.stop()
+		return
+	# 负重降速时脚步节奏也放慢。
+	_footsteps.pitch_scale = clampf(horizontal_speed / maxf(move_speed, 0.01), 0.65, 1.15)
+	if not _footsteps.playing:
+		_footsteps.play()
 
 
 # ---- 搬运契约（第 4 节冻结的公开 API）------------------------------------

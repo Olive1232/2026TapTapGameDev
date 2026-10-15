@@ -11,6 +11,8 @@ extends Node
 # ---- 战斗 / 敌人 ----------------------------------------------------------
 ## 敌人死亡。此刻尸体尚未生成（生成后补发 corpse_spawned）。
 signal enemy_died(enemy: Node3D)
+## 敌人被击杀及致死攻击来源；保留 enemy_died 的既有房间统计契约。
+signal enemy_killed(enemy: Node3D, by: Node3D)
 ## 敌人被生成（用于房间统计敌人数量）。
 signal enemy_spawned(enemy: Node3D)
 

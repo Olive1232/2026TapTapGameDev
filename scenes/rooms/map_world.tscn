@@ -1,75 +1,72 @@
 [gd_scene format=3 uid="uid://c7h21wl1k4iji"]
 
-[ext_resource type="PackedScene" path="res://scenes/economy/corpse_return_outlet.tscn" id="corpse_outlet"]
-[ext_resource type="Resource" path="res://resources/shop/shop_item_corpse_return.tres" id="corpse_return_product"]
-[ext_resource type="Resource" path="res://resources/shop/shop_item_charged_throw.tres" id="charged_throw_product"]
+[ext_resource type="PackedScene" path="res://scenes/ui/bottom_text.tscn" id="bottom_text"]
+[ext_resource type="Resource" uid="uid://b6yfkprj55lvo" path="res://resources/shop/shop_item_charged_throw.tres" id="charged_throw"]
+[ext_resource type="Resource" uid="uid://xd8u5178osuy" path="res://resources/shop/shop_item_corpse_return.tres" id="corpse_return"]
 [ext_resource type="PackedScene" path="res://scenes/ui/crosshair.tscn" id="crosshair"]
-[ext_resource type="FontVariation" uid="uid://devl8p2neeq6s" path="res://resources/ui/game_font.tres" id="font"]
-[ext_resource type="PackedScene" uid="uid://dcxrgc436iq7t" path="res://scenes/environment/map_v2_geometry.tscn" id="geometry"]
-[ext_resource type="PackedScene" path="res://scenes/elements/flammable_grass.tscn" id="grass"]
+[ext_resource type="PackedScene" path="res://scenes/environment/map_origin_geometry.tscn" id="geometry"]
 [ext_resource type="PackedScene" uid="uid://chole00000001" path="res://scenes/economy/hole.tscn" id="hole"]
+[ext_resource type="PackedScene" path="res://scenes/mechanisms/lift_gate.tscn" id="lift_gate"]
 [ext_resource type="PackedScene" uid="uid://cmoneyui00001" path="res://scenes/ui/money_ui.tscn" id="money"]
+[ext_resource type="PackedScene" path="res://scenes/ui/onboarding_hints.tscn" id="onboarding"]
+[ext_resource type="PackedScene" path="res://scenes/economy/corpse_return_outlet.tscn" id="outlet"]
 [ext_resource type="PackedScene" uid="uid://b1nf44seup0a5" path="res://scenes/player/player.tscn" id="player"]
 [ext_resource type="Resource" uid="uid://6g0i0fluavl3" path="res://resources/enemies/monster_rat.tres" id="rat"]
 [ext_resource type="Script" uid="uid://dk2kylwpxjl15" path="res://scripts/rooms/map_world.gd" id="room"]
 [ext_resource type="Script" uid="uid://l0ptrx5cbq8p" path="res://scripts/rooms/room_exit_trigger.gd" id="room_exit"]
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_shelf.tscn" id="shelf"]
 [ext_resource type="PackedScene" path="res://scenes/shop/shop_fixture.tscn" id="shop"]
 [ext_resource type="PackedScene" uid="uid://bd2b8m71ej6u5" path="res://scenes/enemies/monster_spawner.tscn" id="spawner"]
 [ext_resource type="PackedScene" path="res://scenes/elements/torch.tscn" id="torch"]
-[ext_resource type="PackedScene" path="res://scenes/shop/shop_shelf.tscn" id="upgrade_shelf"]
 [ext_resource type="PackedScene" path="res://scenes/elements/flammable_vines.tscn" id="vines"]
-[ext_resource type="Script" path="res://scripts/elements/vine_gate.gd" id="vine_gate"]
+[ext_resource type="Script" uid="uid://bc4uland40flt" path="res://scripts/elements/vine_gate.gd" id="vine_gate"]
+[ext_resource type="PackedScene" path="res://scenes/mechanisms/weight_platform.tscn" id="weight_platform"]
 
-[ext_resource type="PackedScene" path="res://scenes/ui/bottom_text.tscn" id="bottom_text"]
+[sub_resource type="CylinderShape3D" id="swallow"]
+height = 4.0
+radius = 2.6
 
-[sub_resource type="CylinderShape3D" id="Swallow"]
-height = 5.0
-radius = 3.15
+[sub_resource type="BoxShape3D" id="vine_contact"]
+size = Vector3(3.6, 1.7, 1.7)
 
-[sub_resource type="BoxShape3D" id="CleaningExit"]
-size = Vector3(2, 10, 5)
+[sub_resource type="BoxShape3D" id="stand_shape"]
+size = Vector3(6.3, 7.2, 6.3)
 
-[sub_resource type="BoxShape3D" id="ShopExit"]
-size = Vector3(2, 10, 5.6)
+[sub_resource type="StandardMaterial3D" id="stand_material"]
+albedo_color = Color(0.32, 0.37, 0.39, 1)
 
-[sub_resource type="StandardMaterial3D" id="SpawnerMat"]
-albedo_color = Color(0.08, 0.04, 0.025, 1)
-roughness = 0.9
+[sub_resource type="BoxMesh" id="stand_mesh"]
+size = Vector3(6.3, 7.2, 6.3)
 
-[sub_resource type="CylinderMesh" id="SpawnMarker"]
-top_radius = 0.45
-bottom_radius = 0.45
-height = 0.015
+[sub_resource type="BoxShape3D" id="exit_shape"]
+size = Vector3(1.6, 6, 4.8)
 
-[sub_resource type="Environment" id="Environment"]
+[sub_resource type="Environment" id="environment"]
 background_mode = 1
-background_color = Color(0.055, 0.065, 0.08, 1)
+background_color = Color(0.065, 0.075, 0.09, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.72, 0.76, 0.84, 1)
-ambient_light_sky_contribution = 0.0
-ambient_light_energy = 0.14
+ambient_light_color = Color(0.75, 0.8, 0.86, 1)
+ambient_light_energy = 0.48
 tonemap_mode = 2
 
-[node name="MapWorld" type="Node3D" unique_id=106279645]
+[node name="MapWorld" type="Node3D" unique_id=651950797]
 script = ExtResource("room")
-room_title = "模型世界"
-initial_task = "在主厅杀鼠，将尸体带到中央洞献祭，攒 %d 金币购买油。"
-purchase_task = "金币已够，沿商店通道去拿油，放到店长前的小台子。"
 
-[node name="WorldGeometry" parent="." unique_id=1874852254 instance=ExtResource("geometry")]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+[node name="WorldGeometry" parent="." unique_id=1552196684 instance=ExtResource("geometry")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
 
-[node name="Player" parent="." unique_id=895368793 instance=ExtResource("player")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 1.1, -15)
+[node name="Player" parent="." unique_id=180156964 instance=ExtResource("player")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -28.5, 3.41, -1.5)
 
-[node name="ExitPoint" type="Marker3D" parent="." unique_id=1056027509]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -12)
+[node name="ExitPoint" type="Marker3D" parent="." unique_id=328512708]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -28.5, 3.41, -1.5)
 
-[node name="Hole" parent="." unique_id=480893499 instance=ExtResource("hole")]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.4952, -0.1668, 0.158)
-swallow_radius = 4.0
-player_fall_radius = 6.5
-coin_landing_radius = 7.5
+[node name="Hole" parent="." unique_id=1075258409 instance=ExtResource("hole")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -47.46, 2.298, -19.29)
+swallow_radius = 7.8
+player_fall_radius = 7.2
+coin_landing_radius = 13.5
+coin_landing_points = Array[NodePath]([NodePath("../CoinLandingPoints/Center"), NodePath("../CoinLandingPoints/North"), NodePath("../CoinLandingPoints/South")])
 corpse_return_outlet_path = NodePath("../CorpseReturnOutlet")
 
 [node name="Rim" parent="Hole" index="0"]
@@ -79,10 +76,10 @@ visible = false
 visible = false
 
 [node name="Blood" parent="Hole" index="2"]
-visible = false
+transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 2, 0, -1.05, 0)
 
 [node name="Shape" parent="Hole/SwallowZone" index="0"]
-shape = SubResource("Swallow")
+shape = SubResource("swallow")
 
 [node name="Bottom" parent="Hole" index="5"]
 visible = false
@@ -91,243 +88,414 @@ collision_layer = 0
 [node name="Shape" parent="Hole/Bottom" index="1"]
 disabled = true
 
-[node name="ShopRoom" parent="." unique_id=1094564211 instance=ExtResource("shop")]
-transform = Transform3D(0.9099613, 0, 0.41469324, 0, 1, 0, -0.41469324, 0, 0.9099613, -31.12, -0.8558, 16.02)
+[node name="Ambience" parent="Hole" index="6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
 
-[node name="CorpseReturnShelf" parent="ShopRoom" unique_id=2057761615 instance=ExtResource("upgrade_shelf")]
+[node name="ShopRoom" parent="." unique_id=1690445796 instance=ExtResource("shop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 1.815, 9)
+
+[node name="CorpseReturnShelf" parent="ShopRoom" unique_id=1519785745 instance=ExtResource("shelf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 3)
-item_data = ExtResource("corpse_return_product")
+item_data = ExtResource("corpse_return")
 
-[node name="ChargedThrowShelf" parent="ShopRoom" instance=ExtResource("upgrade_shelf")]
-position = Vector3(0, 0, 5.8)
-item_data = ExtResource("charged_throw_product")
+[node name="ChargedThrowShelf" parent="ShopRoom" unique_id=983150841 instance=ExtResource("shelf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 5.8)
+item_data = ExtResource("charged_throw")
 
-[node name="CleaningRoomExit" type="Area3D" parent="." unique_id=1112804445]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.8, 3, 0)
+[node name="StarterCleaningRoom" type="Node3D" parent="." unique_id=1887260279]
+
+[node name="RatSpawner" parent="StarterCleaningRoom" unique_id=1627988879 instance=ExtResource("spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.1, 2.874, -13.2)
+monster_data = ExtResource("rat")
+max_alive = 3
+spawn_radius = 3.3000000000000003
+
+[node name="EntryRatSpawner" parent="." unique_id=39869872 instance=ExtResource("spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 3.258, -18)
+monster_data = ExtResource("rat")
+enabled = false
+max_alive = 3
+spawn_interval = 4.0
+spawn_radius = 3.9
+
+[node name="RatSpawner" parent="." unique_id=2040145310 instance=ExtResource("spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 6.591, -15)
+monster_data = ExtResource("rat")
+enabled = false
+max_alive = 3
+spawn_interval = 4.0
+spawn_radius = 3.9
+
+[node name="DeepRatSpawner" parent="." unique_id=1565340022 instance=ExtResource("spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96, 6.591, -24)
+monster_data = ExtResource("rat")
+enabled = false
+max_alive = 3
+spawn_interval = 5.0
+spawn_radius = 3.9
+
+[node name="GalleryRatSpawner" parent="." unique_id=27322492 instance=ExtResource("spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 3.258, 18)
+monster_data = ExtResource("rat")
+enabled = false
+max_alive = 3
+spawn_interval = 5.0
+spawn_radius = 3.9
+
+[node name="Torch" parent="." unique_id=1609430465 instance=ExtResource("torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 2.874, -30)
+
+[node name="EntryTorch" parent="." unique_id=1700873462 instance=ExtResource("torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 3.258, -29.4)
+
+[node name="CleaningTorch" parent="." unique_id=1771401988 instance=ExtResource("torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 6.591, -33)
+
+[node name="GalleryTorch" parent="." unique_id=741432987 instance=ExtResource("torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 3.258, 30)
+
+[node name="VineGate" type="Node3D" parent="." unique_id=243330259]
+transform = Transform3D(-5.857326e-08, 0, 1.34, 0, 1.34, 0, -1.34, 0, -5.857326e-08, -15.6, 3.06, -15)
+script = ExtResource("vine_gate")
+persistence_id = &"world.cleaning.vines"
+
+[node name="Vines1" parent="VineGate" unique_id=956273971 instance=ExtResource("vines")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, 0, 0)
+size = Vector3(3.6, 3.2, 0.35)
+
+[node name="Shape" parent="VineGate/Vines1" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="ElementComponent" parent="VineGate/Vines1" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Shape" parent="VineGate/Vines1/ElementComponent" index="0"]
+shape = SubResource("vine_contact")
+
+[node name="Vines2" parent="VineGate" unique_id=2091756448 instance=ExtResource("vines")]
+size = Vector3(3.6, 3.2, 0.35)
+
+[node name="Shape" parent="VineGate/Vines2" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="ElementComponent" parent="VineGate/Vines2" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Shape" parent="VineGate/Vines2/ElementComponent" index="0"]
+shape = SubResource("vine_contact")
+
+[node name="Vines3" parent="VineGate" unique_id=1662572659 instance=ExtResource("vines")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 0, 0)
+size = Vector3(3.6, 3.2, 0.35)
+
+[node name="Shape" parent="VineGate/Vines3" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="ElementComponent" parent="VineGate/Vines3" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Shape" parent="VineGate/Vines3/ElementComponent" index="0"]
+shape = SubResource("vine_contact")
+
+[node name="WeightPuzzle" type="Node3D" parent="." unique_id=1096724005]
+
+[node name="Platform" parent="WeightPuzzle" unique_id=1443699386 instance=ExtResource("weight_platform")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 15, -31.5)
+platform_size = Vector3(7.8, 1.2, 7.8)
+
+[node name="Stand" type="StaticBody3D" parent="WeightPuzzle" unique_id=402417919]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 10.191, -31.5)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="WeightPuzzle/Stand" unique_id=1216700668]
+shape = SubResource("stand_shape")
+
+[node name="Mesh" type="MeshInstance3D" parent="WeightPuzzle/Stand" unique_id=1955609363]
+material_override = SubResource("stand_material")
+mesh = SubResource("stand_mesh")
+
+[node name="Gate" parent="WeightPuzzle" unique_id=1511635384 instance=ExtResource("lift_gate")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 78.9, 6.66, -21)
+platform_path = NodePath("../Platform")
+leaf_size = Vector3(11.7, 12.3, 0.96)
+open_offset = Vector3(0, 13.5, 0)
+move_speed = 7.5
+persistence_id = &"world.cleaning.weight_gate"
+
+[node name="MainRoomExitShop" type="Area3D" parent="." unique_id=301490434]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -76.5, 9, 3)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_id = &"main"
+room_floor_path = NodePath("../WorldGeometry/Collision/MainFloor")
+
+[node name="Shape" type="CollisionShape3D" parent="MainRoomExitShop" unique_id=1287264327]
+shape = SubResource("exit_shape")
+
+[node name="ShopRoomExit" type="Area3D" parent="." unique_id=1985569530]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -76.5, 9, 3)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_id = &"shop"
+room_direction = Vector3(-1, 0, 0)
+room_floor_path = NodePath("../WorldGeometry/Collision/ShopFloor")
+
+[node name="Shape" type="CollisionShape3D" parent="ShopRoomExit" unique_id=2002034072]
+shape = SubResource("exit_shape")
+
+[node name="MainRoomExitCleaning" type="Area3D" parent="." unique_id=1111528141]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -16.5, 10.5, -15)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_id = &"main"
+room_direction = Vector3(-1, 0, 0)
+room_floor_path = NodePath("../WorldGeometry/Collision/MainFloor")
+
+[node name="Shape" type="CollisionShape3D" parent="MainRoomExitCleaning" unique_id=128736863]
+shape = SubResource("exit_shape")
+
+[node name="EntryExitMain" type="Area3D" parent="." unique_id=505872657]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -16.5, 10.5, -15)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_id = &"entry"
+room_floor_path = NodePath("../WorldGeometry/Collision/EntryFloor")
+
+[node name="Shape" type="CollisionShape3D" parent="EntryExitMain" unique_id=475964854]
+shape = SubResource("exit_shape")
+
+[node name="CleaningRoomExit" type="Area3D" parent="." unique_id=1164669106]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 32.7, 12, -21)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("room_exit")
 room_floor_path = NodePath("../WorldGeometry/Collision/CleaningFloor")
 
-[node name="Shape" type="CollisionShape3D" parent="CleaningRoomExit" unique_id=1532924018]
-shape = SubResource("CleaningExit")
+[node name="Shape" type="CollisionShape3D" parent="CleaningRoomExit" unique_id=1329250614]
+shape = SubResource("exit_shape")
 
-[node name="MainRoomExitCleaning" type="Area3D" parent="." unique_id=2047664245]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.8, 3, 0)
+[node name="EntryExitCleaning" type="Area3D" parent="." unique_id=538631639]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 32.7, 12, -21)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("room_exit")
-room_id = &"main"
+room_id = &"entry"
 room_direction = Vector3(-1, 0, 0)
-room_floor_path = NodePath("../WorldGeometry/Collision/MainFloor")
+room_floor_path = NodePath("../WorldGeometry/Collision/EntryFloor")
 
-[node name="Shape" type="CollisionShape3D" parent="MainRoomExitCleaning" unique_id=348986398]
-shape = SubResource("CleaningExit")
+[node name="Shape" type="CollisionShape3D" parent="EntryExitCleaning" unique_id=28310333]
+shape = SubResource("exit_shape")
 
-[node name="MainRoomExitShop" type="Area3D" parent="." unique_id=1334853171]
-transform = Transform3D(-0.91755563, 0, -0.39760742, 0, 1, 0, 0.39760742, 0, -0.91755563, -22, 3, 4.6)
+[node name="CleaningExitDeep" type="Area3D" parent="." unique_id=1122982163]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 78.9, 12, -21)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("room_exit")
-room_id = &"main"
 room_direction = Vector3(-1, 0, 0)
-room_floor_path = NodePath("../WorldGeometry/Collision/MainFloor")
+room_floor_path = NodePath("../WorldGeometry/Collision/CleaningFloor")
 
-[node name="Shape" type="CollisionShape3D" parent="MainRoomExitShop" unique_id=1014077741]
-shape = SubResource("ShopExit")
+[node name="Shape" type="CollisionShape3D" parent="CleaningExitDeep" unique_id=372205349]
+shape = SubResource("exit_shape")
 
-[node name="ShopRoomExit" type="Area3D" parent="." unique_id=950001573]
-transform = Transform3D(-0.91755563, 0, -0.39760742, 0, 1, 0, 0.39760742, 0, -0.91755563, -22, 3, 4.6)
+[node name="DeepRoomExit" type="Area3D" parent="." unique_id=1463350361]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 78.9, 12, -21)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("room_exit")
-room_id = &"shop"
-room_floor_path = NodePath("../WorldGeometry/Collision/ShopFloor")
+room_id = &"deep"
+room_floor_path = NodePath("../WorldGeometry/Collision/DeepFloor")
 
-[node name="Shape" type="CollisionShape3D" parent="ShopRoomExit" unique_id=104790769]
-shape = SubResource("ShopExit")
+[node name="Shape" type="CollisionShape3D" parent="DeepRoomExit" unique_id=657425210]
+shape = SubResource("exit_shape")
 
-[node name="CorpseReturnOutlet" parent="." unique_id=737617022 instance=ExtResource("corpse_outlet")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, -0.1668, -12)
-room_paths = Array[NodePath]([NodePath("../CleaningRoomExit"), NodePath("../MainRoomExitCleaning"), NodePath("../MainRoomExitShop"), NodePath("../ShopRoomExit")])
+[node name="EntryExitGallery" type="Area3D" parent="." unique_id=1203694937]
+transform = Transform3D(-1.3113417e-07, 0, 3, 0, 3, 0, -3, 0, -1.3113417e-07, 16.5, 10.5, 4.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_id = &"entry"
+room_floor_path = NodePath("../WorldGeometry/Collision/EntryFloor")
 
-[node name="StarterCleaningRoom" type="Node3D" parent="." unique_id=408525533]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1668, -14)
+[node name="Shape" type="CollisionShape3D" parent="EntryExitGallery" unique_id=1911349477]
+shape = SubResource("exit_shape")
 
-[node name="RatSpawner" parent="StarterCleaningRoom" unique_id=51720745 instance=ExtResource("spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -1.2)
-monster_data = ExtResource("rat")
-max_alive = 3
-spawn_radius = 2.4
+[node name="GalleryExitEntry" type="Area3D" parent="." unique_id=822160640]
+transform = Transform3D(-1.3113417e-07, 0, 3, 0, 3, 0, -3, 0, -1.3113417e-07, 16.5, 10.5, 4.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_id = &"gallery"
+room_direction = Vector3(-1, 0, 0)
+room_floor_path = NodePath("../WorldGeometry/Collision/GalleryFloor")
 
-[node name="Marker" type="MeshInstance3D" parent="StarterCleaningRoom/RatSpawner" unique_id=1585847009]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
-material_override = SubResource("SpawnerMat")
-mesh = SubResource("SpawnMarker")
+[node name="Shape" type="CollisionShape3D" parent="GalleryExitEntry" unique_id=603708355]
+shape = SubResource("exit_shape")
 
-[node name="Sign" type="Label3D" parent="StarterCleaningRoom/RatSpawner" unique_id=1743340174]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
-pixel_size = 0.008
-billboard = 1
-text = "主厅老鼠
-最多 3 只 / 每 3 秒"
-font = ExtResource("font")
-font_size = 28
+[node name="CleaningExitGallery" type="Area3D" parent="." unique_id=1530257693]
+transform = Transform3D(-1.3113417e-07, 0, 3, 0, 3, 0, -3, 0, -1.3113417e-07, 55.5, 12, 4.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_floor_path = NodePath("../WorldGeometry/Collision/CleaningFloor")
 
-[node name="Torch" parent="." unique_id=1844778873 instance=ExtResource("torch")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, -0.1668, -3.2)
+[node name="Shape" type="CollisionShape3D" parent="CleaningExitGallery" unique_id=1484343692]
+shape = SubResource("exit_shape")
 
-[node name="VineGate" type="Node3D" parent="." unique_id=484492715]
-transform = Transform3D(-8.742278e-08, 0, 2, 0, 2, 0, -2, 0, -8.742278e-08, 15.1, 0.0306, 0)
-script = ExtResource("vine_gate")
-persistence_id = &"world.cleaning.vines"
+[node name="GalleryExitCleaning" type="Area3D" parent="." unique_id=1244288506]
+transform = Transform3D(-1.3113417e-07, 0, 3, 0, 3, 0, -3, 0, -1.3113417e-07, 55.5, 12, 4.5)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("room_exit")
+room_id = &"gallery"
+room_direction = Vector3(-1, 0, 0)
+room_floor_path = NodePath("../WorldGeometry/Collision/GalleryFloor")
 
-[node name="Vines1" parent="VineGate" unique_id=1664361915 instance=ExtResource("vines")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 0)
+[node name="Shape" type="CollisionShape3D" parent="GalleryExitCleaning" unique_id=1741325775]
+shape = SubResource("exit_shape")
 
-[node name="Vines2" parent="VineGate" unique_id=1940563833 instance=ExtResource("vines")]
+[node name="CorpseReturnOutlet" parent="." unique_id=2120226551 instance=ExtResource("outlet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.4, 2.874, -19.5)
+room_paths = Array[NodePath]([NodePath("../MainRoomExitShop"), NodePath("../ShopRoomExit"), NodePath("../MainRoomExitCleaning"), NodePath("../EntryExitMain"), NodePath("../CleaningRoomExit"), NodePath("../EntryExitCleaning"), NodePath("../CleaningExitDeep"), NodePath("../DeepRoomExit"), NodePath("../EntryExitGallery"), NodePath("../GalleryExitEntry"), NodePath("../CleaningExitGallery"), NodePath("../GalleryExitCleaning")])
 
-[node name="Vines3" parent="VineGate" unique_id=479180249 instance=ExtResource("vines")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 0)
+[node name="CoinLandingPoints" type="Node3D" parent="." unique_id=270007614]
 
-[node name="GrassPatch" type="Node3D" parent="." unique_id=44541767]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.0306, 0)
+[node name="Center" type="Marker3D" parent="CoinLandingPoints" unique_id=2114494717]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.6, 3.3, -19.5)
 
-[node name="Grass1" parent="GrassPatch" unique_id=1289036841 instance=ExtResource("grass")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.8, 0, 3.7)
+[node name="North" type="Marker3D" parent="CoinLandingPoints" unique_id=303005915]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.6, 3.3, -21)
 
-[node name="Grass2" parent="GrassPatch" unique_id=1075222281 instance=ExtResource("grass")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, 0, 3.7)
+[node name="South" type="Marker3D" parent="CoinLandingPoints" unique_id=1677036163]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.6, 3.3, -18)
 
-[node name="Grass3" parent="GrassPatch" unique_id=1237002821 instance=ExtResource("grass")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8, 0, 3.7)
+[node name="GameplayAnchors" type="Node3D" parent="." unique_id=1346823224]
 
-[node name="CockroachSpawner" parent="." unique_id=904424840 instance=ExtResource("spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.8, 0.0306, -1.6)
-enabled = false
-max_alive = 3
-spawn_interval = 4.0
-spawn_radius = 1.6
+[node name="Combat" type="Marker3D" parent="GameplayAnchors" unique_id=1778330168]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.6, 3.41, -10.5)
 
-[node name="Marker" type="MeshInstance3D" parent="CockroachSpawner" unique_id=664291936]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
-material_override = SubResource("SpawnerMat")
-mesh = SubResource("SpawnMarker")
+[node name="Main" type="Marker3D" parent="GameplayAnchors" unique_id=361301142]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.5, 3.41, -1.5)
 
-[node name="Sign" type="Label3D" parent="CockroachSpawner" unique_id=630220315]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
-pixel_size = 0.008
-billboard = 1
-text = "清扫区蟑螂
-最多 3 只 / 每 4 秒"
-font = ExtResource("font")
-font_size = 28
+[node name="ShopApproach" type="Marker3D" parent="GameplayAnchors" unique_id=1919664123]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 3.41, 3)
 
-[node name="RatSpawner" parent="." unique_id=1193554757 instance=ExtResource("spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6, 0.0306, 4.8)
-monster_data = ExtResource("rat")
-enabled = false
-max_alive = 2
-spawn_interval = 6.0
-spawn_radius = 1.6
+[node name="Shop" type="Marker3D" parent="GameplayAnchors" unique_id=1252742721]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 2.36, 12)
 
-[node name="Marker" type="MeshInstance3D" parent="RatSpawner" unique_id=2040527479]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
-material_override = SubResource("SpawnerMat")
-mesh = SubResource("SpawnMarker")
+[node name="Entry" type="Marker3D" parent="GameplayAnchors" unique_id=1551121786]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 3.8, -15)
 
-[node name="Sign" type="Label3D" parent="RatSpawner" unique_id=54352566]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
-pixel_size = 0.008
-billboard = 1
-text = "清扫区老鼠
-最多 2 只 / 每 6 秒"
-font = ExtResource("font")
-font_size = 28
+[node name="Cleaning" type="Marker3D" parent="GameplayAnchors" unique_id=566352974]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 7.13, -15)
 
-[node name="HoleSign" type="Label3D" parent="." unique_id=1082980151]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 2, 0.16)
-pixel_size = 0.016
-billboard = 1
-text = "献祭洞"
-font = ExtResource("font")
-font_size = 30
+[node name="Deep" type="Marker3D" parent="GameplayAnchors" unique_id=1671155008]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96, 7.13, -21)
 
-[node name="ShopSign" type="Label3D" parent="." unique_id=943539901]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.4, 7, 2)
-pixel_size = 0.016
-billboard = 1
-text = "商店通道"
-font = ExtResource("font")
-font_size = 30
+[node name="Gallery" type="Marker3D" parent="GameplayAnchors" unique_id=1795242454]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 3.8, 18)
 
-[node name="TorchSign" type="Label3D" parent="." unique_id=1585415876]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, 4.8, -3.2)
-pixel_size = 0.016
-billboard = 1
-text = "火把"
-font = ExtResource("font")
-font_size = 28
+[node name="VineBefore" type="Marker3D" parent="GameplayAnchors" unique_id=444795046]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 3.41, -15)
 
-[node name="GateSign" type="Label3D" parent="." unique_id=560206436]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.1, 6.9, 0)
-pixel_size = 0.016
-billboard = 1
-text = "用火烧开清扫区"
-font = ExtResource("font")
-font_size = 30
+[node name="VineAfter" type="Marker3D" parent="GameplayAnchors" unique_id=273220318]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 3.8, -15)
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1068489741]
-environment = SubResource("Environment")
+[node name="WeightBefore" type="Marker3D" parent="GameplayAnchors" unique_id=1455095425]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 69, 7.13, -21)
 
-[node name="Sun" type="DirectionalLight3D" parent="." unique_id=112391175]
-transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
-light_energy = 0.35
+[node name="WeightAfter" type="Marker3D" parent="GameplayAnchors" unique_id=317152769]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 87, 7.13, -21)
+
+[node name="PlatformThrow" type="Marker3D" parent="GameplayAnchors" unique_id=1989735438]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 7.13, -15)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2147027984]
+environment = SubResource("environment")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1714876281]
+transform = Transform3D(0.8253356, 0.5032136, -0.2561196, 0, 0.4535961, 0.8912074, 0.5646425, -0.7355452, 0.374369, 0, 0, 0)
+light_energy = 0.25
 shadow_enabled = true
 
-[node name="MainLight" type="OmniLight3D" parent="." unique_id=1461701226]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -10)
+[node name="MainLight" type="OmniLight3D" parent="." unique_id=1280166906]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 18, -18)
+light_color = Color(0.9, 0.8, 0.68, 1)
+light_energy = 2.8
+shadow_enabled = true
+shadow_bias = 0.05
+shadow_normal_bias = 0.2
+omni_range = 60.0
+
+[node name="ShopLight" type="OmniLight3D" parent="." unique_id=210714812]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 15, 12)
+light_color = Color(1, 0.78, 0.52, 1)
+light_energy = 3.0
+shadow_enabled = true
+shadow_bias = 0.05
+shadow_normal_bias = 0.2
+omni_range = 51.0
+
+[node name="EntryLight" type="OmniLight3D" parent="." unique_id=187921664]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 18, -18)
 light_color = Color(0.78, 0.86, 1, 1)
-light_energy = 1.6
+light_energy = 2.8
 shadow_enabled = true
 shadow_bias = 0.05
-shadow_normal_bias = 0.3
-omni_range = 24.0
+shadow_normal_bias = 0.2
+omni_range = 54.0
 
-[node name="PitLight" type="OmniLight3D" parent="." unique_id=2054554251]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 8)
-light_color = Color(1, 0.78, 0.62, 1)
-light_energy = 1.1
+[node name="CleaningLight" type="OmniLight3D" parent="." unique_id=1963427811]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 20.4, -18)
+light_color = Color(0.85, 0.9, 1, 1)
+light_energy = 2.8
 shadow_enabled = true
 shadow_bias = 0.05
-shadow_normal_bias = 0.3
-omni_range = 18.0
+shadow_normal_bias = 0.2
+omni_range = 54.0
 
-[node name="CleaningLight" type="OmniLight3D" parent="." unique_id=2111289418]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 5, 2)
-light_color = Color(0.8, 0.9, 1, 1)
-light_energy = 1.4
+[node name="DeepLight" type="OmniLight3D" parent="." unique_id=1784593179]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 99, 20.4, -21)
+light_color = Color(0.78, 0.85, 1, 1)
+light_energy = 2.8
 shadow_enabled = true
 shadow_bias = 0.05
-shadow_normal_bias = 0.3
-omni_range = 14.0
+shadow_normal_bias = 0.2
+omni_range = 54.0
 
-[node name="HUD" type="CanvasLayer" parent="." unique_id=101729306]
+[node name="GalleryLight" type="OmniLight3D" parent="." unique_id=658561043]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 18, 21)
+light_color = Color(0.9, 0.8, 0.65, 1)
+light_energy = 3.0
+shadow_enabled = true
+shadow_bias = 0.05
+shadow_normal_bias = 0.2
+omni_range = 66.0
 
-[node name="MoneyUI" parent="HUD" unique_id=1108601200 instance=ExtResource("money")]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1206062895]
 
-[node name="Objective" type="Label" parent="HUD" unique_id=1157503923]
+[node name="MoneyUI" parent="HUD" unique_id=1107158198 instance=ExtResource("money")]
+
+[node name="Objective" type="Label" parent="HUD" unique_id=2075233977]
 offset_left = 24.0
 offset_top = 20.0
-offset_right = 1100.0
-offset_bottom = 105.0
+offset_right = 1060.0
+offset_bottom = 120.0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 22
 
-[node name="Crosshair" parent="HUD" unique_id=996515823 instance=ExtResource("crosshair")]
+[node name="Crosshair" parent="HUD" unique_id=857820961 instance=ExtResource("crosshair")]
 layout_mode = 3
 
-[node name="BottomText" parent="HUD" instance=ExtResource("bottom_text")]
+[node name="BottomText" parent="HUD" unique_id=271255311 instance=ExtResource("bottom_text")]
+
+[node name="OnboardingHints" parent="HUD" unique_id=958981840 instance=ExtResource("onboarding")]
 
 [editable path="Hole"]
+[editable path="VineGate/Vines1"]
+[editable path="VineGate/Vines2"]
+[editable path="VineGate/Vines3"]

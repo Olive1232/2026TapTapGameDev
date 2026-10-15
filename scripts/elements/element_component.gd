@@ -8,6 +8,8 @@ signal extinguished
 signal burned_down
 
 const FLAME_SCENE := preload("res://scenes/elements/flame_effect.tscn")
+const BURN_DOWN_SOUND := preload("res://assets/music/烧毁的声音.mp3")
+const Sound := preload("res://scripts/shared/world_sound.gd")
 
 @export var tags: PackedStringArray = PackedStringArray(["flammable"])
 ## 0 表示不按时间熄灭，由宿主决定（例如剑的挥砍次数）。
@@ -90,6 +92,7 @@ func _physics_process(delta: float) -> void:
 			if tags.has("indestructible"):
 				extinguish()
 			else:
+				Sound.play_one_shot(self, BURN_DOWN_SOUND)
 				burned_down.emit()
 				get_parent().queue_free()
 

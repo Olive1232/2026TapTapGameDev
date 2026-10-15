@@ -2,6 +2,7 @@ extends CanvasLayer
 
 
 func _ready() -> void:
+	%ResumeButton.pressed.connect(GameFlow.resume_game)
 	%SaveButton.pressed.connect(func(): %SaveStatus.text = SaveGame.save_game().message)
 	%MainMenuButton.pressed.connect(func():
 		var result := GameFlow.return_to_main_menu()
@@ -17,8 +18,8 @@ func open() -> void:
 	%Root.show()
 	%Card.show()
 	%Settings.hide()
-	%SaveStatus.text = "金币、已购升级与关卡进度仅在手动存档时保存"
-	%SaveButton.grab_focus()
+	%SaveStatus.text = "手动保存金币、已购升级与关卡进度；载入后回到出生点。"
+	%ResumeButton.grab_focus()
 
 
 func close() -> void:

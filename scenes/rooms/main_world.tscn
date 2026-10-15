@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://d22jft1yrub13"]
+
+[ext_resource type="PackedScene" uid="uid://fynymovkxsrw" path="res://assets/map_origin.glb" id="1_flsf4"]
+[ext_resource type="Shape3D" path="res://resources/environment/main_world/mesh_01_collision.res" id="2_bxmb8"]
+[ext_resource type="Shape3D" path="res://resources/environment/main_world/mesh_02_collision.res" id="3_wfvbv"]
+[ext_resource type="PackedScene" uid="uid://b1nf44seup0a5" path="res://scenes/player/player.tscn" id="4_player"]
+[ext_resource type="Script" uid="uid://dri2pdxbmtkga" path="res://scripts/rooms/main_world.gd" id="5_world"]
+[ext_resource type="PackedScene" uid="uid://cmoneyui00001" path="res://scenes/ui/money_ui.tscn" id="6_money"]
+[ext_resource type="PackedScene" path="res://scenes/ui/crosshair.tscn" id="7_crosshair"]
+[ext_resource type="PackedScene" path="res://scenes/ui/bottom_text.tscn" id="8_bottom"]
+[ext_resource type="PackedScene" path="res://scenes/ui/onboarding_hints.tscn" id="9_onboarding"]
+[ext_resource type="PackedScene" path="res://scenes/environment/main_world_lighting.tscn" id="10_lighting"]
+
+[node name="MainWorld" type="Node3D" unique_id=1307683830]
+script = ExtResource("5_world")
+
+[node name="Player" parent="." unique_id=1918942854 instance=ExtResource("4_player")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -28.5, 3.44, -1.5)
+
+[node name="MapScale" type="Node3D" parent="." unique_id=2017246654]
+transform = Transform3D(15, 0, 0, 0, 15, 0, 0, 0, 15, 0, 0, 0)
+metadata/_editor_description = "沿用现有地图尺寸（源模型 × 5 × 3）。只在此父节点统一缩放，MapOrigin 保持原始导入变换。"
+
+[node name="MapOrigin" parent="MapScale" unique_id=2075284540 instance=ExtResource("1_flsf4")]
+
+[node name="Collision" type="Node3D" parent="MapScale" unique_id=1689819808]
+
+[node name="Mesh01" type="StaticBody3D" parent="MapScale/Collision" unique_id=1007336139]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0)
+collision_mask = 0
+metadata/source_mesh = "youximouxing_low(3)"
+
+[node name="Shape" type="CollisionShape3D" parent="MapScale/Collision/Mesh01" unique_id=1611681425]
+shape = ExtResource("2_bxmb8")
+
+[node name="Mesh02" type="StaticBody3D" parent="MapScale/Collision" unique_id=365657948]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, -5.0847073, 0)
+collision_mask = 0
+metadata/source_mesh = "youximouxing_low(3)_001"
+
+[node name="Shape" type="CollisionShape3D" parent="MapScale/Collision/Mesh02" unique_id=60493682]
+shape = ExtResource("3_wfvbv")
+
+[node name="GameplayAnchors" type="Node3D" parent="." unique_id=654921631]
+
+[node name="Combat" type="Marker3D" parent="GameplayAnchors" unique_id=360539090]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.5, 3.44, -1.5)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1199807496]
+
+[node name="MoneyUI" parent="HUD" unique_id=2033818521 instance=ExtResource("6_money")]
+
+[node name="Crosshair" parent="HUD" unique_id=1814655386 instance=ExtResource("7_crosshair")]
+layout_mode = 3
+
+[node name="BottomText" parent="HUD" unique_id=345126838 instance=ExtResource("8_bottom")]
+
+[node name="OnboardingHints" parent="HUD" unique_id=1443645134 instance=ExtResource("9_onboarding")]
+
+[node name="WorldLighting" parent="." unique_id=1379777725 instance=ExtResource("10_lighting")]

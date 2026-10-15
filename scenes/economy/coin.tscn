@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/economy/coin.gd" id="1_coin"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_coin"]
-size = Vector3(0.2, 0.05, 0.2)
+size = Vector3(0.2884499, 0.07211248, 0.2884499)
 
 [sub_resource type="StandardMaterial3D" id="Mat_coin"]
 albedo_color = Color(0.76, 0.48, 0.22, 1)
@@ -12,10 +12,10 @@ emission = Color(0.76, 0.48, 0.22, 1)
 emission_energy_multiplier = 0.5
 
 [sub_resource type="BoxShape3D" id="BoxShape_coin"]
-size = Vector3(0.2, 0.05, 0.2)
+size = Vector3(0.2884499, 0.07211248, 0.2884499)
 
 [sub_resource type="SphereShape3D" id="SphereShape_pickup"]
-radius = 0.2
+radius = 0.2884499
 
 [node name="Coin" type="CharacterBody3D"]
 collision_layer = 0

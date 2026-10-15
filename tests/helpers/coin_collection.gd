@@ -35,7 +35,11 @@ static func collect_all(tree: SceneTree, player: CharacterBody3D) -> bool:
 			var floor_hit := player.get_world_3d().direct_space_state.intersect_ray(ray)
 			if floor_hit.is_empty() or absf(floor_hit.position.y - coin.global_position.y) > 0.5:
 				continue
-			start.y = floor_hit.position.y + standing_height + player.safe_margin
+			# 斜坡上盒体的上坡底角高于中心采样点；先完整放到坡面上方再落地。
+			var normal: Vector3 = floor_hit.normal
+			var body_size: Vector3 = (player_shape.shape as BoxShape3D).size
+			var slope_lift := 0.5 * (absf(normal.x) * body_size.x + absf(normal.z) * body_size.z) / maxf(normal.y, 0.1)
+			start.y = floor_hit.position.y + standing_height + slope_lift + player.safe_margin + 0.02
 			var query := PhysicsShapeQueryParameters3D.new()
 			query.shape = player_shape.shape
 			query.transform = player.global_transform

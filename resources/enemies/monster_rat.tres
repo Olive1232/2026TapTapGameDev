@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://6g0i0fluavl3"]
 
 [ext_resource type="Script" uid="uid://drersog8aq6oe" path="res://resources/types/monster_data.gd" id="1_monsterdata"]
+[ext_resource type="AudioStream" uid="uid://cwbqhonqo4a4t" path="res://assets/music/老鼠叫声.mp3" id="2_voice"]
 
 [resource]
 script = ExtResource("1_monsterdata")
@@ -16,3 +17,4 @@ body_size = Vector3(0.5, 0.34, 0.8)
 body_color = Color(0.45, 0.44, 0.46, 1)
 corpse_size = Vector3(0.5, 0.16, 0.8)
 corpse_color = Color(0.38, 0.37, 0.39, 1)
+voice_stream = ExtResource("2_voice")

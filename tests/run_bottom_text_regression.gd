@@ -184,7 +184,8 @@ func _test_world() -> void:
 		_check(_ui.get_displayed_source() == &"shop_description", "looking at " + product.display_name + " selects description")
 		_check(_ui.get_displayed_text().contains(product.description), "actual resource description displayed for " + product.display_name)
 		_check(_ui.get_displayed_text().contains("%d 金币" % _shop.get_product_price(product)), "current price displayed for " + product.display_name)
-		_camera.rotate_y(PI)
+		# 新商店的对面也有货架；看向空处，明确验证离开所有商品焦点。
+		_camera.rotation.x = deg_to_rad(80)
 		await _frames()
 		_check(_ui.get_displayed_source() == &"guidance", "looking away clears " + product.display_name + " description")
 	var stock: Node3D = _shop.shelf

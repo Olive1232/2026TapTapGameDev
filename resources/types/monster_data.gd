@@ -44,6 +44,10 @@ extends Resource
 @export var corpse_size: Vector3 = Vector3.ZERO
 @export var corpse_color: Color = Color(0, 0, 0, 0)
 
+@export_group("声音")
+## 留空的怪种保持安静；播放完整叫声后随机间隔再叫。
+@export var voice_stream: AudioStream
+
 
 ## 尸体实际使用的尺寸（未单独配置则沿用本体）。
 func get_corpse_size() -> Vector3:

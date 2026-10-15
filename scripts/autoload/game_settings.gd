@@ -7,7 +7,8 @@ const DEFAULT_SENSITIVITY := 0.1
 const MIN_SENSITIVITY := 0.02
 const MAX_SENSITIVITY := 0.5
 
-var settings_path: String = "user://settings.cfg"
+## 与存档沿用同一旧目录；目录标识不是游戏名。
+var settings_path: String = OS.get_user_data_dir().get_base_dir().path_join("2026聚光灯/settings.cfg")
 var fullscreen: bool = false
 var mouse_sensitivity: float = DEFAULT_SENSITIVITY
 
@@ -57,5 +58,3 @@ func _apply_window_mode() -> void:
 	if DisplayServer.get_name() == "headless":
 		return
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED)
-	if not fullscreen:
-		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://chole00000001"]
 
 [ext_resource type="Script" path="res://scripts/economy/hole.gd" id="1_hole"]
+[ext_resource type="AudioStream" path="res://assets/music/洞的声音.mp3" id="2_ambience"]
 
 [sub_resource type="CylinderMesh" id="Cyl_rim"]
 top_radius = 1.5
@@ -92,3 +93,12 @@ surface_material_override/0 = SubResource("Mat_pit")
 
 [node name="Shape" type="CollisionShape3D" parent="Bottom"]
 shape = SubResource("BoxShape_bottom")
+
+[node name="Ambience" type="AudioStreamPlayer3D" parent="."]
+position = Vector3(0, -0.4, 0)
+stream = ExtResource("2_ambience")
+volume_db = -16.0
+unit_size = 4.0
+max_distance = 20.0
+autoplay = true
+bus = &"SFX"

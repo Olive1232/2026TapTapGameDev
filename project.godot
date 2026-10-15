@@ -10,10 +10,13 @@ config_version=5
 
 [application]
 
-config/name="2026聚光灯"
 run/main_scene="res://scenes/ui/main_menu.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
+
+[audio]
+
+buses/default_bus_layout="res://resources/audio/default_bus_layout.tres"
 
 [autoload]
 

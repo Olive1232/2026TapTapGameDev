@@ -2,6 +2,9 @@ extends RefCounted
 
 ## 先写同目录临时文件，写入失败时保留上次正式文件。
 static func write_text(path: String, text: String) -> Error:
+	var directory_error := DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	if directory_error != OK:
+		return directory_error
 	var temporary := path + ".tmp"
 	var file := FileAccess.open(temporary, FileAccess.WRITE)
 	if file == null:
