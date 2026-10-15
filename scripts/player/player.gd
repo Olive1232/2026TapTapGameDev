@@ -40,6 +40,7 @@ var _climb_cooldown := 0.0
 var _mount_remaining := 0.0
 var _mount_direction := Vector3.ZERO
 var _bottom_text: BottomText
+var _rift_recovery_locked := false
 
 @onready var camera: Camera3D = $Camera3D
 @onready var _footsteps: AudioStreamPlayer = $Footsteps
@@ -69,6 +70,8 @@ func reset_gameplay_input() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _rift_recovery_locked:
+		return
 	if is_climbing() and event.is_action_pressed("ClimbRelease") and not event.is_echo():
 		_release_climb = true
 		get_viewport().set_input_as_handled()
@@ -80,7 +83,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(_delta: float) -> void:
-	if _look_delta == Vector2.ZERO:
+	if _rift_recovery_locked or _look_delta == Vector2.ZERO:
 		return
 	# 渲染帧应用视角：与物理插值后的位移保持同一时间基准。
 	rotate_y(deg_to_rad(-_look_delta.x * mouse_sensitivity))
@@ -90,6 +93,10 @@ func _process(_delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _rift_recovery_locked:
+		velocity = Vector3.ZERO
+		_footsteps.stop()
+		return
 	_climb_cooldown = maxf(0.0, _climb_cooldown - delta)
 	if not Input.is_action_pressed("Up"):
 		_climb_wait_release = false
@@ -125,6 +132,31 @@ func _physics_process(delta: float) -> void:
 	if was_grounded and velocity.y <= 0.0:
 		apply_floor_snap()
 	_update_footsteps(direction != Vector3.ZERO)
+
+
+func is_rift_recovering() -> bool:
+	return _rift_recovery_locked
+
+
+func set_rift_recovery_locked(locked: bool) -> void:
+	_rift_recovery_locked = locked
+	reset_gameplay_input()
+	if locked:
+		_stop_climbing(true)
+		_mount_remaining = 0.0
+		_update_climb_hint()
+		_footsteps.stop()
+
+
+## 裂缝黄屏遮挡下复位；保留朝向、背包和手持物品。
+func recover_from_fall(at: Vector3) -> void:
+	_stop_climbing(true)
+	_mount_remaining = 0.0
+	velocity = Vector3.ZERO
+	global_position = at
+	$Camera3D/Grabber.snap_held_to_hand()
+	reset_gameplay_input()
+	reset_physics_interpolation()
 
 
 func _try_step_up(motion: Vector3) -> void:

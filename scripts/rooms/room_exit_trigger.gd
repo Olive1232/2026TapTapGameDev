@@ -41,6 +41,9 @@ func _on_exited(body: Node3D) -> void:
 	var id := body.get_instance_id()
 	var from_room: bool = _entered_from_room.get(id, false)
 	_entered_from_room.erase(id)
+	# 裂缝复位不算主动离房，避免传送或下落离开区域时误回收。
+	if body.has_method("is_rift_recovering") and body.is_rift_recovering():
+		return
 	if from_room and not body.is_queued_for_deletion() and _side(body) < 0.0:
 		room_left.emit(self)
 

@@ -28,6 +28,7 @@
 [ext_resource type="PackedScene" path="res://scenes/environment/shop_passage_steps.tscn" id="26_xqlbi"]
 [ext_resource type="PackedScene" path="res://scenes/economy/main_world_soul_egg_zones.tscn" id="27_jhoda"]
 [ext_resource type="PackedScene" path="res://scenes/economy/main_world_corpse_return_outlet.tscn" id="28_musv6"]
+[ext_resource type="PackedScene" path="res://scenes/environment/main_world_rift_recovery.tscn" id="29_musv6"]
 
 [sub_resource type="CylinderShape3D" id="HoleSwallowShape"]
 height = 8.0
@@ -237,5 +238,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -81.66, 1.795, -9.32)
 
 [node name="CorpseReturnOutlet" parent="." unique_id=1968601464 instance=ExtResource("28_musv6")]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -34, 2.875, -28)
+
+[node name="RiftRecovery" parent="." unique_id=1120494996 instance=ExtResource("29_musv6")]
 
 [editable path="Hole"]

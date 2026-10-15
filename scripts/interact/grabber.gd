@@ -230,6 +230,18 @@ func cancel_throw_charge() -> void:
 		_trajectory.hide()
 
 
+## 玩家复位时手持实体一起回到手边，避免留在裂缝里被地形挡住。
+func snap_held_to_hand() -> void:
+	var held := get_held()
+	if held == null or _hold_point == null:
+		return
+	held.global_position = _hold_point.global_position
+	if held is RigidBody3D:
+		held.linear_velocity = Vector3.ZERO
+		held.angular_velocity = Vector3.ZERO
+	held.reset_physics_interpolation()
+
+
 func _on_held_tree_exiting() -> void:
 	# 在引用被引擎清为 null 之前处理献祭 / 销毁，负重不能残留。
 	_clear_current()

@@ -128,7 +128,8 @@ func _physics_process(_delta: float) -> void:
 	if locked:
 		return
 	# 洞 / 关卡外的商品退回货架，台面上的商品不会超时。
-	if counter == null and global_position.y < _home_height - 1.6:
+	var recovering: bool = is_held and is_instance_valid(_holder) and _holder.has_method("is_rift_recovering") and _holder.is_rift_recovering()
+	if counter == null and global_position.y < _home_height - 1.6 and not recovering:
 		return_home()
 		return
 	if not is_held or not is_instance_valid(_hold_point):
