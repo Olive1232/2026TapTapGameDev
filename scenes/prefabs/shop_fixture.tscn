@@ -1,0 +1,50 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/shop/shop_room.gd" id="script"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_counter.tscn" id="counter"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shopkeeper.tscn" id="keeper"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_booth.tscn" id="booth"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_oil.tscn" id="oil"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_corpse_value.tscn" id="corpse_value"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_golden_coin.tscn" id="golden_coin"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_mirror.tscn" id="mirror"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_corpse_return.tscn" id="corpse_return"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_charged_throw.tscn" id="charged_throw"]
+
+[node name="ShopRoom" type="Node3D"]
+editor_description = "整套商店：六种商品货架、交付台面、店长、强化隔间和照明。原点放在地面；不含建筑外壳。Player Path / Hole Path 指向世界的玩家与洞；默认与 Player、Hole 同级。子节点可开启可编辑子节点后调整位置。"
+script = ExtResource("script")
+player_path = NodePath("../Player")
+hole_path = NodePath("../Hole")
+
+[node name="Shelf" parent="." instance=ExtResource("oil")]
+position = Vector3(-2.5, 0, 3)
+
+[node name="CorpseValueShelf" parent="." instance=ExtResource("corpse_value")]
+position = Vector3(-2.5, 0, 0)
+
+[node name="GoldenCoinShelf" parent="." instance=ExtResource("golden_coin")]
+position = Vector3(2.5, 0, 0)
+
+[node name="MirrorShelf" parent="." instance=ExtResource("mirror")]
+position = Vector3(-2.5, 0, 5.8)
+
+[node name="CorpseReturnShelf" parent="." instance=ExtResource("corpse_return")]
+position = Vector3(2.5, 0, 3)
+
+[node name="ChargedThrowShelf" parent="." instance=ExtResource("charged_throw")]
+position = Vector3(2.5, 0, 5.8)
+
+[node name="Counter" parent="." instance=ExtResource("counter")]
+position = Vector3(0, 0, -2)
+
+[node name="Shopkeeper" parent="." instance=ExtResource("keeper")]
+position = Vector3(0, 0, -3)
+
+[node name="Booth" parent="." instance=ExtResource("booth")]
+
+[node name="Light" type="OmniLight3D" parent="."]
+position = Vector3(0, 3.2, 1)
+light_color = Color(1, 0.84, 0.61, 1)
+light_energy = 1.8
+omni_range = 11.0

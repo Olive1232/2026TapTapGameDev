@@ -1,6 +1,9 @@
 class_name Hole
 extends Node3D
 
+## 本洞实际收到尸体；剧情可在结算倒计时推进前挂起首次涌现。
+signal corpse_received(corpse: Corpse)
+
 ## 洞 —— 经济循环的中枢。
 ##
 ## 流程（对应策划需求）：
@@ -8,7 +11,7 @@ extends Node3D
 ##   → 按「总价值 × 随机修正」喷出等价值的整数钱币 → 落地后玩家接触拾取
 ##
 ## 其它规则：
-##   - 玩家掉进洞里获得向上速度，被喷出洞口
+##   - 玩家和可喷飞的活体怪物掉进洞里获得向上速度，被喷出洞口
 ##   - 非玩家物品受到**与距离成反比的吸引力**（越近吸力越大，见文档 N1 决策）
 ##   - 洞的形态可随升级改变（M13-9，尚未做）
 
@@ -39,7 +42,7 @@ const PLAYER_FALL_HEIGHT := 0.35
 
 ## 献祭配置表。留空则用代码内置的占位规则。
 @export var offering_table: OfferingTable
-## 玩家喷出速度（米/秒）。保留水平方向的移动与空中操控。
+## 玩家和可喷飞怪物共用的喷出速度（米/秒），保留水平方向移动。
 @export_range(1.0, 30.0, 0.5) var player_eject_speed: float = 12.0
 ## 是否把调试状态打到控制台。
 @export var debug_print: bool = false
@@ -62,10 +65,12 @@ var _golden_coin_level := 0
 var pending_value: int = 0
 ## 距离结算还剩多少秒。<=0 表示没有待结算内容。
 var time_until_erupt: float = 0.0
+var _settlement_paused := false
 
 var _rng := RandomNumberGenerator.new()
 var _player: Node3D = null
-var _player_ejected := false
+## 每个活体独立记录本次掉落；弱引用不阻止死亡或场景释放。
+var _ejected_characters: Dictionary = {}
 
 
 func _ready() -> void:
@@ -166,8 +171,8 @@ func _setup_areas() -> void:
 func _physics_process(delta: float) -> void:
 	_attract_items(delta)
 	_swallow_items()
-	_check_player_fall()
-	if pending_value > 0:
+	_check_character_falls()
+	if pending_value > 0 and not _settlement_paused:
 		time_until_erupt -= delta
 		if time_until_erupt <= 0.0:
 			_erupt()
@@ -195,25 +200,38 @@ func _swallow_items() -> void:
 				_destroy(body)
 
 
-## 每帧直接按距离判断玩家是否掉进洞里。
+## 每帧直接按距离判断玩家和可喷飞怪物是否掉进洞里。
 ##
 ## 为什么不靠 SwallowZone 的 body_entered：那个区域很薄，
-## 玩家高速下落时会**一帧穿过**（穿透漏判），于是永远不被踢出，
+## 活体高速下落时会**一帧穿过**（穿透漏判），于是永远不被踢出，
 ## 直接掉到地底（早期版本的 bug）。距离判定不依赖物理检测时机。
-func _check_player_fall() -> void:
-	if _player == null or not is_instance_valid(_player):
+func _check_character_falls() -> void:
+	for id in _ejected_characters.keys():
+		var character = _ejected_characters[id].get_ref()
+		if not is_instance_valid(character) or character.is_queued_for_deletion():
+			_ejected_characters.erase(id)
+	if is_instance_valid(_player) and _player is CharacterBody3D:
+		_check_character_fall(_player)
+	for character in get_tree().get_nodes_in_group("hole_ejectable"):
+		if character is CharacterBody3D and character != _player:
+			_check_character_fall(character)
+
+
+func _check_character_fall(body: CharacterBody3D) -> void:
+	if body.is_queued_for_deletion():
 		return
-	var d := _player.global_position - global_position
+	var id := body.get_instance_id()
+	var d := body.global_position - global_position
 	# 水平距离够近，且已经陷进洞口平面以下。
 	var horizontal := Vector2(d.x, d.z).length()
 	if horizontal > player_fall_radius or d.y > PLAYER_FALL_HEIGHT:
-		_player_ejected = false
-	elif _player is CharacterBody3D and _player.is_on_floor() and d.y >= 0.0 and _player.velocity.y <= 0.0:
+		_ejected_characters.erase(id)
+	elif body.is_on_floor() and d.y >= 0.0 and body.velocity.y <= 0.0:
 		# 模型洞沿略低于主地板；正常站在洞沿时不触发喷出。
-		_player_ejected = false
-	elif not _player_ejected:
-		_player_ejected = true
-		_eject_player(_player)
+		_ejected_characters.erase(id)
+	elif not _ejected_characters.has(id):
+		_ejected_characters[id] = weakref(body)
+		_eject_character(body)
 
 
 # ---- 吸引力 --------------------------------------------------------------
@@ -251,8 +269,8 @@ func _attract_items(delta: float) -> void:
 func _on_body_entered_swallow(body: Node) -> void:
 	if body == null:
 		return
-	# 玩家掉入**不在这里处理**——这里只处理物品。
-	# 玩家的掉入判定统一走 _check_player_fall() 的距离检查：
+	# 活体掉入不在这里处理——这里只处理物品。
+	# 活体的掉入判定统一走 _check_character_falls() 的距离检查：
 	# 早先把踢出也写在这里，导致玩家只要碰到 Area 就被瞬移（哪怕还在洞上方）。
 	if body is CharacterBody3D:
 		return
@@ -299,17 +317,16 @@ func _destroy(body: Node, offered_value: int = -1) -> void:
 		body.call_deferred("return_home")
 		return
 	if body is Corpse:
+		corpse_received.emit(body)
 		EventBus.corpse_offered.emit(body, _item_value(body) if offered_value < 0 else offered_value)
 	if body is Node3D:
 		(body as Node3D).queue_free()
 
 
-func _eject_player(player: Node3D) -> void:
-	if player is CharacterBody3D:
-		var body := player as CharacterBody3D
-		body.velocity.y = maxf(body.velocity.y, player_eject_speed)
+func _eject_character(body: CharacterBody3D) -> void:
+	body.velocity.y = maxf(body.velocity.y, player_eject_speed)
 	if debug_print:
-		print("[Hole] 玩家掉入，向上喷出速度 %.1f" % player_eject_speed)
+		print("[Hole] %s 掉入，向上喷出速度 %.1f" % [body.name, player_eject_speed])
 
 
 # ---- 涌现 ----------------------------------------------------------------
@@ -525,3 +542,8 @@ func has_pending() -> bool:
 func force_erupt() -> void:
 	if pending_value > 0:
 		_erupt()
+
+
+## 只挂起经济结算，吸力 / 吞入 / 玩家喷出仍正常运行。
+func set_settlement_paused(value: bool) -> void:
+	_settlement_paused = value

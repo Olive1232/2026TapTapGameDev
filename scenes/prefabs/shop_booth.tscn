@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_booth.tscn" id="base"]
+
+[node name="Booth" instance=ExtResource("base")]
+editor_description = "强化隔间：原点是商店布局中心，隔间在本地 Z=-4.85 到 -2.51；与台面、店长按整套商店布局对齐。用于替换 Booth，保留 Curtain 与 PreviewSword 节点供动画使用。"

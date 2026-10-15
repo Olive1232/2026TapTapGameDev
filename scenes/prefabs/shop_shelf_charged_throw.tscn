@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_shelf.tscn" id="base"]
+[ext_resource type="Resource" path="res://resources/shop/shop_item_charged_throw.tres" id="product"]
+
+[node name="ChargedThrowShelf" instance=ExtResource("base")]
+editor_description = "棒球手套货架：原点放在地面。已配置商品；运行时生成可拿起的商品。放在整套商店的根节点下，由商店管理购买与补货。Item Data 可改商品配置。"
+item_data = ExtResource("product")
+
+[node name="Sign" parent="." index="2"]
+text = "棒球手套\n200 金币 · 蓄力投掷"

@@ -4,6 +4,13 @@ signal purchase_completed(data: ShopItemData)
 
 @export var player_path: NodePath = NodePath("../Player")
 @export var hole_path: NodePath = NodePath("../Hole")
+## 可连接独立摆放的部件；默认路径继续支持整套商店预制体。
+@export var counter_path: NodePath = NodePath("Counter")
+@export var shopkeeper_path: NodePath = NodePath("Shopkeeper")
+@export var booth_path: NodePath = NodePath("Booth")
+@export var shelf_path: NodePath = NodePath("Shelf")
+## 留空时收集直接子节点；独立摆放时显式指定货架。
+@export var shelf_paths: Array[NodePath] = []
 var busy := false
 var completed_purchases := 0
 var _player: Node3D
@@ -20,8 +27,12 @@ var _tween: Tween
 var _message := ""
 var _message_remaining := 0.0
 
-@onready var counter: ShopCounter = $Counter
-@onready var shelf: Node3D = $Shelf
+@onready var counter: ShopCounter = get_node(counter_path) as ShopCounter
+@onready var shelf: Node3D = get_node(shelf_path) as Node3D
+@onready var _shopkeeper: StaticBody3D = get_node(shopkeeper_path) as StaticBody3D
+@onready var _booth: Node3D = get_node(booth_path) as Node3D
+@onready var _curtain: MeshInstance3D = _booth.get_node("Curtain") as MeshInstance3D
+@onready var _preview_sword: Node3D = _booth.get_node("PreviewSword") as Node3D
 
 
 func _ready() -> void:
@@ -30,14 +41,22 @@ func _ready() -> void:
 	if _player != null:
 		_sword = _player.get_node_or_null("Camera3D/WeaponRig/WeaponPivot/Mount") as Sword
 		_grabber = _player.get_node_or_null("Camera3D/Grabber") as Grabber
-	$Shopkeeper.struck.connect(_on_struck)
+	_shopkeeper.struck.connect(_on_struck)
 	counter.item_placed.connect(func(_item): _show_message("商品已放到台面，左键挥剑命中店长进行强化。"))
-	for child in get_children():
-		if child.has_method("refresh_label") and child.has_method("restock"):
-			_shelves.append(child)
-			child.item_returned.connect(_on_item_returned)
-	$Booth/PreviewSword.hide()
+	if shelf_paths.is_empty():
+		for child in get_children():
+			_register_shelf(child)
+	else:
+		for path in shelf_paths:
+			_register_shelf(get_node(path))
+	_preview_sword.hide()
 	_refresh_shelf()
+
+
+func _register_shelf(stock: Node) -> void:
+	if stock is Node3D and stock.has_method("refresh_label") and stock.has_method("restock") and not _shelves.has(stock):
+		_shelves.append(stock)
+		stock.item_returned.connect(_on_item_returned)
 
 
 func _process(delta: float) -> void:
@@ -201,7 +220,7 @@ func _on_struck(source: Node3D) -> void:
 	busy = true
 	counter.locked = true
 	_transaction_item.locked = true
-	$Shopkeeper.locked = true
+	_shopkeeper.locked = true
 	if _forging_sword:
 		_sword.set_forge_locked(true)
 	else:
@@ -213,25 +232,25 @@ func _on_struck(source: Node3D) -> void:
 
 
 func _start_animation() -> void:
-	var preview: Node3D = $Booth/PreviewSword
+	var preview: Node3D = _preview_sword
 	preview.position = Vector3(0.7, 1.35, -2.95)
 	if _forging_sword:
 		var material := StandardMaterial3D.new()
 		material.albedo_color = _result.tint
 		material.metallic = 0.5
-		$Booth/PreviewSword/Blade.material_override = material
+		_preview_sword.get_node("Blade").material_override = material
 	# Tween 绑定本商店，继承暂停；离开场景自动结束，不会留下异步交付。
 	_tween = create_tween()
 	_tween.tween_interval(0.3)
 	if _forging_sword:
 		_tween.tween_callback(preview.show)
 	_tween.tween_interval(0.3)
-	_tween.tween_property($Booth/Curtain, "scale:y", 1.0, 0.5)
-	_tween.parallel().tween_property($Booth/Curtain, "position:y", 1.75, 0.5)
+	_tween.tween_property(_curtain, "scale:y", 1.0, 0.5)
+	_tween.parallel().tween_property(_curtain, "position:y", 1.75, 0.5)
 	_tween.tween_callback(preview.hide)
 	_tween.tween_interval(0.6)
-	_tween.tween_property($Booth/Curtain, "scale:y", 0.08, 0.5)
-	_tween.parallel().tween_property($Booth/Curtain, "position:y", 3.05, 0.5)
+	_tween.tween_property(_curtain, "scale:y", 0.08, 0.5)
+	_tween.parallel().tween_property(_curtain, "position:y", 3.05, 0.5)
 	if _forging_sword:
 		_tween.tween_callback(preview.show)
 	_tween.tween_interval(0.25)
@@ -304,8 +323,8 @@ func _end_transaction() -> void:
 		_transaction_item.locked = false
 	_transaction_item = null
 	_transaction_price = 0
-	$Shopkeeper.locked = false
-	$Booth/PreviewSword.hide()
+	_shopkeeper.locked = false
+	_preview_sword.hide()
 	if is_instance_valid(_sword):
 		if _forging_sword:
 			_sword.set_forge_locked(false)

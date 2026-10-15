@@ -32,6 +32,16 @@ func empty_upgrade_levels() -> Dictionary:
 	return levels
 
 
+func empty_dialogue_progress() -> Dictionary:
+	return {"shop_visited": false, "hole_introduced": false}
+
+
+func is_valid_dialogue_progress(progress: Variant) -> bool:
+	if not progress is Dictionary or progress.size() != 2:
+		return false
+	return progress.get("shop_visited") is bool and progress.get("hole_introduced") is bool
+
+
 func is_valid_upgrade_levels(levels: Variant) -> bool:
 	if not levels is Dictionary or levels.size() != LEVEL_UPGRADE_IDS.size():
 		return false
@@ -60,6 +70,7 @@ func save_game() -> Dictionary:
 		"level": progress.level,
 		"opened_gates": progress.opened_gates,
 		"tutorial_stage": GameFlow.get_tutorial_stage(),
+		"dialogue_progress": GameFlow.get_dialogue_progress(),
 	}
 	var error := AtomicFile.write_text(save_path, JSON.stringify(data, "\t"))
 	if error != OK:
@@ -133,7 +144,11 @@ func read_save() -> Dictionary:
 	var tutorial_stage: Variant = data.get("tutorial_stage", "complete")
 	if not tutorial_stage is String or tutorial_stage not in ["controls", "pickup", "complete"]:
 		return _invalid_save()
-	return {"ok": true, "coins": amount, "upgrades": upgrades, "upgrade_levels": upgrade_levels, "level": level, "opened_gates": opened_gates, "tutorial_stage": tutorial_stage, "message": "载入成功"}
+	# v7 可选扩展，旧档仍可体验新增的首次对白。
+	var dialogue_progress: Variant = data.get("dialogue_progress", empty_dialogue_progress())
+	if not is_valid_dialogue_progress(dialogue_progress):
+		return _invalid_save()
+	return {"ok": true, "coins": amount, "upgrades": upgrades, "upgrade_levels": upgrade_levels, "level": level, "opened_gates": opened_gates, "tutorial_stage": tutorial_stage, "dialogue_progress": dialogue_progress, "message": "载入成功"}
 
 
 func _invalid_save() -> Dictionary:

@@ -217,11 +217,11 @@ func _test_world() -> void:
 	_check(sword.try_swing(), "real sword starts empty-wallet purchase attempt")
 	await _wait(0.8)
 	_check(_ui.get_displayed_source() == &"shop_feedback" and _ui.get_displayed_text().contains("金钱不足"), "failed real purchase gives bottom feedback")
-	var flow = root.get_node("GameFlow")
-	flow.pause_game()
+	# 此处保留旧地图商品夹具；它已不属于 GameFlow 的正式游戏入口。
+	paused = true
 	await _wait(3.5)
 	_check(not _ui.visible and _shop.get_status_message().contains("金钱不足"), "pause preserves real shop feedback lifetime")
-	flow.resume_game()
+	paused = false
 	await _frames()
 	_check(_ui.visible and _ui.get_displayed_text().contains("金钱不足"), "resume restores shop feedback")
 	await _wait(3.3)

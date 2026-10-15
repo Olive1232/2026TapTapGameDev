@@ -118,4 +118,4 @@ func _spawn_monster_ahead(data: MonsterData) -> void:
 func _update_label() -> void:
 	if _label == null:
 		return
-	_label.text = "测试场地（剑 + 钱包 + 怪物/尸体）\nR 重载   T 生成靶子   F1 隐藏本提示\n左键挥砍 · 右键抓取/放下 · WASD 移动 · 空格跳跃 · Esc 暂停菜单\n已生成靶子：%d   已生成怪物：%d\n自动刷新：蟑螂最多3只 / 每4秒 · 老鼠最多2只 / 每6秒\n钱包调试：[1] +5  [2] 花3  [3] +100  [4] 清零\n怪物调试：[5] 蟑螂  [6] 老鼠\n上次操作：%s" % [_spawn_count, _monster_count, _last_action]
+	_label.text = "测试场地（剑 + 钱包 + 怪物/尸体）\nR 重载   T 生成靶子   F1 隐藏本提示\n左键挥砍 · 右键抓取/放下 · WASD 移动 / 攀爬 · Esc 暂停菜单\n已生成靶子：%d   已生成怪物：%d\n自动刷新：蟑螂最多3只 / 每4秒 · 老鼠最多2只 / 每6秒\n钱包调试：[1] +5  [2] 花3  [3] +100  [4] 清零\n怪物调试：[5] 蟑螂  [6] 老鼠\n上次操作：%s" % [_spawn_count, _monster_count, _last_action]

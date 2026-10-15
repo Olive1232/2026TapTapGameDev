@@ -21,6 +21,7 @@ var burning := false
 var burn_remaining := 0.0
 var _spread_remaining := 0.0
 var _flame: Node3D
+var _flame_coverage := Vector3.ZERO
 
 
 func _ready() -> void:
@@ -32,7 +33,19 @@ func _ready() -> void:
 	_flame = FLAME_SCENE.instantiate() as Node3D
 	_flame.scale = Vector3.ONE * flame_scale
 	add_child(_flame)
+	_apply_flame_coverage()
 	_update_flame()
+
+
+## 宿主的局部尺寸；父节点的 Transform 缩放会自然继承，不能再乘一次。
+func set_flame_coverage(size: Vector3) -> void:
+	_flame_coverage = size.max(Vector3.ZERO)
+	_apply_flame_coverage()
+
+
+func _apply_flame_coverage() -> void:
+	if is_instance_valid(_flame):
+		_flame.set_coverage(_flame_coverage / maxf(flame_scale, 0.1))
 
 
 func is_fire_source() -> bool:

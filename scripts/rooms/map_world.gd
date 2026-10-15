@@ -79,7 +79,7 @@ func _update_hud() -> void:
 		state = "燃烧中 · 剩余 %d 次挥砍" % _sword.fire_swings_remaining
 	elif _sword.oiled:
 		state = "已涂油 · 可接触火把重新点燃"
-	var guidance := "剑：%s\nWASD 移动 · 空格跳跃 · 左键挥剑 · 右键拿放 · Esc 菜单" % state
+	var guidance := "剑：%s\nWASD 移动 / 攀爬 · 左键挥剑 · 右键拿放 · Esc 菜单" % state
 	if OS.is_debug_build():
 		guidance += " · R 重置"
 	var grabber := _player.get_node("Camera3D/Grabber") as Grabber

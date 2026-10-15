@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/shop/shopkeeper.tscn" id="base"]
+
+[node name="Shopkeeper" instance=ExtResource("base")]
+editor_description = "店长：原点放在地面，可被剑命中。用于整套商店中替换 Shopkeeper，保持节点名；购买结算由商店控制器处理。"

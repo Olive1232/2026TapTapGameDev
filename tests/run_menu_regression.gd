@@ -287,11 +287,8 @@ func _run() -> void:
 	await _key(KEY_SPACE)
 	_check(not paused, "space activates focused continue button")
 	_check(player.velocity.y <= 0.0, "keyboard continue does not jump: velocity=%s" % player.velocity)
-	Input.action_press("Jump")
-	for frame in 3:
-		await physics_frame
-	Input.action_release("Jump")
-	_check(player.velocity.y > 0.0, "normal jump remains available after menu confirmation")
+	await _key(KEY_SPACE)
+	_check(not InputMap.has_action("Jump") and player.velocity.y <= 0.0, "space no longer triggers gameplay jump after menu confirmation")
 	for frame in 65:
 		await physics_frame
 

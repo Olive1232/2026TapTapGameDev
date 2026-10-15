@@ -1,0 +1,279 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/rooms/room_exit_trigger.gd" id="exit"]
+
+[sub_resource type="BoxShape3D" id="ShopVolume"]
+size = Vector3(71, 100, 190)
+
+[sub_resource type="BoxShape3D" id="MainVolume"]
+size = Vector3(62.5, 100, 190)
+
+[sub_resource type="BoxShape3D" id="EntryVolume"]
+size = Vector3(49.2, 100, 94.5)
+
+[sub_resource type="BoxShape3D" id="CleaningVolume"]
+size = Vector3(46.2, 100, 94.5)
+
+[sub_resource type="BoxShape3D" id="DeepVolume"]
+size = Vector3(71.1, 100, 94.5)
+
+[sub_resource type="BoxShape3D" id="GalleryVolume"]
+size = Vector3(166.5, 100, 95.5)
+
+[sub_resource type="BoxShape3D" id="ShopExitShape"]
+size = Vector3(2, 12, 8)
+
+[sub_resource type="BoxShape3D" id="MainExitShopShape"]
+size = Vector3(2, 12, 8)
+
+[sub_resource type="BoxShape3D" id="MainExitEntryShape"]
+size = Vector3(2, 14, 12)
+
+[sub_resource type="BoxShape3D" id="EntryExitMainShape"]
+size = Vector3(2, 14, 12)
+
+[sub_resource type="BoxShape3D" id="EntryExitCleaningShape"]
+size = Vector3(2, 16, 6.5)
+
+[sub_resource type="BoxShape3D" id="CleaningExitEntryShape"]
+size = Vector3(2, 16, 6.5)
+
+[sub_resource type="BoxShape3D" id="CleaningExitDeepShape"]
+size = Vector3(2, 16, 6.2)
+
+[sub_resource type="BoxShape3D" id="DeepExitCleaningShape"]
+size = Vector3(2, 16, 6.2)
+
+[sub_resource type="BoxShape3D" id="EntryExitGalleryShape"]
+size = Vector3(14, 14, 2)
+
+[sub_resource type="BoxShape3D" id="GalleryExitEntryShape"]
+size = Vector3(14, 14, 2)
+
+[sub_resource type="BoxShape3D" id="CleaningExitGalleryShape"]
+size = Vector3(34, 16, 2)
+
+[sub_resource type="BoxShape3D" id="GalleryExitCleaningShape"]
+size = Vector3(34, 14, 2)
+
+[node name="SoulEggZones" type="Node3D"]
+metadata/_editor_description = "灵魂鸡蛋：六条连接通道两端的 12 个离房判定区。Regions 内的体积只用于尸体归属，不产生碰撞。"
+
+[node name="Regions" type="Node3D" parent="."]
+
+[node name="Shop" type="Area3D" parent="Regions"]
+position = Vector3(-114.5, 10, 5)
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Regions/Shop"]
+shape = SubResource("ShopVolume")
+
+[node name="Main" type="Area3D" parent="Regions"]
+position = Vector3(-47.75, 10, 5)
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Regions/Main"]
+shape = SubResource("MainVolume")
+
+[node name="Entry" type="Area3D" parent="Regions"]
+position = Vector3(8.100000000000001, 10, -42.75)
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Regions/Entry"]
+shape = SubResource("EntryVolume")
+
+[node name="Cleaning" type="Area3D" parent="Regions"]
+position = Vector3(55.800000000000004, 10, -42.75)
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Regions/Cleaning"]
+shape = SubResource("CleaningVolume")
+
+[node name="Deep" type="Area3D" parent="Regions"]
+position = Vector3(114.45, 10, -42.75)
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Regions/Deep"]
+shape = SubResource("DeepVolume")
+
+[node name="Gallery" type="Area3D" parent="Regions"]
+position = Vector3(66.75, 10, 52.25)
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Regions/Gallery"]
+shape = SubResource("GalleryVolume")
+
+[node name="ShopExit" type="Area3D" parent="."]
+position = Vector3(-81, 7, -9.8)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"shop"
+room_direction = Vector3(-1, 0, 0)
+room_volume_path = NodePath("../Regions/Shop/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="ShopExit"]
+shape = SubResource("ShopExitShape")
+
+[node name="MainExitShop" type="Area3D" parent="."]
+position = Vector3(-75.5, 7, -12.5)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"main"
+room_direction = Vector3(1, 0, 0)
+room_volume_path = NodePath("../Regions/Main/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="MainExitShop"]
+shape = SubResource("MainExitShopShape")
+
+[node name="MainExitEntry" type="Area3D" parent="."]
+position = Vector3(-23, 8, -17)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"main"
+room_direction = Vector3(-1, 0, 0)
+room_volume_path = NodePath("../Regions/Main/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="MainExitEntry"]
+shape = SubResource("MainExitEntryShape")
+
+[node name="EntryExitMain" type="Area3D" parent="."]
+position = Vector3(-10.5, 8, -17)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"entry"
+room_direction = Vector3(1, 0, 0)
+room_volume_path = NodePath("../Regions/Entry/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="EntryExitMain"]
+shape = SubResource("EntryExitMainShape")
+
+[node name="EntryExitCleaning" type="Area3D" parent="."]
+position = Vector3(24.2, 9, -17.5)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"entry"
+room_direction = Vector3(-1, 0, 0)
+room_volume_path = NodePath("../Regions/Entry/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="EntryExitCleaning"]
+shape = SubResource("EntryExitCleaningShape")
+
+[node name="CleaningExitEntry" type="Area3D" parent="."]
+position = Vector3(38.3, 9, -17.5)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"cleaning"
+room_direction = Vector3(1, 0, 0)
+room_volume_path = NodePath("../Regions/Cleaning/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="CleaningExitEntry"]
+shape = SubResource("CleaningExitEntryShape")
+
+[node name="CleaningExitDeep" type="Area3D" parent="."]
+position = Vector3(73.5, 10, -23.3)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"cleaning"
+room_direction = Vector3(-1, 0, 0)
+room_volume_path = NodePath("../Regions/Cleaning/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="CleaningExitDeep"]
+shape = SubResource("CleaningExitDeepShape")
+
+[node name="DeepExitCleaning" type="Area3D" parent="."]
+position = Vector3(83.5, 10, -23.3)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"deep"
+room_direction = Vector3(1, 0, 0)
+room_volume_path = NodePath("../Regions/Deep/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="DeepExitCleaning"]
+shape = SubResource("DeepExitCleaningShape")
+
+[node name="EntryExitGallery" type="Area3D" parent="."]
+position = Vector3(14, 8, 0)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"entry"
+room_direction = Vector3(0, 0, -1)
+room_volume_path = NodePath("../Regions/Entry/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="EntryExitGallery"]
+shape = SubResource("EntryExitGalleryShape")
+
+[node name="GalleryExitEntry" type="Area3D" parent="."]
+position = Vector3(14, 8, 6)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"gallery"
+room_direction = Vector3(0, 0, 1)
+room_volume_path = NodePath("../Regions/Gallery/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="GalleryExitEntry"]
+shape = SubResource("GalleryExitEntryShape")
+
+[node name="CleaningExitGallery" type="Area3D" parent="."]
+position = Vector3(60, 9, -2)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"cleaning"
+room_direction = Vector3(0, 0, -1)
+room_volume_path = NodePath("../Regions/Cleaning/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="CleaningExitGallery"]
+shape = SubResource("CleaningExitGalleryShape")
+
+[node name="GalleryExitCleaning" type="Area3D" parent="."]
+position = Vector3(60, 8, 7.5)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("exit")
+room_id = &"gallery"
+room_direction = Vector3(0, 0, 1)
+room_volume_path = NodePath("../Regions/Gallery/Shape")
+
+[node name="Shape" type="CollisionShape3D" parent="GalleryExitCleaning"]
+shape = SubResource("GalleryExitCleaningShape")
+

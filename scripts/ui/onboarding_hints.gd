@@ -7,11 +7,12 @@ const COMPLETE := "complete"
 const FONT := preload("res://resources/ui/game_font.tres")
 const INK := Color(0.95, 0.95, 0.88)
 const ACCENT := Color(1.0, 0.82, 0.42)
-const PANEL_SIZE := Vector2(496, 156)
+const PANEL_SIZE := Vector2(352, 156)
 @export_range(0.5, 3.0, 0.1) var blink_period := 1.4
 var _stage := COMPLETE
 var _elapsed := 0.0
 var _pulse := 1.0
+@onready var _bottom_text: BottomText = get_node_or_null("../BottomText") as BottomText
 
 
 func _ready() -> void:
@@ -44,7 +45,7 @@ func _process(delta: float) -> void:
 
 
 func _refresh_visibility() -> void:
-	visible = _stage != COMPLETE and not get_tree().paused
+	visible = _stage != COMPLETE and not get_tree().paused and (not is_instance_valid(_bottom_text) or not _bottom_text.is_dialogue_active())
 
 
 func _belongs_to_world(node: Node) -> bool:
@@ -71,7 +72,10 @@ func _on_corpse_grabbed(corpse: Node3D) -> void:
 ## 位于底部文字上方，不覆盖准星、任务或金币；最小窗口仍完整显示。
 func get_panel_rect() -> Rect2:
 	var width := PANEL_SIZE.x if _stage == CONTROLS else 216.0
-	return Rect2(Vector2(floorf((size.x - width) * 0.5), size.y - 270.0), Vector2(width, PANEL_SIZE.y))
+	var top := size.y - 270.0
+	if is_instance_valid(_bottom_text) and _bottom_text.visible:
+		top = minf(top, _bottom_text.get_panel_rect().position.y - PANEL_SIZE.y - 14.0)
+	return Rect2(Vector2(floorf((size.x - width) * 0.5), maxf(12.0, top)), Vector2(width, PANEL_SIZE.y))
 
 
 func _draw() -> void:
@@ -87,11 +91,9 @@ func _draw() -> void:
 	var origin := panel.position
 	if _stage == CONTROLS:
 		_draw_wasd(origin + Vector2(38, 17))
-		_draw_key(Rect2(origin + Vector2(204, 48), Vector2(100, 34)), "空格", 19)
-		_draw_mouse(origin + Vector2(388, 16), false)
+		_draw_mouse(origin + Vector2(258, 16), false)
 		_draw_caption("移动", origin + Vector2(92, 136))
-		_draw_caption("跳跃", origin + Vector2(254, 136))
-		_draw_caption("攻击", origin + Vector2(414, 136))
+		_draw_caption("攻击", origin + Vector2(284, 136))
 	else:
 		_draw_mouse(origin + Vector2(82, 16), true)
 		_draw_caption("捡起老鼠", origin + Vector2(108, 136))

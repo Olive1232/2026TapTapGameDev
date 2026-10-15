@@ -90,7 +90,7 @@ func load_game() -> Dictionary:
 	var result := SaveGame.read_save()
 	if not result.ok:
 		return result
-	return _enter_game(result.coins, result.upgrades, result.level, result.opened_gates, result.upgrade_levels, result.tutorial_stage)
+	return _enter_game(result.coins, result.upgrades, result.level, result.opened_gates, result.upgrade_levels, result.tutorial_stage, result.dialogue_progress)
 
 
 func get_purchased_upgrades() -> Dictionary:
@@ -132,12 +132,18 @@ func get_tutorial_stage() -> String:
 	return hints.get_stage() if hints != null else "complete"
 
 
-func _enter_game(coins: int, upgrades: Dictionary = {}, level: String = "world", opened_gates: Dictionary = {}, upgrade_levels: Dictionary = {}, tutorial_stage: String = "complete") -> Dictionary:
+func get_dialogue_progress() -> Dictionary:
+	var scene := get_tree().current_scene
+	var dialogue := scene.get_node_or_null("WorldDialogue") if scene != null else null
+	return dialogue.get_progress() if dialogue != null else SaveGame.empty_dialogue_progress()
+
+
+func _enter_game(coins: int, upgrades: Dictionary = {}, level: String = "world", opened_gates: Dictionary = {}, upgrade_levels: Dictionary = {}, tutorial_stage: String = "complete", dialogue_progress: Dictionary = {}) -> Dictionary:
 	if _transitioning:
 		return {"ok": false, "message": "正在进入游戏..."}
 	var previous := Wallet.total
 	Wallet.set_total(coins)
-	var result := _change_scene(SAVE_LEVELS[level], upgrades, opened_gates, upgrade_levels, tutorial_stage)
+	var result := _change_scene(SAVE_LEVELS[level], upgrades, opened_gates, upgrade_levels, tutorial_stage, dialogue_progress)
 	if not result.ok:
 		Wallet.set_total(previous)
 	return result
@@ -151,10 +157,10 @@ func return_to_main_menu() -> Dictionary:
 func reset_current_game() -> Dictionary:
 	if not is_in_game():
 		return {"ok": false, "message": "当前不在游戏中。"}
-	return _change_scene(get_tree().current_scene.scene_file_path, {}, {}, {}, get_tutorial_stage())
+	return _change_scene(get_tree().current_scene.scene_file_path, {}, {}, {}, get_tutorial_stage(), get_dialogue_progress())
 
 
-func _change_scene(path: String, upgrades: Dictionary = {}, opened_gates: Dictionary = {}, upgrade_levels: Dictionary = {}, tutorial_stage: String = "complete") -> Dictionary:
+func _change_scene(path: String, upgrades: Dictionary = {}, opened_gates: Dictionary = {}, upgrade_levels: Dictionary = {}, tutorial_stage: String = "complete", dialogue_progress: Dictionary = {}) -> Dictionary:
 	if _transitioning:
 		return {"ok": false, "message": "正在切换场景..."}
 	_transitioning = true
@@ -169,16 +175,19 @@ func _change_scene(path: String, upgrades: Dictionary = {}, opened_gates: Dictio
 	# 场景离开时可能正在顿帧，避免把慢速状态带到主菜单或新游戏。
 	Engine.time_scale = 1.0
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	_finish_transition(upgrades.duplicate(), opened_gates.duplicate(), upgrade_levels.duplicate(), tutorial_stage)
+	_finish_transition(upgrades.duplicate(), opened_gates.duplicate(), upgrade_levels.duplicate(), tutorial_stage, dialogue_progress.duplicate())
 	return {"ok": true, "message": ""}
 
 
-func _finish_transition(upgrades: Dictionary, opened_gates: Dictionary, upgrade_levels: Dictionary, tutorial_stage: String) -> void:
+func _finish_transition(upgrades: Dictionary, opened_gates: Dictionary, upgrade_levels: Dictionary, tutorial_stage: String, dialogue_progress: Dictionary) -> void:
 	await get_tree().scene_changed
 	var scene := get_tree().current_scene
 	var hints := scene.get_node_or_null("HUD/OnboardingHints")
 	if hints != null:
 		hints.restore_stage(tutorial_stage)
+	var dialogue := scene.get_node_or_null("WorldDialogue")
+	if dialogue != null:
+		dialogue.restore_progress(dialogue_progress)
 	if not LevelProgress.restore(scene, opened_gates):
 		push_error("无法恢复关卡进度，请检查机关的固定存档编号与配置。")
 	if not upgrades.is_empty() or not upgrade_levels.is_empty():

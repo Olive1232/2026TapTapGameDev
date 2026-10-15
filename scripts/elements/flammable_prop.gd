@@ -15,6 +15,7 @@ extends StaticBody3D
 	set(value):
 		blocks_movement = value
 		_update_geometry()
+@export var climbable := true
 
 @onready var element: ElementComponent = $ElementComponent
 var _material: StandardMaterial3D
@@ -37,6 +38,8 @@ func _update_geometry() -> void:
 	$Shape.shape = shape
 	$Shape.position.y = size.y * 0.5
 	$ElementComponent.position.y = size.y * 0.5
+	if not Engine.is_editor_hint():
+		element.set_flame_coverage(size)
 	_material = StandardMaterial3D.new()
 	_material.albedo_color = tint
 	_material.roughness = 0.9
@@ -83,3 +86,11 @@ func take_hit(info: HitInfo) -> void:
 
 func get_hit_center() -> Vector3:
 	return global_position + Vector3.UP * size.y * 0.5
+
+
+func can_climb() -> bool:
+	return climbable and blocks_movement and not is_queued_for_deletion()
+
+
+func get_climb_top() -> Vector3:
+	return to_global(Vector3(0, size.y, 0))

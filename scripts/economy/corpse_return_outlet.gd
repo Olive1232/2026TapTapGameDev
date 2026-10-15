@@ -109,4 +109,4 @@ func moving_count() -> int:
 
 
 func _update_sign() -> void:
-	$Sign.text = "尸体出口\n离开任一房间后自动回收" if _enabled else "尸体出口\n购买自动入洞升级后启用"
+	$Sign.text = "尸体出口\n离开房间后自动回收" if _enabled else "尸体出口\n购买灵魂鸡蛋后启用"

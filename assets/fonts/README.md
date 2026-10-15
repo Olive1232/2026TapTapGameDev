@@ -9,3 +9,5 @@
 `fusion_pixel_12px_proportional_zh_hans.otf` 为缝合像素字体的 12px 比例宽度简体中文版本，来自 [TakWolf 官方发行 2026.09.25](https://github.com/TakWolf/fusion-pixel-font/releases/tag/2026.09.25)，文件未修改。SHA-256：`e84b6d1ab8f2e25084761eb61c88b373bf1fa0b0c5e9b559d5b1d90e4d658c86`。
 
 字体按 SIL Open Font License 1.1 分发，许可见 `ofl_fusion_pixel.txt`，发行包内的上游许可保存在 `licenses/fusion_pixel/`。字体配置为 `resources/ui/pixel_font.tres`，仅供底部文字组件使用；关闭抗锯齿、MSDF、亚像素定位、系统回退与自动过采样，按 24px（12px 的两倍）显示，使用最近邻纹理采样。菜单及世界标牌继续使用原字体。
+
+像素字库缺少的生僻字（例如对白中的“辘”）回退到随项目分发的 `game_font.tres`，不依赖操作系统字体，也不改写对白原文。

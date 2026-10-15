@@ -1,6 +1,8 @@
-[gd_resource type="FontVariation" format=3]
+[gd_resource type="FontVariation" format=3 uid="uid://c5lhsib8cgo2n"]
 
-[ext_resource type="FontFile" path="res://assets/fonts/fusion_pixel_12px_proportional_zh_hans.otf" id="font"]
+[ext_resource type="FontVariation" uid="uid://devl8p2neeq6s" path="res://resources/ui/game_font.tres" id="fallback"]
+[ext_resource type="FontFile" uid="uid://dq5ah3kx2gkbr" path="res://assets/fonts/fusion_pixel_12px_proportional_zh_hans.otf" id="font"]
 
 [resource]
+fallbacks = Array[Font]([ExtResource("fallback")])
 base_font = ExtResource("font")

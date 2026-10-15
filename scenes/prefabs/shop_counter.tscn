@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_counter.tscn" id="base"]
+
+[node name="Counter" instance=ExtResource("base")]
+editor_description = "交付台面：原点放在地面，Socket 是商品吸附点。用于整套商店中替换 Counter，保持节点名；独立摆放只提供拿放，不结算购买。"
+
+[node name="Sign" parent="." index="3"]
+text = "放商品 → 挥剑命中店长"

@@ -9,6 +9,7 @@ radius = 0.6
 size = Vector3(0.8, 0.5, 0.7)
 tint = Color(0.25, 0.5, 0.12, 1)
 blocks_movement = false
+climbable = false
 
 [node name="ElementComponent" parent="." index="1"]
 burn_duration = 3.0

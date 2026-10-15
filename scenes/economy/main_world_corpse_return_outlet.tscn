@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/economy/corpse_return_outlet.tscn" id="outlet"]
+
+[node name="CorpseReturnOutlet" instance=ExtResource("outlet")]
+room_paths = Array[NodePath]([NodePath("../SoulEggZones/ShopExit"), NodePath("../SoulEggZones/MainExitShop"), NodePath("../SoulEggZones/MainExitEntry"), NodePath("../SoulEggZones/EntryExitMain"), NodePath("../SoulEggZones/EntryExitCleaning"), NodePath("../SoulEggZones/CleaningExitEntry"), NodePath("../SoulEggZones/CleaningExitDeep"), NodePath("../SoulEggZones/DeepExitCleaning"), NodePath("../SoulEggZones/EntryExitGallery"), NodePath("../SoulEggZones/GalleryExitEntry"), NodePath("../SoulEggZones/CleaningExitGallery"), NodePath("../SoulEggZones/GalleryExitCleaning")])
+

@@ -9,13 +9,18 @@ signal room_left(room: Node3D)
 @export var room_bounds := AABB(Vector3(0, -5, -12), Vector3(18, 14, 24))
 ## 有真实地图地板时按脚下地板划分房间，避免包围盒重叠误收另一房间。
 @export var room_floor_path: NodePath
+## 原始模型共用地板碰撞时，使用独立房间体积划分回收归属。
+@export var room_volume_path: NodePath
 var _room_floor: StaticBody3D
+var _room_volume: CollisionShape3D
 var _entered_from_room: Dictionary = {}
 
 
 func _ready() -> void:
 	if not room_floor_path.is_empty():
 		_room_floor = get_node_or_null(room_floor_path) as StaticBody3D
+	if not room_volume_path.is_empty():
+		_room_volume = get_node_or_null(room_volume_path) as CollisionShape3D
 	collision_layer = 0
 	collision_mask = CollisionLayers.PLAYER
 	monitorable = false
@@ -41,6 +46,11 @@ func _on_exited(body: Node3D) -> void:
 
 
 func contains_corpse(corpse: Corpse) -> bool:
+	if not room_volume_path.is_empty():
+		if not is_instance_valid(_room_volume) or _room_volume.disabled or not _room_volume.shape is BoxShape3D:
+			return false
+		var size: Vector3 = _room_volume.shape.size
+		return AABB(-size * 0.5, size).has_point(_room_volume.to_local(corpse.global_position))
 	if room_floor_path.is_empty():
 		return room_bounds.has_point(to_local(corpse.global_position))
 	if not is_instance_valid(_room_floor):

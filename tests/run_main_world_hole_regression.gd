@@ -86,6 +86,8 @@ func _run() -> void:
 	await scene_changed
 	_rat = load("res://resources/enemies/monster_rat.tres")
 	_world = current_scene
+	# 首次剧情会等待左键；本专项只检查常规吞入与两秒结算。
+	_world.get_node("WorldDialogue").restore_progress({"shop_visited": true, "hole_introduced": true})
 	_hole = _world.get_node("Hole")
 	_player = _world.get_node("Player")
 	_camera = _player.get_node("Camera3D")

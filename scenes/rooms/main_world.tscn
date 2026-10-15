@@ -11,6 +11,23 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/onboarding_hints.tscn" id="9_onboarding"]
 [ext_resource type="PackedScene" path="res://scenes/environment/main_world_lighting.tscn" id="10_lighting"]
 [ext_resource type="PackedScene" uid="uid://chole00000001" path="res://scenes/economy/hole.tscn" id="11_hole"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/torch.tscn" id="12_4e057"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/flammable_vines.tscn" id="13_ftn7i"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shopkeeper.tscn" id="15_h24ri"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_booth.tscn" id="16_jaxdf"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_counter.tscn" id="17_6qd45"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_charged_throw.tscn" id="18_xqlbi"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_corpse_return.tscn" id="19_qaudl"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_corpse_value.tscn" id="20_jhoda"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_golden_coin.tscn" id="21_musv6"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/rat_spawner.tscn" id="22_n76ho"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_mirror.tscn" id="22_y7bs8"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/shop_shelf_oil.tscn" id="23_dsgrk"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/lift_gate.tscn" id="24_6qd45"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/weight_platform.tscn" id="25_xqlbi"]
+[ext_resource type="PackedScene" path="res://scenes/environment/shop_passage_steps.tscn" id="26_xqlbi"]
+[ext_resource type="PackedScene" path="res://scenes/economy/main_world_soul_egg_zones.tscn" id="27_jhoda"]
+[ext_resource type="PackedScene" path="res://scenes/economy/main_world_corpse_return_outlet.tscn" id="28_musv6"]
 
 [sub_resource type="CylinderShape3D" id="HoleSwallowShape"]
 height = 8.0
@@ -25,6 +42,7 @@ script = ExtResource("5_world")
 
 [node name="Player" parent="." unique_id=1918942854 instance=ExtResource("4_player")]
 transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -28.5, 3.44, -1.5)
+max_step_height = 0.6
 
 [node name="MapScale" type="Node3D" parent="." unique_id=2017246654]
 transform = Transform3D(15, 0, 0, 0, 15, 0, 0, 0, 15, 0, 0, 0)
@@ -75,6 +93,7 @@ swallow_radius = 9.5
 player_fall_radius = 9.5
 coin_landing_radius = 13.9
 coin_landing_points = Array[NodePath]([NodePath("../CoinLandingPoints/Center"), NodePath("../CoinLandingPoints/North"), NodePath("../CoinLandingPoints/South")])
+corpse_return_outlet_path = NodePath("../CorpseReturnOutlet")
 
 [node name="Rim" parent="Hole" index="0"]
 visible = false
@@ -119,5 +138,104 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.6, 2.328, -21)
 
 [node name="South" type="Marker3D" parent="CoinLandingPoints" unique_id=848957237]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.6, 2.328, -18)
+
+[node name="Torch" parent="." unique_id=1232848228 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.450354, 3.175507, -9.745237)
+
+[node name="Shopkeeper" parent="." unique_id=1962818175 instance=ExtResource("15_h24ri")]
+transform = Transform3D(-0.89636135, 0, 0.44332415, 0, 1, 0, -0.44332415, 0, -0.89636135, -86.382996, 1.8149924, 6.0604386)
+
+[node name="Booth" parent="." unique_id=257800957 instance=ExtResource("16_jaxdf")]
+transform = Transform3D(-0.89879405, 0, 0.43837112, 0, 1, 0, -0.43837112, 0, -0.89879405, -84.739334, 1.8149927, 2.602518)
+
+[node name="Counter" parent="." unique_id=1278164938 instance=ExtResource("17_6qd45")]
+transform = Transform3D(-0.88620365, 0, 0.46329594, 0, 1, 0, -0.46329594, 0, -0.88620365, -85.854774, 1.8149935, 5.065074)
+
+[node name="ChargedThrowShelf" parent="." unique_id=528128636 instance=ExtResource("18_xqlbi")]
+transform = Transform3D(-0.84056664, 0, 0.5417082, 0, 1, 0, -0.5417082, 0, -0.84056664, -89.789116, 1.8149931, 3.9985723)
+
+[node name="CorpseReturnShelf" parent="." unique_id=662184711 instance=ExtResource("19_qaudl")]
+transform = Transform3D(0.809017, 0, -0.58778524, 0, 1, 0, 0.58778524, 0, 0.809017, -91.66349, 1.814993, 2.7503154)
+
+[node name="CorpseValueShelf" parent="." unique_id=496862281 instance=ExtResource("20_jhoda")]
+transform = Transform3D(0.7880108, 0, 0.6156615, 0, 1, 0, -0.6156615, 0, 0.7880108, -82.295235, 1.8149931, 5.36448)
+
+[node name="GoldenCoinShelf" parent="." unique_id=1863895775 instance=ExtResource("21_musv6")]
+transform = Transform3D(0.656059, 0, 0.75470954, 0, 1, 0, -0.75470954, 0, 0.656059, -80.381836, 1.8149925, 3.8063254)
+
+[node name="MirrorShelf" parent="." unique_id=1978096191 instance=ExtResource("22_y7bs8")]
+transform = Transform3D(0.64278764, 0, -0.76604444, 0, 1, 0, 0.76604444, 0, 0.64278764, -81.14747, 1.8246992, 0.84923816)
+
+[node name="Shelf" parent="." unique_id=90976680 instance=ExtResource("23_dsgrk")]
+transform = Transform3D(-0.65605897, 0, 0.7547096, 0, 1, 0, -0.7547096, 0, -0.65605897, -83.04017, 1.8149934, -1.4277698)
+
+[node name="RatSpawner" parent="." unique_id=1313307626 instance=ExtResource("22_n76ho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.857696, 3.2565079, -5.35596)
+
+[node name="Torch2" parent="." unique_id=2055093749 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.012514, 3.2565064, -4.3565245)
+
+[node name="Torch3" parent="." unique_id=856352410 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.375168, 3.2565079, -28.099026)
+
+[node name="FlammableVines" parent="." unique_id=1544001774 instance=ExtResource("13_ftn7i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.471731, 3.256506, -17.666225)
+
+[node name="FlammableVines2" parent="." unique_id=1915973289 instance=ExtResource("13_ftn7i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.4028015, 3.2565045, -2.185217)
+
+[node name="LiftGate" parent="." unique_id=1757015182 instance=ExtResource("24_6qd45")]
+transform = Transform3D(0.034899496, 0, -0.99939084, 0, 1, 0, 0.99939084, 0, 0.034899496, 32.84, 6.792, -17.467)
+leaf_size = Vector3(5.43, 6.09, 0.3)
+
+[node name="WeightPlatform" parent="." unique_id=918058287 instance=ExtResource("25_xqlbi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.51839, 10.945112, -7.8626366)
+
+[node name="Torch4" parent="." unique_id=1567869002 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.135628, 3.256503, 26.667816)
+
+[node name="Torch5" parent="." unique_id=145349441 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.991264, 3.256503, 12.610737)
+
+[node name="Torch6" parent="." unique_id=412028730 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 73.18203, 3.256503, 10.1628685)
+
+[node name="RatSpawner2" parent="." unique_id=243860645 instance=ExtResource("22_n76ho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.9191, 3.2565012, 38.493202)
+
+[node name="RatSpawner3" parent="." unique_id=1691100367 instance=ExtResource("22_n76ho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.67308, 3.2565017, 27.245974)
+
+[node name="RatSpawner4" parent="." unique_id=1159634236 instance=ExtResource("22_n76ho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.62361, 3.2565045, 7.538885)
+
+[node name="Torch7" parent="." unique_id=1690920922 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.78522, 6.592495, -8.31349)
+
+[node name="RatSpawner5" parent="." unique_id=826826836 instance=ExtResource("22_n76ho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.12921, 6.592497, -39.80745)
+
+[node name="RatSpawner6" parent="." unique_id=1327906998 instance=ExtResource("22_n76ho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56.708786, 6.5924964, -39.167213)
+
+[node name="Torch8" parent="." unique_id=470207799 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72.795944, 6.592497, -29.612679)
+
+[node name="Torch9" parent="." unique_id=418052286 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.560474, 6.592497, -35.962605)
+
+[node name="Torch10" parent="." unique_id=794422176 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84.58198, 6.592496, -20.66531)
+
+[node name="Torch11" parent="." unique_id=1016776577 instance=ExtResource("12_4e057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84.56129, 6.592498, -26.848835)
+
+[node name="ShopPassageSteps" parent="." unique_id=1022832759 instance=ExtResource("26_xqlbi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -81.66, 1.795, -9.32)
+
+[node name="SoulEggZones" parent="." unique_id=741483208 instance=ExtResource("27_jhoda")]
+
+[node name="CorpseReturnOutlet" parent="." unique_id=1968601464 instance=ExtResource("28_musv6")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -34, 2.875, -28)
 
 [editable path="Hole"]

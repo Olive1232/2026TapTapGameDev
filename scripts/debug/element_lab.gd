@@ -93,7 +93,7 @@ func _update_hud() -> void:
 		state = "燃烧中 · 剩余 %d 次挥砍" % _sword.fire_swings_remaining
 	elif _sword.oiled:
 		state = "已涂油 · 可接触火把重新点燃"
-	_hint.text = "剑：%s\nWASD 移动 · 空格跳跃 · 左键挥剑 · 右键点按拿起/放下 · Esc 菜单 · R 重置房间" % state
+	_hint.text = "剑：%s\nWASD 移动 / 攀爬 · 左键挥剑 · 右键点按拿起/放下 · Esc 菜单 · R 重置房间" % state
 	if _aimed_oil_station() != null:
 		_hint.text += "\n[E] 免费测试涂油"
 

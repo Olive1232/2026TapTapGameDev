@@ -92,6 +92,7 @@ func _run() -> void:
 		_check(scene.get_node("Player/Camera3D/WeaponRig/WeaponPivot/Mount").oiled == expected.upgrades.oil and scene.get_node("Player/Camera3D/Grabber").charged_throw_enabled == expected.upgrades.charged_throw, "legacy v%d restores available player abilities" % version)
 		var hole = scene.get_node("Hole")
 		_check(hole.has_upgrade("mirror") == expected.upgrades.mirror and hole.get_corpse_value_level() == expected.upgrade_levels.corpse_value and hole.get_golden_coin_level() == expected.upgrade_levels.golden_coin, "legacy v%d restores migrated hole upgrades" % version)
+		_check(hole.has_upgrade("corpse_return") == expected.upgrades.corpse_return and scene.get_node("CorpseReturnOutlet").is_enabled() == expected.upgrades.corpse_return, "legacy v%d restores soul egg on the placed outlet" % version)
 		_check(_flow.get_tutorial_stage() == expected.tutorial_stage, "legacy v%d retains tutorial stage" % version)
 		_flow.pause_game()
 		_check(paused and _save.save_game().ok, "legacy v%d can save while paused in new world" % version)

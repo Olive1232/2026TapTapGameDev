@@ -13,4 +13,4 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(_delta: float) -> void:
-	$HUD/Hint.text = "WASD 移动 · 空格跳跃 · 右键点按拿放 · R 重置\n" + (grabber.get_throw_prompt() if grabber.charged_throw_enabled else "E 解锁投掷（仅本调试场景）；正式地图商店售价 200 金币")
+	$HUD/Hint.text = "WASD 移动 / 攀爬 · 右键点按拿放 · R 重置\n" + (grabber.get_throw_prompt() if grabber.charged_throw_enabled else "E 解锁投掷（仅本调试场景）；正式地图商店售价 200 金币")

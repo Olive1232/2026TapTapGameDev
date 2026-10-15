@@ -154,7 +154,7 @@ func _run() -> void:
 	_bind_world()
 	_check(_hints.get_stage() == "complete" and not _hints.visible, "direct world entry has no tutorial")
 	await _enter()
-	_check(_hints.visible and _hints.get_stage() == "controls", "new game starts with movement, jump and attack icons")
+	_check(_hints.visible and _hints.get_stage() == "controls", "new game starts with movement and attack icons")
 	_check(_hints.mouse_filter == Control.MOUSE_FILTER_IGNORE and _hints.get_child_count() == 0, "overlay has no input-blocking children")
 	for dimensions in [Vector2i(960, 640), Vector2i(1280, 720), Vector2i(1920, 1080), Vector2i(2560, 1080)]:
 		root.size = dimensions

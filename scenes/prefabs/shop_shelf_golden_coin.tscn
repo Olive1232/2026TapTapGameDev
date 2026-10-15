@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_shelf.tscn" id="base"]
+[ext_resource type="Resource" path="res://resources/shop/shop_item_golden_coin.tres" id="product"]
+
+[node name="GoldenCoinShelf" instance=ExtResource("base")]
+editor_description = "点金石头货架：原点放在地面。已配置商品；运行时生成可拿起的商品。放在整套商店的根节点下，由商店管理购买与补货。Item Data 可改商品配置。"
+item_data = ExtResource("product")
+
+[node name="Sign" parent="." index="2"]
+text = "点金石头\n10 金币起 · 点金概率升级"

@@ -19,6 +19,14 @@ extends Resource
 @export_group("运动（随机游走）")
 ## 游走速度（米/秒）。
 @export var move_speed: float = 1.6
+## 活体掉入洞后使用与玩家相同的喷飞规则；尸体仍按献祭规则处理。
+@export var hole_ejectable: bool = false
+## 移动前检查脚下及前方支撑，避免自主游走或水平击退越过悬崖。
+@export var avoid_ledges: bool = false
+## 可通过的小落差；超过此高度视为边缘，正常缓坡不受影响。
+@export_range(0.05, 1.0, 0.05) var ledge_max_drop: float = 0.4
+## 身体前缘额外保留的距离（米）。
+@export_range(0.0, 0.5, 0.01) var ledge_margin: float = 0.12
 ## 连续走动的时长范围（秒），到点停下来歇一会。
 @export var walk_duration_min: float = 0.8
 @export var walk_duration_max: float = 2.5
