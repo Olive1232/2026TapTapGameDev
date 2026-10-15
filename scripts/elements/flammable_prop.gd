@@ -1,26 +1,51 @@
+@tool
 class_name FlammableProp
 extends StaticBody3D
 
 ## 藤蔓 / 草占位实体。燃烧结束才移除碰撞，普通剑不能砍开。
-@export var size := Vector3(1.2, 3.2, 0.35)
-@export var tint := Color(0.13, 0.38, 0.16)
-@export var blocks_movement := true
+@export var size := Vector3(1.2, 3.2, 0.35):
+	set(value):
+		size = value.max(Vector3.ONE * 0.01)
+		_update_geometry()
+@export var tint := Color(0.13, 0.38, 0.16):
+	set(value):
+		tint = value
+		_update_geometry()
+@export var blocks_movement := true:
+	set(value):
+		blocks_movement = value
+		_update_geometry()
 
 @onready var element: ElementComponent = $ElementComponent
 var _material: StandardMaterial3D
 
 
 func _ready() -> void:
+	_update_geometry()
+	if not Engine.is_editor_hint():
+		element.ignited.connect(_on_ignited)
+
+
+## 编辑器和运行时共用外形，拖入地图即可预览尺寸；生成节点不写入场景文件。
+func _update_geometry() -> void:
+	if not is_node_ready():
+		return
 	collision_layer = CollisionLayers.WORLD if blocks_movement else 0
 	collision_mask = 0
 	var shape := BoxShape3D.new()
 	shape.size = size
 	$Shape.shape = shape
 	$Shape.position.y = size.y * 0.5
-	element.position.y = size.y * 0.5
+	$ElementComponent.position.y = size.y * 0.5
 	_material = StandardMaterial3D.new()
 	_material.albedo_color = tint
 	_material.roughness = 0.9
+	var previous := get_node_or_null("GeneratedVisuals")
+	if previous != null:
+		previous.free()
+	var visuals := Node3D.new()
+	visuals.name = "GeneratedVisuals"
+	add_child(visuals)
 	# 交错藤条与叶片，碰撞仍是整片障碍。
 	for i in range(5):
 		var stem := MeshInstance3D.new()
@@ -30,7 +55,7 @@ func _ready() -> void:
 		stem.mesh = mesh
 		stem.position = Vector3((i - 2) * size.x * 0.2, size.y * 0.5, sin(i * 2.0) * size.z * 0.25)
 		stem.rotation.z = (i - 2) * 0.045
-		add_child(stem)
+		visuals.add_child(stem)
 		for j in range(4):
 			var leaf := MeshInstance3D.new()
 			var leaf_mesh := BoxMesh.new()
@@ -39,8 +64,9 @@ func _ready() -> void:
 			leaf.mesh = leaf_mesh
 			leaf.position = Vector3(stem.position.x, size.y * (j + 0.6) / 4.0, stem.position.z)
 			leaf.rotation.z = 0.4 if (i + j) % 2 == 0 else -0.4
-			add_child(leaf)
-	element.ignited.connect(_on_ignited)
+			visuals.add_child(leaf)
+	if not Engine.is_editor_hint() and element.burning:
+		_on_ignited()
 
 
 func _on_ignited() -> void:

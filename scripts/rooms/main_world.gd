@@ -8,6 +8,7 @@ var _upgrade_levels := {}
 @onready var _sword: Sword = $Player/Camera3D/WeaponRig/WeaponPivot/Mount
 @onready var _grabber: Grabber = $Player/Camera3D/Grabber
 @onready var _bottom_text: BottomText = $HUD/BottomText
+@onready var _hole: Hole = $Hole
 
 
 func _ready() -> void:
@@ -37,7 +38,7 @@ func get_purchased_upgrade_levels() -> Dictionary:
 	return _upgrade_levels.duplicate()
 
 
-## 商店 / 洞尚未放置时仍完整保留旧档记录，不因换地图抹掉已购能力。
+## 恢复当前实体的能力，并保留尚未迁入的商店 / 尸体出口记录。
 func restore_purchased_upgrades(upgrades: Dictionary, levels: Dictionary = {}) -> bool:
 	var next_upgrades := SaveGame.empty_upgrades()
 	for id in upgrades:
@@ -60,6 +61,12 @@ func restore_purchased_upgrades(upgrades: Dictionary, levels: Dictionary = {}) -
 		_sword.set_sword_data(oiled_sword)
 	if next_upgrades.charged_throw and not _grabber.charged_throw_enabled:
 		_grabber.apply_upgrade("charged_throw")
+	if next_upgrades.mirror and not _hole.has_upgrade("mirror"):
+		_hole.apply_upgrade("mirror")
+	elif not next_upgrades.mirror:
+		_hole.upgrade_tags.erase("mirror")
+	_hole.restore_upgrade_level("corpse_value", next_levels.corpse_value)
+	_hole.restore_upgrade_level("golden_coin", next_levels.golden_coin)
 	_purchased_upgrades = next_upgrades
 	_upgrade_levels = next_levels
 	return true

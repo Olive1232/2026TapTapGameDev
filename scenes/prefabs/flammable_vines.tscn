@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/elements/flammable_vines.tscn" id="base"]
+
+[node name="FlammableVines" instance=ExtResource("base")]
+editor_description = "藤蔓：原点为底部中心。Size 调整宽高厚度；燃烧结束后移除外观与碰撞。"

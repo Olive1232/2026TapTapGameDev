@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://bd2b8m71ej6u5" path="res://scenes/enemies/monster_spawner.tscn" id="base"]
+[ext_resource type="Resource" uid="uid://6g0i0fluavl3" path="res://resources/enemies/monster_rat.tres" id="rat"]
+
+[node name="RatSpawner" instance=ExtResource("base")]
+editor_description = "老鼠刷新点：原点放在地面稍上方。默认上限 5 只、每 3 秒刷新 1 只、半径 2 米。紫色圆柱仅编辑器可见。"
+monster_data = ExtResource("rat")
+max_alive = 5
+spawn_interval = 3.0
+spawn_radius = 2.0

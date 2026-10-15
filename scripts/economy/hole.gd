@@ -45,6 +45,8 @@ const PLAYER_FALL_HEIGHT := 0.35
 @export var debug_print: bool = false
 
 ## 关卡可按实际模型口径适配；旧场景保持原默认值与高度规则。
+## 大坑需要更远的参考距离，使坑沿吸力足以克服地面摩擦。
+@export_range(0.1, 40.0, 0.1) var attraction_reference_distance: float = ATTRACTION_REFERENCE_DISTANCE
 @export_range(0.1, 10.0, 0.1) var swallow_radius: float = SWALLOW_RADIUS
 @export_range(0.1, 10.0, 0.1) var player_fall_radius: float = PLAYER_FALL_RADIUS
 ## 喷币落点到洞心的距离；按实际地形配置，不能用吞噬半径代替洞口尺寸。
@@ -233,7 +235,7 @@ func _attract_items(delta: float) -> void:
 		if dist < 0.001:
 			continue
 		# 越近吸力越大：scale = 参考距离 / 实际距离，并设上限。
-		var scale := clampf(ATTRACTION_REFERENCE_DISTANCE / maxf(dist, 0.1), 0.0, ATTRACTION_MAX_SCALE)
+		var scale := clampf(attraction_reference_distance / maxf(dist, 0.1), 0.0, ATTRACTION_MAX_SCALE)
 		var pull := to_hole.normalized() * scale
 		if body is RigidBody3D:
 			# 必须用速度而不是 global_position：给 RigidBody 直接赋 global_position

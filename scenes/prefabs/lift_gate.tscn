@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/mechanisms/lift_gate.tscn" id="base"]
+
+[node name="LiftGate" instance=ExtResource("base")]
+editor_description = "升降门：原点为关闭时的底部中心。Platform Path 指向对应配重平台；Leaf Size 调整门尺寸，Open Offset 调整升起距离。"

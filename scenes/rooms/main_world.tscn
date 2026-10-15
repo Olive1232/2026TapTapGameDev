@@ -10,6 +10,15 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/bottom_text.tscn" id="8_bottom"]
 [ext_resource type="PackedScene" path="res://scenes/ui/onboarding_hints.tscn" id="9_onboarding"]
 [ext_resource type="PackedScene" path="res://scenes/environment/main_world_lighting.tscn" id="10_lighting"]
+[ext_resource type="PackedScene" uid="uid://chole00000001" path="res://scenes/economy/hole.tscn" id="11_hole"]
+
+[sub_resource type="CylinderShape3D" id="HoleSwallowShape"]
+height = 8.0
+radius = 9.5
+
+[sub_resource type="CylinderShape3D" id="HoleAttractShape"]
+height = 18.0
+radius = 18.0
 
 [node name="MainWorld" type="Node3D" unique_id=1307683830]
 script = ExtResource("5_world")
@@ -58,3 +67,57 @@ layout_mode = 3
 [node name="OnboardingHints" parent="HUD" unique_id=1443645134 instance=ExtResource("9_onboarding")]
 
 [node name="WorldLighting" parent="." unique_id=1379777725 instance=ExtResource("10_lighting")]
+
+[node name="Hole" parent="." unique_id=408587926 instance=ExtResource("11_hole")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -47.46, 2.298, -19.29)
+attraction_reference_distance = 12.0
+swallow_radius = 9.5
+player_fall_radius = 9.5
+coin_landing_radius = 13.9
+coin_landing_points = Array[NodePath]([NodePath("../CoinLandingPoints/Center"), NodePath("../CoinLandingPoints/North"), NodePath("../CoinLandingPoints/South")])
+
+[node name="Rim" parent="Hole" index="0"]
+visible = false
+
+[node name="Pit" parent="Hole" index="1"]
+visible = false
+
+[node name="Blood" parent="Hole" index="2"]
+transform = Transform3D(7.5, 0, 0, 0, 1, 0, 0, 0, 7.5, 0, -3.25, 0)
+
+[node name="SwallowZone" parent="Hole" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.2, 0)
+
+[node name="Shape" parent="Hole/SwallowZone" index="0"]
+shape = SubResource("HoleSwallowShape")
+
+[node name="AttractZone" parent="Hole" index="4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, 0)
+
+[node name="Shape" parent="Hole/AttractZone" index="0"]
+shape = SubResource("HoleAttractShape")
+
+[node name="Bottom" parent="Hole" index="5"]
+visible = false
+collision_layer = 0
+
+[node name="Shape" parent="Hole/Bottom" index="1"]
+disabled = true
+
+[node name="Ambience" parent="Hole" index="6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+unit_size = 12.0
+max_distance = 50.0
+
+[node name="CoinLandingPoints" type="Node3D" parent="." unique_id=917672888]
+
+[node name="Center" type="Marker3D" parent="CoinLandingPoints" unique_id=1485503474]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.6, 2.328, -19.5)
+
+[node name="North" type="Marker3D" parent="CoinLandingPoints" unique_id=1824858673]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.6, 2.328, -21)
+
+[node name="South" type="Marker3D" parent="CoinLandingPoints" unique_id=848957237]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.6, 2.328, -18)
+
+[editable path="Hole"]

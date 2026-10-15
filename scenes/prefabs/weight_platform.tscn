@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/mechanisms/weight_platform.tscn" id="base"]
+
+[node name="WeightPlatform" instance=ExtResource("base")]
+editor_description = "配重平台：原点为平台顶面中心。Platform Size 调整尺寸，Required Corpse Count 设置所需尸体数量。"

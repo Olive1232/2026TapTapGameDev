@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/elements/torch.tscn" id="base"]
+
+[node name="Torch" instance=ExtResource("base")]
+editor_description = "火把：原点放在地面。运行时持续燃烧，可以点燃已涂油的剑和附近可燃物。"
