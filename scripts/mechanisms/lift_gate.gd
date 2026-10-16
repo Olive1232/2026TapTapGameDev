@@ -8,6 +8,8 @@ signal closed
 signal blocked_changed(blocked: bool)
 
 @export_node_path("Node3D") var platform_path: NodePath
+## 门扇可缩入这些固定岩壁 / 门框；玩家、怪物及尸体仍参与防夹检测。
+@export var frame_collision_paths: Array[NodePath] = []
 @export var leaf_size := Vector3(3.0, 3.0, 0.3):
 	set(value):
 		leaf_size = value.max(Vector3.ONE * 0.1)
@@ -101,7 +103,12 @@ func _physics_process(delta: float) -> void:
 		query.motion = motion
 		query.margin = 0.005
 		query.collision_mask = CollisionLayers.WORLD | CollisionLayers.PLAYER | CollisionLayers.ENEMY | CollisionLayers.PICKUP
-		query.exclude = [leaf.get_rid()]
+		var excluded: Array[RID] = [leaf.get_rid()]
+		for path in frame_collision_paths:
+			var frame := get_node_or_null(path) as StaticBody3D
+			if frame != null:
+				excluded.append(frame.get_rid())
+		query.exclude = excluded
 		var space := get_world_3d().direct_space_state
 		# cast_motion 不报告起点已有的重叠，先覆盖出生 / 转移进门扇的情况。
 		blocked = not space.intersect_shape(query, 1).is_empty()

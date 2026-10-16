@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/mechanisms/burnable_rope.gd" id="rope"]
+[ext_resource type="Script" path="res://scripts/elements/element_component.gd" id="element"]
+
+[node name="Rope" type="StaticBody3D"]
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("rope")
+
+[node name="Shape" type="CollisionShape3D" parent="."]
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+
+[node name="ElementComponent" type="Area3D" parent="."]
+collision_layer = 32
+collision_mask = 32
+script = ExtResource("element")
+burn_duration = 2.0
+flame_scale = 0.65
+
+[node name="Shape" type="CollisionShape3D" parent="ElementComponent"]

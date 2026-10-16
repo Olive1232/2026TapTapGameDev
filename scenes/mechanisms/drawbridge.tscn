@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/mechanisms/drawbridge.gd" id="bridge"]
+[ext_resource type="PackedScene" path="res://scenes/mechanisms/burnable_rope.tscn" id="rope"]
+[ext_resource type="Font" path="res://resources/ui/game_font.tres" id="font"]
+
+[node name="Drawbridge" type="Node3D"]
+script = ExtResource("bridge")
+editor_description = "吊桥：原点为近岸铰链，放下后沿本地 -Z 方向延伸。默认竖起；烧断地锚绳索后放下。Persistence Id 用于保存断绳状态。"
+
+[node name="Hinge" type="AnimatableBody3D" parent="."]
+rotation = Vector3(1.5707964, 0, 0)
+collision_layer = 1
+collision_mask = 0
+sync_to_physics = false
+
+[node name="Shape" type="CollisionShape3D" parent="Hinge"]
+
+[node name="Rope" parent="." instance=ExtResource("rope")]
+
+[node name="Sign" type="Label3D" parent="."]
+text = "绳索\n用火烧断，放下吊桥"
+font = ExtResource("font")
+font_size = 28
+pixel_size = 0.007
+billboard = 1
+

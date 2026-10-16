@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/mechanisms/drawbridge.tscn" id="bridge"]
+
+[node name="Drawbridges" type="Node3D"]
+editor_description = "两处原始裂隙的可燃绳索吊桥，均从西岸向东放下。"
+
+[node name="UpperBridge" parent="." instance=ExtResource("bridge")]
+position = Vector3(64, 6.5925, -23.3)
+rotation = Vector3(0, -1.5707964, 0)
+deck_size = Vector3(3.4, 0.22, 8)
+persistence_id = &"world.upper_rift.rope"
+
+[node name="LowerBridge" parent="." instance=ExtResource("bridge")]
+position = Vector3(58, 3.2565, 33)
+rotation = Vector3(0, -1.5707964, 0)
+deck_size = Vector3(3, 0.22, 10.2)
+persistence_id = &"world.lower_rift.rope"

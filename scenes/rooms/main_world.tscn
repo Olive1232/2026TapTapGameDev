@@ -29,6 +29,7 @@
 [ext_resource type="PackedScene" path="res://scenes/economy/main_world_soul_egg_zones.tscn" id="27_jhoda"]
 [ext_resource type="PackedScene" path="res://scenes/economy/main_world_corpse_return_outlet.tscn" id="28_musv6"]
 [ext_resource type="PackedScene" path="res://scenes/environment/main_world_rift_recovery.tscn" id="29_musv6"]
+[ext_resource type="PackedScene" path="res://scenes/environment/main_world_drawbridges.tscn" id="30_y7bs8"]
 
 [sub_resource type="CylinderShape3D" id="HoleSwallowShape"]
 height = 8.0
@@ -172,6 +173,7 @@ transform = Transform3D(-0.65605897, 0, 0.7547096, 0, 1, 0, -0.7547096, 0, -0.65
 
 [node name="RatSpawner" parent="." unique_id=1313307626 instance=ExtResource("22_n76ho")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.857696, 3.2565079, -5.35596)
+max_alive = 1
 
 [node name="Torch2" parent="." unique_id=2055093749 instance=ExtResource("12_4e057")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.012514, 3.2565064, -4.3565245)
@@ -180,13 +182,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.012514, 3.2565064, -4.3565
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.375168, 3.2565079, -28.099026)
 
 [node name="FlammableVines" parent="." unique_id=1544001774 instance=ExtResource("13_ftn7i")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.471731, 3.256506, -17.666225)
+transform = Transform3D(0.5424777, 0, -0.8400702, 0, 1, 0, 0.8400702, 0, 0.5424777, 27.383207, 3.256506, -18.3753)
+size = Vector3(3.42, 3.36, 0.35)
+respawn_delay = 3.0
 
 [node name="FlammableVines2" parent="." unique_id=1915973289 instance=ExtResource("13_ftn7i")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.4028015, 3.2565045, -2.185217)
+transform = Transform3D(0.9607543, 0, 0.27740085, 0, 1, 0, -0.27740085, 0, 0.9607543, 15.1505375, 3.2565045, -2.301279)
+size = Vector3(4.57, 6.64, 0.35)
 
 [node name="LiftGate" parent="." unique_id=1757015182 instance=ExtResource("24_6qd45")]
 transform = Transform3D(0.034899496, 0, -0.99939084, 0, 1, 0, 0.99939084, 0, 0.034899496, 32.84, 6.792, -17.467)
+platform_path = NodePath("../WeightPlatform")
+frame_collision_paths = Array[NodePath]([NodePath("../MapScale/Collision/Mesh01")])
 leaf_size = Vector3(5.43, 6.09, 0.3)
 
 [node name="WeightPlatform" parent="." unique_id=918058287 instance=ExtResource("25_xqlbi")]
@@ -203,21 +210,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 73.18203, 3.256503, 10.162868
 
 [node name="RatSpawner2" parent="." unique_id=243860645 instance=ExtResource("22_n76ho")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.9191, 3.2565012, 38.493202)
+max_alive = 1
 
 [node name="RatSpawner3" parent="." unique_id=1691100367 instance=ExtResource("22_n76ho")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.67308, 3.2565017, 27.245974)
+max_alive = 1
 
 [node name="RatSpawner4" parent="." unique_id=1159634236 instance=ExtResource("22_n76ho")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.62361, 3.2565045, 7.538885)
+max_alive = 1
 
 [node name="Torch7" parent="." unique_id=1690920922 instance=ExtResource("12_4e057")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.78522, 6.592495, -8.31349)
 
 [node name="RatSpawner5" parent="." unique_id=826826836 instance=ExtResource("22_n76ho")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.12921, 6.592497, -39.80745)
+max_alive = 1
 
 [node name="RatSpawner6" parent="." unique_id=1327906998 instance=ExtResource("22_n76ho")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56.708786, 6.5924964, -39.167213)
+max_alive = 1
 
 [node name="Torch8" parent="." unique_id=470207799 instance=ExtResource("12_4e057")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72.795944, 6.592497, -29.612679)
@@ -237,8 +249,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -81.66, 1.795, -9.32)
 [node name="SoulEggZones" parent="." unique_id=741483208 instance=ExtResource("27_jhoda")]
 
 [node name="CorpseReturnOutlet" parent="." unique_id=1968601464 instance=ExtResource("28_musv6")]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -34, 2.875, -28)
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -28, 2.875, -28)
 
 [node name="RiftRecovery" parent="." unique_id=1120494996 instance=ExtResource("29_musv6")]
+
+[node name="Drawbridges" parent="." unique_id=866211622 instance=ExtResource("30_y7bs8")]
 
 [editable path="Hole"]

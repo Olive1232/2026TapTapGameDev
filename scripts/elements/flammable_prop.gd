@@ -16,15 +16,49 @@ extends StaticBody3D
 		blocks_movement = value
 		_update_geometry()
 @export var climbable := true
+## 燃烧销毁后等待多少秒在原位刷新；0 秒表示永不刷新。
+@export_range(0.0, 3600.0, 0.1, "or_greater", "suffix:s") var respawn_delay: float = 0.0
 
 @onready var element: ElementComponent = $ElementComponent
 var _material: StandardMaterial3D
+var _waiting_for_respawn := false
+var _respawn_remaining := 0.0
 
 
 func _ready() -> void:
 	_update_geometry()
+	set_physics_process(false)
 	if not Engine.is_editor_hint():
+		element.destroy_parent_on_burn_down = false
 		element.ignited.connect(_on_ignited)
+		element.burned_down.connect(_on_burned_down)
+
+
+func _on_burned_down() -> void:
+	if respawn_delay <= 0.0:
+		queue_free()
+		return
+	_waiting_for_respawn = true
+	_respawn_remaining = respawn_delay
+	element.extinguish()
+	# 禁用元素节点会一并移出物理检测，等待期间不能传火或被重新点燃。
+	element.process_mode = Node.PROCESS_MODE_DISABLED
+	$Shape.set_deferred("disabled", true)
+	hide()
+	set_physics_process(true)
+
+
+func _physics_process(delta: float) -> void:
+	_respawn_remaining -= delta
+	if _respawn_remaining > 0.0:
+		return
+	_respawn_remaining = 0.0
+	_waiting_for_respawn = false
+	set_physics_process(false)
+	_material.albedo_color = tint
+	$Shape.set_deferred("disabled", false)
+	element.process_mode = Node.PROCESS_MODE_INHERIT
+	show()
 
 
 ## 编辑器和运行时共用外形，拖入地图即可预览尺寸；生成节点不写入场景文件。
@@ -77,6 +111,8 @@ func _on_ignited() -> void:
 
 
 func take_hit(info: HitInfo) -> void:
+	if _waiting_for_respawn:
+		return
 	if info.tags.has("fire"):
 		var at := global_position
 		if is_instance_valid(info.source):
@@ -89,7 +125,7 @@ func get_hit_center() -> Vector3:
 
 
 func can_climb() -> bool:
-	return climbable and blocks_movement and not is_queued_for_deletion()
+	return climbable and blocks_movement and not _waiting_for_respawn and not is_queued_for_deletion()
 
 
 func get_climb_top() -> Vector3:

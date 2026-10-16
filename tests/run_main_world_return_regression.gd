@@ -185,6 +185,38 @@ func _test_exit(name: String, enabled: bool) -> void:
 		_check(root.get_node("Wallet").total == 0, "settled coins still require contact pickup")
 
 
+func _test_outlet_handoff() -> void:
+	await _fresh(true)
+	var corpses: Array = []
+	for monster_id in ["rat", "cockroach"]:
+		var corpse = load("res://scenes/enemies/corpse.tscn").instantiate()
+		corpse.setup(load("res://resources/enemies/monster_" + monster_id + ".tres"))
+		corpse.position = ROOM_POINTS[&"cleaning"] + Vector3.RIGHT * corpses.size() * 2.0
+		_world.add_child(corpse)
+		corpses.append(corpse)
+	await _frames(120)
+	_check(corpses.all(func(corpse): return corpse.sleeping and not corpse.freeze), "real room corpses settle before return without freezing the fixture")
+	corpses[0].sleeping = false
+	corpses[0].linear_velocity = Vector3.RIGHT
+	var ids := corpses.map(func(corpse): return corpse.get_instance_id())
+	var values := corpses.map(func(corpse): return corpse.value)
+	_outlet._on_room_left(_world.get_node("SoulEggZones/CleaningExitEntry"))
+	await _frames(1)
+	_check(_transfers.size() == 2 and _transfers.all(func(entry): return ids.has(entry.id)), "awake and sleeping corpses both transfer without cloning")
+	# 不只检查信号发出瞬间的坐标：等物理引擎更新重叠后仍应先从小洞移出。
+	await _frames(30)
+	var spawn: Vector3 = _outlet.get_node("SpawnPoint").global_position
+	_check(corpses.all(func(corpse): return is_instance_valid(corpse) and corpse.global_position.distance_to(spawn) < 2.0), "returned corpses remain visibly near the small outlet for the first half second")
+	_check(_outlet.moving_count() == 2 and corpses.all(func(corpse): return not _hole.is_in_attraction_range(corpse)), "outlet drives corpses before handing them to main hole attraction")
+	_check(not _hole.has_pending() and root.get_node("CoinPool").active_count() == 0, "return does not immediately offer corpses or produce coins")
+	for index in corpses.size():
+		if is_instance_valid(corpses[index]):
+			_check(corpses[index].get_instance_id() == ids[index] and corpses[index].value == values[index], "physical outlet movement preserves original corpse identity and value")
+	await _frames(600)
+	_check(corpses.all(func(corpse): return not is_instance_valid(corpse)) and _outlet.moving_count() == 0 and root.get_node("CoinPool").active_count() > 0, "outlet movement subsequently hands off to attraction, offering and physical coins")
+	_check(root.get_node("Wallet").total == 0, "automatic return still requires coin pickup")
+
+
 func _run() -> void:
 	await process_frame
 	root.get_node("SaveGame").save_path = "/tmp/taptap-main-world-return-save.json"
@@ -193,7 +225,9 @@ func _run() -> void:
 	_check(_outlet._rooms.size() == 12 and _outlet.room_paths.size() == 12, "six passages have twelve connected room entrances")
 	_check(not _outlet.is_enabled() and _hole.can_apply_upgrade("corpse_return"), "outlet is initially disabled and soul egg can be purchased")
 	var distance: float = Vector2(_outlet.global_position.x - _hole.global_position.x, _outlet.global_position.z - _hole.global_position.z).length()
-	_check(distance > _hole.player_fall_radius + 1.5 and distance < 18.0, "outlet sits on solid ground beside the original hole")
+	var attraction_radius: float = _hole.get_node("AttractZone/Shape").shape.radius
+	_check(distance > attraction_radius + _outlet.move_speed and distance < attraction_radius + 6.0, "small outlet leaves at least one second of movement before main hole attraction")
+	await _test_outlet_handoff()
 	await _test_exit("ShopExit", false)
 	var names: Array[String] = []
 	for room in _outlet._rooms:

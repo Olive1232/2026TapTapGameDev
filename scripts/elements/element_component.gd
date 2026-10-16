@@ -19,6 +19,8 @@ const Sound := preload("res://scripts/shared/world_sound.gd")
 
 var burning := false
 var burn_remaining := 0.0
+## 可重复刷新的宿主接管烧毁后的销毁与恢复；其他实体仍直接释放。
+var destroy_parent_on_burn_down := true
 var _spread_remaining := 0.0
 var _flame: Node3D
 var _flame_coverage := Vector3.ZERO
@@ -63,7 +65,7 @@ func _on_area_entered(area: Area3D) -> void:
 
 
 func ignite() -> bool:
-	if burning or not tags.has("flammable") or is_queued_for_deletion():
+	if burning or not tags.has("flammable") or is_queued_for_deletion() or process_mode == Node.PROCESS_MODE_DISABLED:
 		return false
 	burning = true
 	burn_remaining = burn_duration
@@ -107,7 +109,8 @@ func _physics_process(delta: float) -> void:
 			else:
 				Sound.play_one_shot(self, BURN_DOWN_SOUND)
 				burned_down.emit()
-				get_parent().queue_free()
+				if destroy_parent_on_burn_down:
+					get_parent().queue_free()
 
 
 func _clear_path(source: Node3D, from: Vector3) -> bool:

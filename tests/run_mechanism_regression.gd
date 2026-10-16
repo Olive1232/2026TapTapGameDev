@@ -93,10 +93,39 @@ func _run() -> void:
 	await _test_momentary_and_obstruction()
 	await _test_early_goal_arrival()
 	await _test_portability()
+	await _test_placed_world()
 	paused = false
 	Engine.time_scale = 1.0
 	print("MECHANISM REGRESSION RESULT: passed=%d failed=%d" % [_passed, _failed])
 	quit(0 if _failed == 0 else 1)
+
+
+func _test_placed_world() -> void:
+	root.get_node("GameFlow").start_new_game()
+	await scene_changed
+	_room = current_scene
+	_player = _room.get_node("Player")
+	_player.set_physics_process(false)
+	_room.get_node("WorldDialogue").restore_progress({"shop_visited": true, "hole_introduced": true})
+	for node in _room.get_children():
+		if node.has_method("get_alive_count"):
+			node.enabled = false
+	_platform = _room.get_node("WeightPlatform")
+	_gate = _room.get_node("LiftGate")
+	await _frames(10)
+	_check(_gate.get_node_or_null(_gate.platform_path) == _platform and _gate.is_closed() and not _platform.is_pressed(), "placed world gate is linked to its empty weight platform")
+	var obstruction = _new_corpse(_gate.get_node("Leaf/Shape").global_position)
+	obstruction.freeze = true
+	var corpse = _new_corpse(_platform.global_position + Vector3.UP * 0.5)
+	await _wait(1.0)
+	_check(_platform.is_pressed() and _platform.get_corpse_count() == 1, "real corpse settles on the placed world platform")
+	_check(_gate.is_blocked() and _gate.is_closed(), "configured rock frame exclusion still protects a corpse inside the gate")
+	obstruction.queue_free()
+	await _wait(3.0)
+	_check(_gate.is_open() and not _gate.is_blocked() and _gate.get_node("Leaf").position.is_equal_approx(_gate.open_offset), "placed gate retracts into its rock frame after obstruction clears")
+	corpse.queue_free()
+	await _wait(0.5)
+	_check(not _platform.is_pressed() and _platform.get_corpse_count() == 0 and _gate.is_open(), "placed gate keeps its default open latch after platform load is removed")
 
 
 func _test_real_throw_and_passage() -> void:

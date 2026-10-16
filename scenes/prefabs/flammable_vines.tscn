@@ -3,4 +3,4 @@
 [ext_resource type="PackedScene" path="res://scenes/elements/flammable_vines.tscn" id="base"]
 
 [node name="FlammableVines" instance=ExtResource("base")]
-editor_description = "藤蔓：原点为底部中心。Size 调整宽高厚度；燃烧结束后移除外观与碰撞。"
+editor_description = "藤蔓：原点为底部中心。Size 调整宽高厚度；燃烧结束后移除外观与碰撞。Respawn Delay 设置烧毁后原位刷新的等待秒数，0 秒永不刷新。"

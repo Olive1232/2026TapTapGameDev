@@ -1,6 +1,6 @@
 extends RefCounted
 
-## 只记录已经永久开通的机关；编号不依赖节点名、路径或地图坐标。
+## 记录机关不可逆的进度（永久开通、吊桥断绳）；编号不依赖节点名、路径或地图坐标。
 const GROUP := &"persistent_gates"
 const UNMATCHED_META := &"unmatched_gate_progress"
 const MAX_GATES := 32
