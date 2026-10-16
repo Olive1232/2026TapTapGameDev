@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/rat_visual.gd" id="visual"]
+
+[node name="RatVisual" type="Node3D"]
+script = ExtResource("visual")

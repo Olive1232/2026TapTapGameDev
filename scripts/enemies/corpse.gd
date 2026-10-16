@@ -78,7 +78,20 @@ func _apply_visual() -> void:
 	mesh.mesh = box
 	_material = StandardMaterial3D.new()
 	_material.albedo_color = color
+	_material.roughness = 0.95
 	mesh.material_override = _material
+	var previous := get_node_or_null("Model")
+	if previous != null:
+		remove_child(previous)
+		previous.queue_free()
+	mesh.visible = _pending_data == null or _pending_data.visual_scene == null
+	if _pending_data != null and _pending_data.visual_scene != null:
+		var model := _pending_data.visual_scene.instantiate() as Node3D
+		model.name = "Model"
+		model.position.y = -box.size.y * 0.5
+		if model.has_method("configure"):
+			model.configure(box.size, _material, true)
+		add_child(model)
 	# 碰撞体跟着走，这样尸体能被地形挡住。
 	var shape := get_node_or_null("Shape") as CollisionShape3D
 	if shape != null:
@@ -183,6 +196,7 @@ func relocate_for_return(at: Transform3D) -> bool:
 
 func _on_ignited() -> void:
 	_material.albedo_color = _material.albedo_color.darkened(0.4)
+	_material.emission = _material.emission.darkened(0.4)
 
 
 func _on_burned_down() -> void:

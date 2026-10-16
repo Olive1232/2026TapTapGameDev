@@ -62,11 +62,23 @@ func _apply_visual() -> void:
 	box.size = data.body_size
 	_material = StandardMaterial3D.new()
 	_material.albedo_color = data.body_color
+	_material.roughness = 0.92
 	box.material = _material
 	_mesh.mesh = box
 	_mesh.material_override = _material
 	# 网格抬高到半身高，让底面贴地。
 	_mesh.position = Vector3(0, data.body_size.y * 0.5, 0)
+	var previous := get_node_or_null("Model")
+	if previous != null:
+		remove_child(previous)
+		previous.queue_free()
+	_mesh.visible = data.visual_scene == null
+	if data.visual_scene != null:
+		var model := data.visual_scene.instantiate() as Node3D
+		model.name = "Model"
+		if model.has_method("configure"):
+			model.configure(data.body_size, _material, false)
+		add_child(model)
 	if _shape != null:
 		var bs := BoxShape3D.new()
 		bs.size = data.body_size

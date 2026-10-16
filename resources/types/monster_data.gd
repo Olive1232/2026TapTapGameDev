@@ -44,8 +44,10 @@ extends Resource
 ## 尸体重量，影响玩家扛着它时的移速。1.0 为基准。
 @export var corpse_weight: float = 1.0
 
-@export_group("表现（占位）")
-## 怪物本体的占位胶囊尺寸（等美术白模）。
+@export_group("表现")
+## 可选表现；支持 configure(尺寸, 毛色材质, 是否尸体)，不包含物理碰撞。
+@export var visual_scene: PackedScene
+## 怪物本体的碰撞尺寸；表现随此尺寸缩放。
 @export var body_size: Vector3 = Vector3(0.5, 0.35, 0.7)
 @export var body_color: Color = Color(0.35, 0.25, 0.2)
 ## 尸体外观。留空则沿用 body_size / body_color。
