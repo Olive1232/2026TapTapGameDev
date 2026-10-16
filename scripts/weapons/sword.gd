@@ -4,7 +4,7 @@ extends Node3D
 ## 第一人称剑。挂在 Player/Camera3D/WeaponRig/WeaponPivot 下。
 ##
 ## 负责三件事：
-##   1. 程序化横扫动画（暂无美术动画，用旋转插值代替）
+##   1. 左手持剑、蓄势横扫与收招动画
 ##   2. Area3D 伤害区域的开合与命中检测
 ##   3. 打击反馈：顿帧、击退、闪白、火花
 ##
@@ -65,11 +65,25 @@ var interaction_locked := false
 ## 挂点位置（相机空间），来自场景里本节点的初始 position。
 ## 最终位置 = 挂点 + SwordData.view_offset，让策划能只靠数据调构图。
 var _mount_position: Vector3 = Vector3.ZERO
+var _default_blade: Mesh
+var _motion_time := 0.0
+var _ambient_offset := Vector3.ZERO
+var _ambient_roll := 0.0
+var _movement_blend := 0.0
+var _view_sway := Vector2.ZERO
+var _previous_view := Vector2.ZERO
+var _holder: CharacterBody3D
+var _view_camera: Camera3D
 
 
 func _ready() -> void:
 	# 必须在任何赋值之前记下场景里的挂点位置，之后 position 会被数据改写。
 	_mount_position = position
+	_default_blade = _mesh.mesh
+	_holder = _owner_of_swing() as CharacterBody3D
+	if _holder != null:
+		_view_camera = _holder.get_node_or_null("Camera3D") as Camera3D
+		_previous_view = Vector2(_view_camera.rotation.x, _holder.rotation.y) if _view_camera != null else Vector2.ZERO
 	_ensure_data()
 	_setup_hitbox()
 	_apply_data()
@@ -121,6 +135,9 @@ func _apply_data() -> void:
 	if data == null:
 		return
 	_apply_view_offset()
+	var blade := data.swing_mesh if data.swing_mesh != null else _default_blade
+	if _mesh.mesh != blade:
+		_mesh.mesh = blade
 	if _hit_shape and _hit_shape.shape is BoxShape3D:
 		var box := _hit_shape.shape as BoxShape3D
 		# 伤害区域比视觉剑身更厚（1.4 宽）也更长（前后各留余量），
@@ -153,6 +170,7 @@ func _setup_hitbox() -> void:
 
 
 func _process(delta: float) -> void:
+	_update_hand_motion(delta)
 	if auto_swing_in_editor and Engine.is_editor_hint():
 		_tick(delta)
 		return
@@ -160,6 +178,25 @@ func _process(delta: float) -> void:
 		_tick(delta)
 	else:
 		_drive_animation(0.0)
+
+
+func _update_hand_motion(delta: float) -> void:
+	_motion_time += delta
+	var moving := 0.0
+	if is_instance_valid(_holder) and _holder.is_on_floor() and not _holder.is_climbing():
+		moving = clampf(Vector2(_holder.velocity.x, _holder.velocity.z).length() / maxf(_holder.move_speed, 0.1), 0.0, 1.0)
+	_movement_blend = lerpf(_movement_blend, moving, 1.0 - exp(-delta * 9.0))
+	var cycle := _motion_time * 11.0
+	_ambient_offset = Vector3(sin(cycle) * 0.006, cos(cycle * 2.0) * 0.009, 0) * _movement_blend
+	_ambient_offset.y += sin(_motion_time * 1.7) * 0.0025
+	if is_instance_valid(_view_camera) and delta > 0.0:
+		var current := Vector2(_view_camera.rotation.x, _holder.rotation.y)
+		var turn := Vector2(angle_difference(_previous_view.x, current.x), angle_difference(_previous_view.y, current.y)) / delta
+		_previous_view = current
+		var target := turn.clamp(Vector2.ONE * -2.0, Vector2.ONE * 2.0)
+		_view_sway = _view_sway.lerp(target, 1.0 - exp(-delta * 12.0))
+	_ambient_offset += Vector3(-_view_sway.y * 0.008, _view_sway.x * 0.006, 0)
+	_ambient_roll = sin(cycle) * _movement_blend * 0.6 - _view_sway.y * 0.8
 
 
 func _physics_process(_delta: float) -> void:
@@ -259,9 +296,9 @@ func _drive_animation(_rest_ratio: float) -> void:
 
 
 func _drive_animation_windup(p: float) -> void:
-	# 静止角 → 蓄力角，用 ease out 让起手干脆。
-	var e := ease(p, 0.4)
-	_apply_pose(lerpf(data.rest_yaw, data.windup_yaw, e), data.rest_pitch)
+	var e := smoothstep(0.0, 1.0, p)
+	_apply_pose(lerpf(data.rest_yaw, data.windup_yaw, e), data.rest_pitch + 7.0 * e,
+		Vector3(-0.045, 0.025, 0.055) * e, -12.0 * e)
 
 
 func _drive_animation_swing(p: float) -> void:
@@ -269,19 +306,23 @@ func _drive_animation_swing(p: float) -> void:
 	var e := ease_out_cubic(p)
 	_apply_pose(
 		lerpf(data.windup_yaw, data.followthrough_yaw, e),
-		data.rest_pitch + data.swing_pitch * e
+		data.rest_pitch + lerpf(7.0, data.swing_pitch, e),
+		Vector3(-0.045, 0.025, 0.055).lerp(Vector3(0.085, -0.055, -0.045), e),
+		lerpf(-12.0, 17.0, e)
 	)
 
 
 func _drive_animation_recover(p: float) -> void:
-	var e := ease(p, 0.6)
+	var e := smoothstep(0.0, 1.0, p)
 	_apply_pose(
 		lerpf(data.followthrough_yaw, data.rest_yaw, e),
-		data.rest_pitch + data.swing_pitch * (1.0 - e)
+		data.rest_pitch + data.swing_pitch * (1.0 - e),
+		Vector3(0.085, -0.055, -0.045) * (1.0 - e) + Vector3(0, -0.012, 0.016) * sin(p * PI),
+		17.0 * (1.0 - e) - sin(p * PI) * 3.0
 	)
 
 
-func _apply_pose(yaw_deg: float, pitch_deg: float) -> void:
+func _apply_pose(yaw_deg: float, pitch_deg: float, hand_offset: Vector3 = Vector3.ZERO, wrist_roll: float = 0.0) -> void:
 	if data == null:
 		return
 	# 三个轴分别写在不同节点上，互不覆盖：
@@ -293,8 +334,9 @@ func _apply_pose(yaw_deg: float, pitch_deg: float) -> void:
 	# 单独同步锚点，不转 WeaponPivot，否则模型会叠加两次 yaw。
 	if _hit_anchor != null:
 		_hit_anchor.rotation.y = deg_to_rad(yaw_deg)
+	position = _mount_position + data.view_offset + hand_offset + _ambient_offset
 	rotation.x = deg_to_rad(pitch_deg)
-	rotation.z = deg_to_rad(data.rest_roll)
+	rotation.z = deg_to_rad(data.rest_roll + wrist_roll + _ambient_roll)
 	# 伤害区域继承 HitAnchor 的横扫，只额外加固定下倾角。
 	# 剑的俯仰、自转、构图位置仍不影响判定范围。
 	if _hit_rig != null:

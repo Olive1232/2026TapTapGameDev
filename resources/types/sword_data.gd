@@ -64,7 +64,7 @@ signal view_changed
 		view_changed.emit()
 ## 剑身自转（roll，度）——绕剑身长轴转，决定"刃朝哪边"。
 ## 0 = 剑刃朝上下（竖直的刀身）；90 = 剑刃朝左右（平躺的刀身）。
-## 目前全程恒定（挥砍过程中不变化）。
+## 作为手腕的基础角度；挥砍时会叠加少量转腕，收招后回到此角度。
 @export var rest_roll: float = 0.0:
 	set(value):
 		rest_roll = value
@@ -79,7 +79,7 @@ signal view_changed
 @export var upgrade_tags: PackedStringArray = PackedStringArray()
 
 @export_group("表现")
-## 第一人称手部模型。留空则用场景里的占位方块（见 scenes/player/player.tscn 的 Mount/Pivot/Mesh）。
+## 可替换的刀身网格。留空使用带开刃与剑槽的默认模型；握柄与手套继续保留。
 @export var swing_mesh: Mesh = null
 ## 模型相对**挂点**的位置偏移。位置 = 场景挂点 + 本偏移。
 ## 调剑在画面里的构图只用改这里，不用进场景改 Transform。

@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/elements/element_component.gd" id="4_element"]
 [ext_resource type="AudioStream" path="res://assets/music/走路.mp3" id="5_walk"]
 [ext_resource type="AudioStream" path="res://assets/music/攻击.mp3" id="6_swing"]
+[ext_resource type="Script" path="res://scripts/weapons/sword_model.gd" id="7_model"]
 
 [sub_resource type="BoxShape3D" id="Blade_contact"]
 size = Vector3(0.2, 0.3, 1.8)
@@ -16,18 +17,8 @@ size = Vector3(1.4, 1, 2.4)
 [sub_resource type="BoxMesh" id="BoxMesh_blade"]
 size = Vector3(0.05, 0.12, 1.8)
 
-[sub_resource type="StandardMaterial3D" id="Mat_blade"]
-albedo_color = Color(0.78, 0.8, 0.85, 1)
-metallic = 0.7
-roughness = 0.25
-
 [sub_resource type="BoxMesh" id="BoxMesh_guard"]
 size = Vector3(0.34, 0.06, 0.07)
-
-[sub_resource type="StandardMaterial3D" id="Mat_guard"]
-albedo_color = Color(0.3, 0.24, 0.18, 1)
-metallic = 0.3
-roughness = 0.6
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_body"]
 size = Vector3(1, 2, 1)
@@ -42,6 +33,13 @@ current = true
 fov = 80.0
 
 [node name="WeaponRig" type="Node3D" parent="Camera3D" unique_id=1538534004]
+
+[node name="ViewLight" type="OmniLight3D" parent="Camera3D/WeaponRig"]
+position = Vector3(-0.25, 0.6, -0.15)
+light_color = Color(0.87, 0.91, 1, 1)
+light_energy = 0.8
+light_cull_mask = 2
+omni_range = 4.0
 
 [node name="WeaponPivot" type="Node3D" parent="Camera3D/WeaponRig" unique_id=883115563]
 
@@ -63,16 +61,15 @@ shape = SubResource("BoxShape3D_hit")
 script = ExtResource("2_sword")
 
 [node name="Pivot" type="Node3D" parent="Camera3D/WeaponRig/WeaponPivot/Mount" unique_id=647472966]
+script = ExtResource("7_model")
 
 [node name="Mesh" type="MeshInstance3D" parent="Camera3D/WeaponRig/WeaponPivot/Mount/Pivot" unique_id=649893894]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.1)
 mesh = SubResource("BoxMesh_blade")
-surface_material_override/0 = SubResource("Mat_blade")
 
 [node name="Guard" type="MeshInstance3D" parent="Camera3D/WeaponRig/WeaponPivot/Mount/Pivot" unique_id=1812398805]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.2)
 mesh = SubResource("BoxMesh_guard")
-surface_material_override/0 = SubResource("Mat_guard")
 
 [node name="ElementComponent" type="Area3D" parent="Camera3D/WeaponRig/WeaponPivot/Mount/Pivot"]
 position = Vector3(0, 0, -1.1)
