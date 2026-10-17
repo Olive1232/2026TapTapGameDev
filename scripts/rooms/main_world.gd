@@ -33,19 +33,14 @@ func _ready() -> void:
 		var dialogue := WORLD_DIALOGUE.new()
 		dialogue.name = "WorldDialogue"
 		add_child(dialogue)
-	_update_guidance()
+	_update_shop_messages()
 
 
 func _process(_delta: float) -> void:
-	_update_guidance()
+	_update_shop_messages()
 
 
-func _update_guidance() -> void:
-	var message := "WASD 移动 / 攀爬 · 左键挥剑 · 右键拿放 · Esc 暂停菜单"
-	var throw_prompt := _grabber.get_throw_prompt()
-	if not throw_prompt.is_empty():
-		message += "\n" + throw_prompt
-	_bottom_text.set_message(&"guidance", message, BottomText.GUIDANCE)
+func _update_shop_messages() -> void:
 	_bottom_text.set_message(&"shop_description", _shop.get_context_text(), BottomText.DESCRIPTION)
 	_bottom_text.set_message(&"shop_feedback", _shop.get_status_message(), BottomText.FEEDBACK)
 

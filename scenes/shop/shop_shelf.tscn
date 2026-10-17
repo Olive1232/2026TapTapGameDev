@@ -31,6 +31,7 @@ shape = SubResource("Shape")
 position = Vector3(0, 1.61, 0)
 
 [node name="Sign" type="Label3D" parent="."]
+visible = false
 position = Vector3(0, 2.35, 0)
 billboard = 1
 font_size = 32

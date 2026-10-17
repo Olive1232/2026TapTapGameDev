@@ -77,7 +77,7 @@ func _run() -> void:
 	_check(FileAccess.get_sha256("res://assets/map_origin.glb") == "677077df7b4eb9fbce3c73c83f7aeff59c15d7abf93078ea76091862e345c94d", "source geometry has not changed")
 	_check(scene.get_node("MapScale/Collision").get_child_count() == 2, "original mesh collisions remain configured")
 	_check(scene.get_node("HUD/OnboardingHints").get_stage() == "controls", "new main_world keeps onboarding")
-	_check(not scene.get_node("HUD/BottomText").get_displayed_text().is_empty(), "in-game menu shortcut appears in guidance")
+	_check(not scene.get_node("HUD/BottomText").visible and scene.get_node("HUD/BottomText").get_displayed_text().is_empty(), "main world has no persistent instruction panel")
 	for version in range(1, 8):
 		_write_legacy(version)
 		var expected: Dictionary = _save.read_save()

@@ -288,8 +288,8 @@ func _run() -> void:
 		var stock = _shop.get_node(entry[0])
 		_check(stock.item_data.display_name == entry[1] and stock.item_data.description == entry[2], "product uses design name and description")
 		_check(stock.get_node("Sign").text.contains(entry[2]) and stock.get_item().get_node("Price").text.contains(entry[2]), "world labels include product description")
-	await _key(KEY_G)
-	_check(_wallet.total == 1000, "actual G shortcut supplies purchase budget")
+	_wallet.set_total(1000)
+	_check(_wallet.total == 1000, "test setup supplies purchase budget")
 	await _begin_purchase("CorpseReturnShelf")
 	if _phase == "full":
 		await _save_from_pause()
@@ -372,7 +372,7 @@ func _run() -> void:
 
 func _test_oil_save() -> void:
 	await _enter()
-	await _key(KEY_G)
+	_wallet.set_total(1000)
 	await _begin_purchase("Shelf")
 	await _save_from_pause()
 	_check(_save.read_save().coins == 1000 and not _save.read_save().upgrades.oil, "mid-forge save keeps money and excludes undelivered oil")

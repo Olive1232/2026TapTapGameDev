@@ -10,55 +10,14 @@ const MECHANISM_LAB := "res://scenes/debug/mechanism_lab.tscn"
 ## 存档使用固定入口代号，不执行存档文件提供的任意场景路径。
 const SAVE_LEVELS := {"world": GAME_SCENE, "mechanism_lab": MECHANISM_LAB}
 const LevelProgress := preload("res://scripts/persistence/level_progress.gd")
-const DEBUG_COIN_AMOUNT := 1000
 var _pause_menu: CanvasLayer
 var _transitioning := false
-var _debug_coin_hint: Label
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_pause_menu = load("res://scenes/ui/pause_menu.tscn").instantiate()
 	add_child(_pause_menu)
-	if OS.is_debug_build():
-		var overlay := CanvasLayer.new()
-		overlay.name = "DebugCoins"
-		add_child(overlay)
-		_debug_coin_hint = Label.new()
-		_debug_coin_hint.name = "Hint"
-		_debug_coin_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		overlay.add_child(_debug_coin_hint)
-		_debug_coin_hint.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-		_debug_coin_hint.offset_left = -300.0
-		_debug_coin_hint.offset_right = -20.0
-		_debug_coin_hint.offset_top = 56.0
-		_debug_coin_hint.offset_bottom = 104.0
-		_debug_coin_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		_debug_coin_hint.add_theme_font_size_override("font_size", 16)
-		_debug_coin_hint.add_theme_color_override("font_color", Color(1.0, 0.85, 0.48))
-		_debug_coin_hint.add_theme_color_override("font_outline_color", Color.BLACK)
-		_debug_coin_hint.add_theme_constant_override("outline_size", 3)
-		_debug_coin_hint.hide()
-		EventBus.wallet_changed.connect(_update_debug_coin_hint)
-		_update_debug_coin_hint(Wallet.total, 0)
-
-
-func _process(_delta: float) -> void:
-	if _debug_coin_hint != null:
-		_debug_coin_hint.visible = is_in_game() and not get_tree().paused and not _transitioning
-
-
-func _update_debug_coin_hint(total: int, _delta: int) -> void:
-	_debug_coin_hint.text = "测试：[G] +%d 金币\n当前金币：%d" % [DEBUG_COIN_AMOUNT, total]
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if not OS.is_debug_build() or _transitioning or get_tree().paused or not is_in_game():
-		return
-	if event is InputEventKey and event.pressed and not event.echo:
-		if event.physical_keycode == KEY_G or event.keycode == KEY_G:
-			Wallet.add(DEBUG_COIN_AMOUNT)
-			get_viewport().set_input_as_handled()
 
 
 func _input(event: InputEvent) -> void:

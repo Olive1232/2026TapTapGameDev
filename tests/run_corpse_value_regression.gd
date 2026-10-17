@@ -125,7 +125,7 @@ func _run() -> void:
 	_verify_level(0, 0)
 	var product = _stock().item_data
 	_check(product.display_name == "不点金石头" and product.description == "让尸体更贵" and product.is_supported() and product.purchase_limit == 0, "design product supports unlimited repeatable purchase")
-	await _key(KEY_G)
+	_wallet.set_total(1000)
 	if _phase == "write":
 		for level in range(1, 4):
 			await _buy("CorpseValueShelf")

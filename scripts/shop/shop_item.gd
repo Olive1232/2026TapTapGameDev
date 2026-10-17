@@ -80,7 +80,6 @@ func release(throw_forward: bool = false) -> void:
 	linear_velocity = -_hold_point.global_basis.z * (2.5 if throw_forward else 0.5) if is_instance_valid(_hold_point) else Vector3.ZERO
 	_holder = null
 	_hold_point = null
-	$Price.show()
 
 
 ## 台前放下时自动吸附；同样遵守距离、朝向与墙体遮挡。

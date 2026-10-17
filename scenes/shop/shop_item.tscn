@@ -24,6 +24,7 @@ mesh = SubResource("Jar")
 shape = SubResource("Shape")
 
 [node name="Price" type="Label3D" parent="."]
+visible = false
 position = Vector3(0, 0.55, 0)
 billboard = 1
 font_size = 28

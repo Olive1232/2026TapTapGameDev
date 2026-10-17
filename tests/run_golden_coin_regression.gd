@@ -150,8 +150,7 @@ func _run() -> void:
 	await _enter()
 	_verify_gold(0, 0)
 	_check(_stock().item_data.display_name == "点金石头" and _stock().item_data.description == "可能...也许...有效果吧" and _stock().item_data.is_supported(), "gold product matches design")
-	await _key(KEY_G)
-	await _key(KEY_G)
+	_wallet.set_total(2000)
 	if _phase == "write":
 		for level in range(1, 21):
 			await _buy("GoldenCoinShelf")

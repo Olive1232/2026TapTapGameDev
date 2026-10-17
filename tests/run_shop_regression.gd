@@ -128,7 +128,7 @@ func _run() -> void:
 func _test_items() -> void:
 	await _at_shelf()
 	var item = _shop.shelf.get_item()
-	_check(not item.get_node("Price").visible and _shop.shelf.get_node("Sign").text.contains("5"), "shelf has one clear price label")
+	_check(not item.get_node("Price").visible and not _shop.shelf.get_node("Sign").visible, "products have no floating text labels")
 	var corpse = load("res://scenes/enemies/corpse.tscn").instantiate()
 	_room.add_child(corpse)
 	corpse.freeze = true

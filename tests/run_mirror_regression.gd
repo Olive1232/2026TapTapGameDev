@@ -140,8 +140,7 @@ func _run() -> void:
 	var standalone = load("res://scenes/economy/hole.tscn").instantiate()
 	_check(standalone.corpse_return_outlet_path.is_empty() and standalone.apply_upgrade("mirror") and not standalone.apply_upgrade("mirror") and not standalone.can_apply_upgrade("unknown"), "mirror works independently of corpse return outlet")
 	standalone.free()
-	await _key(KEY_G)
-	await _key(KEY_G)
+	_wallet.set_total(2000)
 	if _phase == "write":
 		await _buy("MirrorShelf")
 		await _buy_other_upgrades()

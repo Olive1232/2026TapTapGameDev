@@ -86,7 +86,6 @@ func _on_shop_entered(body: Node3D) -> void:
 	if _grabber.is_holding():
 		return
 	_ui.play_dialogue(SHOP_INTRO, "店长", PackedStringArray(SHOP_LINES))
-	_ui.set_message(&"rat_task", "赚点钱：去山洞杀两只老鼠，把尸体丢进门口的洞里。", BottomText.GUIDANCE + 1)
 
 
 func _on_corpse_received(_corpse: Corpse) -> void:
@@ -102,7 +101,6 @@ func _on_dialogue_line_changed(source: StringName, index: int, _text: String) ->
 	if source == HOLE_INTRO and index == HOLE_LINES.size() - 1:
 		_hole.set_settlement_paused(false)
 		_hole.force_erupt()
-		_ui.clear_message(&"rat_task")
 
 
 func _on_dialogue_finished(source: StringName) -> void:
