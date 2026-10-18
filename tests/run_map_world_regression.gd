@@ -1,6 +1,6 @@
 extends SceneTree
 
-## 完整 GLB 白模：真实碰撞通行、经济循环、火门、配重门、回收及旧档入口。
+## 历史完整 GLB 白模：真实碰撞通行、经济循环、火门、配重门与回收。
 const Navigation := preload("res://tests/helpers/world_navigation.gd")
 var _passed := 0
 var _failed := 0
@@ -103,6 +103,8 @@ func _route(goal: String) -> bool:
 
 func _run() -> void:
 	await process_frame
+	# 显式选择历史地图夹具；正式入口另由 run_main_world_* 验证。
+	load("res://tests/helpers/legacy_world_fixture.gd").install(self)
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--capture-dir="):
 			_capture_dir = argument.trim_prefix("--capture-dir=")

@@ -128,7 +128,7 @@ func _open_lab() -> void:
 
 
 func _verify_world() -> void:
-	_check(_room.scene_file_path == _flow.GAME_SCENE, "world save restores safe world entrance")
+	_check(_room.scene_file_path == load("res://tests/helpers/legacy_world_fixture.gd").SCENE, "world save restores safe world entrance")
 	_check(_gate.get_child_count() == 0 and _gate.is_persistently_open() and _room.is_gate_open(), "loaded vine bodies and visuals removed")
 	_check(_room.get_node("RatSpawner").enabled and _room.get_node("EntryRatSpawner").enabled and _room.get_node("HUD/Objective").text.contains("东侧房间"), "loaded world updates spawners and gate hint")
 	_check(_events.is_empty() and not _room.is_flow_complete(), "restore does not replay break or reward events")
@@ -169,6 +169,8 @@ func _write_raw(data: Dictionary) -> void:
 
 func _run() -> void:
 	await process_frame
+	# 显式选择历史地图夹具；正式入口另由 run_main_world_* 验证。
+	load("res://tests/helpers/legacy_world_fixture.gd").install(self)
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--data-dir="):
 			_directory = argument.trim_prefix("--data-dir=")
@@ -301,7 +303,7 @@ func _test_ids_and_validation() -> void:
 			legacy.upgrades = {"oil": true, "corpse_return": true, "charged_throw": true}
 		_write_raw(legacy)
 		await _enter(true)
-		_check(_room.scene_file_path == _flow.GAME_SCENE and not _room.is_gate_open() and _wallet.total == 9007199254740993, "legacy v%d keeps exact coins and starts gate closed" % version)
+		_check(_room.scene_file_path == load("res://tests/helpers/legacy_world_fixture.gd").SCENE and not _room.is_gate_open() and _wallet.total == 9007199254740993, "legacy v%d keeps exact coins and starts gate closed" % version)
 		_check(_flow.get_purchased_upgrades() == {"oil": version == 3, "corpse_return": version >= 2, "charged_throw": version >= 2, "mirror": false}, "legacy v%d retains recorded upgrades" % version)
 		_check(_save.save_game().ok and _save.read_save().opened_gates.is_empty(), "legacy migrates only on manual save")
 

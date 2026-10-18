@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" path="res://scripts/mechanisms/drawbridge.gd" id="bridge"]
 [ext_resource type="PackedScene" path="res://scenes/mechanisms/burnable_rope.tscn" id="rope"]
-[ext_resource type="Font" path="res://resources/ui/game_font.tres" id="font"]
 
 [node name="Drawbridge" type="Node3D"]
 script = ExtResource("bridge")
@@ -17,11 +16,4 @@ sync_to_physics = false
 [node name="Shape" type="CollisionShape3D" parent="Hinge"]
 
 [node name="Rope" parent="." instance=ExtResource("rope")]
-
-[node name="Sign" type="Label3D" parent="."]
-text = "绳索\n用火烧断，放下吊桥"
-font = ExtResource("font")
-font_size = 28
-pixel_size = 0.007
-billboard = 1
 

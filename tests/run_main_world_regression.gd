@@ -73,9 +73,28 @@ func _run() -> void:
 	var player := scene.get_node("Player") as CharacterBody3D
 	_check(_flow.is_in_game() and player.is_on_floor(), "main_world is playable and player rests on original floor")
 	_check(player.scale.is_equal_approx(Vector3.ONE) and player.get_parent() == scene, "player retains original size")
-	_check(scene.get_node("MapScale/MapOrigin").scene_file_path == "res://assets/map_origin.glb", "formal world references original GLB")
-	_check(FileAccess.get_sha256("res://assets/map_origin.glb") == "677077df7b4eb9fbce3c73c83f7aeff59c15d7abf93078ea76091862e345c94d", "source geometry has not changed")
-	_check(scene.get_node("MapScale/Collision").get_child_count() == 2, "original mesh collisions remain configured")
+	var model := scene.get_node("MapScale/MapOrigin")
+	_check(model.scene_file_path == "res://assets/main_world_v3.glb", "formal world references v3 GLB")
+	_check(FileAccess.get_sha256("res://assets/main_world_v3.glb") == "84ace4df0d9234594f9b8e4675e3967334824e7aa07935c8de454e86f856df07", "v3 source geometry has not changed")
+	var meshes := model.find_children("*", "MeshInstance3D", true, false)
+	var original_model := (load("res://assets/main_world_v3.glb") as PackedScene).instantiate()
+	var collisions := scene.get_node("MapScale/Collision")
+	_check(collisions.get_child_count() == 4 and meshes.size() == 4, "all four v3 meshes have collisions")
+	for body: StaticBody3D in collisions.get_children():
+		var mesh := model.get_node_or_null(NodePath(body.get_meta("source_mesh"))) as MeshInstance3D
+		_check(mesh != null, "v3 collision identifies an imported source mesh: " + str(body.name))
+		if mesh == null:
+			continue
+		var original_mesh := original_model.get_node(NodePath(body.get_meta("source_mesh"))) as MeshInstance3D
+		_check(mesh.mesh.get_faces() == original_mesh.mesh.get_faces(), "scene preserves original imported geometry: " + str(mesh.name))
+		var shape := body.get_node("Shape").shape as ConcavePolygonShape3D
+		_check(body.transform.is_equal_approx(mesh.transform), "v3 collision matches imported transform: " + str(mesh.name))
+		_check(shape.backface_collision and shape.get_faces() == mesh.mesh.get_faces(), "v3 mesh has matching double-sided triangle collision: " + str(mesh.name))
+	original_model.free()
+	_check(not scene.has_node("PassageRepairs/GalleryRamp"), "gallery has no added ramp")
+	var wall_ray := PhysicsRayQueryParameters3D.create(Vector3(51, 4.8, 10), Vector3(51, 4.8, 0), 1)
+	var wall_hit := player.get_world_3d().direct_space_state.intersect_ray(wall_ray)
+	_check(not wall_hit.is_empty() and wall_hit.collider == collisions.get_node("Mesh01"), "gallery wall uses the original model collision")
 	_check(scene.get_node("HUD/OnboardingHints").get_stage() == "controls", "new main_world keeps onboarding")
 	_check(not scene.get_node("HUD/BottomText").visible and scene.get_node("HUD/BottomText").get_displayed_text().is_empty(), "main world has no persistent instruction panel")
 	for version in range(1, 8):

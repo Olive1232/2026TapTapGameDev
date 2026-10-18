@@ -74,7 +74,6 @@ func _update_geometry() -> void:
 		$Rope.position = (anchor + end) * 0.5
 		$Rope.basis = Basis(Quaternion(Vector3.UP, offset.normalized()))
 		$Rope.length = offset.length()
-	$Sign.position = Vector3(0, 1.7, anchor_distance + 0.35)
 
 
 func _material(color: Color, metallic: float = 0.0) -> StandardMaterial3D:
@@ -101,7 +100,6 @@ func _on_rope_burned_down() -> void:
 	_rope_burned = true
 	_dropping = true
 	_elapsed = 0.0
-	$Sign.hide()
 	# 转动期间关闭桥板碰撞，避免把岸上的玩家夹住或甩进裂隙。
 	$Hinge/Shape.set_deferred("disabled", true)
 	set_physics_process(true)
@@ -151,7 +149,6 @@ func restore_persistent_open() -> void:
 		rope.process_mode = Node.PROCESS_MODE_DISABLED
 		rope.hide()
 		rope.queue_free()
-	$Sign.hide()
 	$Hinge.rotation.x = 0.0
 	$Hinge.reset_physics_interpolation()
 	$Hinge/Shape.set_deferred("disabled", false)

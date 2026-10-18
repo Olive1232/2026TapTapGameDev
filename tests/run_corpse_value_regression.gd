@@ -95,6 +95,8 @@ func _place_stone_and_strike() -> void:
 
 func _run() -> void:
 	await process_frame
+	# 显式选择历史地图夹具；正式入口另由 run_main_world_* 验证。
+	load("res://tests/helpers/legacy_world_fixture.gd").install(self, "res://tests/fixtures/three_room_world.tscn")
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--data-dir="):
 			_directory = argument.trim_prefix("--data-dir=")

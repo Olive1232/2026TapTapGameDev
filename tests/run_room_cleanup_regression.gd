@@ -203,6 +203,8 @@ func _test_floor_overlap() -> void:
 
 func _run() -> void:
 	await process_frame
+	# 显式选择历史地图夹具；正式入口另由 run_main_world_* 验证。
+	load("res://tests/helpers/legacy_world_fixture.gd").install(self, "res://tests/fixtures/three_room_world.tscn")
 	_flow = root.get_node("GameFlow")
 	_wallet = root.get_node("Wallet")
 	_flow.start_new_game()

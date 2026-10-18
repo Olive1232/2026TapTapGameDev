@@ -129,4 +129,11 @@ func can_climb() -> bool:
 
 
 func get_climb_top() -> Vector3:
-	return to_global(Vector3(0, size.y, 0))
+	# 倾斜或旋转后，顶沿的角点会高于中心；脚部越过整个顶沿才能安全跨上去。
+	var top := to_global(Vector3(0, size.y, 0))
+	for x in [-0.5, 0.5]:
+		for z in [-0.5, 0.5]:
+			var corner := to_global(Vector3(size.x * x, size.y, size.z * z))
+			if corner.y > top.y:
+				top = corner
+	return top

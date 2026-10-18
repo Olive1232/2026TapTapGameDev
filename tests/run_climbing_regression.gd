@@ -187,6 +187,26 @@ func _run() -> void:
 	rotated.climbable = false
 	await _frames(8)
 	_check(not _player.is_climbing(), "turning off climbable detaches an existing climber")
+	# 前倾与后倾都会改变身体碰撞距离，单一胸前射线不能稳定抓附。
+	for index in 2:
+		var x := 52.0 + index * 10.0
+		var inclined = _vine(Vector3(x, 0, 0))
+		inclined.rotation.x = deg_to_rad(-30.0 if index == 0 else 30.0)
+		await _place(Vector3(x, 0.55, 2.2))
+		Input.action_press("Up")
+		await _frames(60)
+		_check(_player.is_climbing() and _player.global_position.y > 1.6, "inclined vine attaches and climbs, direction %d" % index)
+		Input.action_release("Up")
+		var height: float = _player.global_position.y
+		await _frames(20)
+		_check(_player.is_climbing() and absf(_player.global_position.y - height) < 0.03, "inclined vine holds height without drifting, direction %d" % index)
+		Input.action_press("Down")
+		await _frames(16)
+		Input.action_release("Down")
+		_check(_player.is_climbing() and _player.global_position.y < height - 0.4, "inclined vine supports descent, direction %d" % index)
+		_key(KEY_E)
+		await _frames(12)
+		_check(not _player.is_climbing() and _player.velocity.y < 0.0, "inclined vine releases into gravity, direction %d" % index)
 	for action in ["Up", "Down", "Left", "Right"]:
 		Input.action_release(action)
 	var grass = load("res://scenes/elements/flammable_grass.tscn").instantiate()

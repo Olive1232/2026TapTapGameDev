@@ -1,6 +1,6 @@
 extends SceneTree
 
-## 四项新版基础规则。使用正式地图碰撞、火把接触与玩家移动。
+## 四项基础规则。使用历史 GLB 地图碰撞、现行火把与玩家组件。
 var _passed := 0
 var _failed := 0
 var _room
@@ -69,6 +69,8 @@ func _capture(name: String, at: Vector3, target: Vector3) -> void:
 
 func _run() -> void:
 	await process_frame
+	# 显式选择历史地图夹具；正式入口另由 run_main_world_* 验证。
+	load("res://tests/helpers/legacy_world_fixture.gd").install(self)
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--capture-dir="):
 			_capture_dir = argument.trim_prefix("--capture-dir=")

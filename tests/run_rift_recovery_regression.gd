@@ -197,7 +197,7 @@ func _run() -> void:
 		var inside := Vector3(67,rift.surface_height,-28) if rift.name == "UpperRift" else Vector3(64,rift.surface_height,20)
 		_check(rift.contains_footprint(inside) and not rift.contains_fall(inside), str(rift.name) + " only triggers below ledge height")
 		_check(rift.contains_fall(inside-Vector3.UP*100), str(rift.name) + " detects deep fast fall")
-	await _walk_off(Vector3(61.5,7.0955,-30), -PI/2.0, "UpperRift", true)
+	await _walk_off(_recovery.get_node("Rifts/UpperRift/Banks/Bank2").global_position, -PI/2.0, "UpperRift", true)
 	await _walk_off(Vector3(72.5,3.7595,21), PI/2.0, "LowerRift", false)
 	await _test_held("res://scenes/enemies/corpse.tscn", "corpse")
 	await _test_held("res://scenes/shop/shop_item.tscn", "product")

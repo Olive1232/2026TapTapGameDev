@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://resources/environment/main_world_rock_material.tres" id="rock"]
+
+[sub_resource type="ConvexPolygonShape3D" id="EntryRampShape"]
+points = PackedVector3Array(0, 0, 0, 2.5, 0, 0, 0, 0, -6.5, 2.5, 0, -6.5, 0, 0.85, 0, 2.5, 0.28, 0, 0, 0.85, -6.5, 2.5, 0.28, -6.5)
+
+[node name="PassageRepairs" type="Node3D"]
+editor_description = "独立坡面修复清扫房入口台阶，保留原模型；回廊维持原有岩壁。"
+
+[node name="EntryRamp" type="StaticBody3D" parent="."]
+position = Vector3(38.2, 5.75, -14.25)
+collision_mask = 0
+
+[node name="Mesh" type="CSGPolygon3D" parent="EntryRamp"]
+polygon = PackedVector2Array(0, 0, 2.5, 0, 2.5, 0.28, 0, 0.85)
+depth = 6.5
+material = ExtResource("rock")
+
+[node name="Shape" type="CollisionShape3D" parent="EntryRamp"]
+shape = SubResource("EntryRampShape")

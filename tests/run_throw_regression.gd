@@ -1,6 +1,6 @@
 extends SceneTree
 
-## 正式商店交易与真实刚体投掷。金币赋值仅用于交易边界夹具。
+## 历史地图夹具中的商店交易与现行刚体投掷。金币赋值仅用于交易边界夹具。
 const PRODUCT := preload("res://resources/shop/shop_item_charged_throw.tres")
 const CORPSE := "res://scenes/enemies/corpse.tscn"
 var _passed := 0
@@ -136,6 +136,8 @@ func _capture(name: String) -> void:
 
 func _run() -> void:
 	await process_frame
+	# 显式选择历史地图夹具；正式入口另由 run_main_world_* 验证。
+	load("res://tests/helpers/legacy_world_fixture.gd").install(self)
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--capture-dir="):
 			_capture_dir = arg.trim_prefix("--capture-dir=")

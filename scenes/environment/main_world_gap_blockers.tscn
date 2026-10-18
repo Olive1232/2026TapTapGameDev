@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[sub_resource type="BoxShape3D" id="GalleryRockGapShape"]
+size = Vector3(10, 2.8, 1)
+
+[node name="GapBlockers" type="Node3D"]
+editor_description = "独立空气墙封住老鼠可钻入的岩石小缝，保留原始模型和模型碰撞。"
+
+[node name="GalleryRockGap" type="StaticBody3D" parent="."]
+position = Vector3(33, 4.5, 30.35)
+collision_layer = 1
+collision_mask = 0
+editor_description = "回廊 RatSpawner3 后方岩缝；底部嵌入地面、两端延伸至岩壁，防止老鼠从底部或侧面钻入。"
+
+[node name="Shape" type="CollisionShape3D" parent="GalleryRockGap"]
+shape = SubResource("GalleryRockGapShape")

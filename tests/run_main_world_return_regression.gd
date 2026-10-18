@@ -1,6 +1,6 @@
 extends SceneTree
 
-## 当前原样地图：真实行走穿越全部入口，验证灵魂鸡蛋的房间隔离和出口献祭。
+## 当前原样地图：真实行走穿越开放入口，封闭岩壁不触发离房回收。
 const ROOM_POINTS := {
 	&"shop": Vector3(-86, 2.3, 2),
 	&"main": Vector3(-53, 3.4, 8),
@@ -98,8 +98,16 @@ func _ground(at: Vector3, floor_y: float) -> Variant:
 	var query := PhysicsShapeQueryParameters3D.new()
 	query.shape = _player.get_node("CollisionShape3D").shape
 	query.collision_mask = 1
-	query.transform = Transform3D(Basis.IDENTITY, position + Vector3.UP * 0.5)
-	return position if space.intersect_shape(query, 1).is_empty() else null
+	# 脚角射线会漏掉坡道接缝位于脚掌中间的凸点，整个人物形状下扫取得实际支撑高度。
+	var lift: float = _player.max_step_height + 0.05
+	query.transform = Transform3D(Basis.IDENTITY, position + Vector3.UP * (0.5 + lift))
+	query.motion = Vector3.DOWN * (lift + 0.05)
+	var fractions := space.cast_motion(query)
+	if fractions[0] >= 1.0:
+		return null
+	query.transform.origin += query.motion * fractions[0] + Vector3.UP * 0.003
+	query.motion = Vector3.ZERO
+	return query.transform.origin - Vector3.UP * 0.5 if space.intersect_shape(query, 1).is_empty() else null
 
 
 func _route(trigger) -> Array:
@@ -185,6 +193,27 @@ func _test_exit(name: String, enabled: bool) -> void:
 		_check(root.get_node("Wallet").total == 0, "settled coins still require contact pickup")
 
 
+func _test_closed_exit(name: String) -> void:
+	await _fresh(true)
+	var trigger = _world.get_node("SoulEggZones/" + name)
+	_check(not trigger.monitoring, name + " is inactive at the original closed wall")
+	var corpses := _corpses()
+	var from_gallery := name == "GalleryExitCleaning"
+	var start := Vector3(51, 3.76, 10) if from_gallery else Vector3(51, 7.1, -10)
+	_player.recover_from_fall(start)
+	_player.rotation.y = 0.0 if from_gallery else PI
+	_player.set_physics_process(true)
+	await _frames(30)
+	Input.action_press("Up")
+	await _frames(120)
+	Input.action_release("Up")
+	await _frames(20)
+	var blocked: bool = _player.global_position.z > 5.8 if from_gallery else _player.global_position.z < 5.0
+	_check(blocked and _player.is_on_floor(), name + " original wall blocks real WASD movement")
+	_check(_events.is_empty() and _transfers.is_empty(), name + " approaching the closed wall never returns corpses")
+	_check(corpses.values().all(func(corpse): return is_instance_valid(corpse)), name + " preserves all room corpses")
+
+
 func _test_outlet_handoff() -> void:
 	await _fresh(true)
 	var corpses: Array = []
@@ -222,7 +251,8 @@ func _run() -> void:
 	root.get_node("SaveGame").save_path = "/tmp/taptap-main-world-return-save.json"
 	root.get_node("GameSettings").settings_path = "/tmp/taptap-main-world-return-settings.cfg"
 	await _fresh(false)
-	_check(_outlet._rooms.size() == 12 and _outlet.room_paths.size() == 12, "six passages have twelve connected room entrances")
+	_check(_outlet._rooms.size() == 12 and _outlet.room_paths.size() == 12, "all twelve authored room entrance references remain")
+	_check(_outlet._rooms.filter(func(room): return room.monitoring).size() == 10, "ten entrances are active while the restored gallery wall has two inactive exits")
 	_check(not _outlet.is_enabled() and _hole.can_apply_upgrade("corpse_return"), "outlet is initially disabled and soul egg can be purchased")
 	var distance: float = Vector2(_outlet.global_position.x - _hole.global_position.x, _outlet.global_position.z - _hole.global_position.z).length()
 	var attraction_radius: float = _hole.get_node("AttractZone/Shape").shape.radius
@@ -233,7 +263,10 @@ func _run() -> void:
 	for room in _outlet._rooms:
 		names.append(room.name)
 	for name in names:
-		await _test_exit(name, true)
+		if name in ["CleaningExitGallery", "GalleryExitCleaning"]:
+			await _test_closed_exit(name)
+		else:
+			await _test_exit(name, true)
 	root.get_node("GameFlow").return_to_main_menu()
 	await scene_changed
 	await _frames()

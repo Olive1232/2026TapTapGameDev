@@ -1,15 +1,15 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cpdc04dxe5vj5"]
 
-[ext_resource type="Script" path="res://scripts/rooms/rift_recovery.gd" id="recovery"]
-[ext_resource type="Script" path="res://scripts/rooms/rift_area.gd" id="rift"]
+[ext_resource type="Script" uid="uid://1wxrxtr77km2" path="res://scripts/rooms/rift_recovery.gd" id="recovery"]
+[ext_resource type="Script" uid="uid://r26tvhd2hf7o" path="res://scripts/rooms/rift_area.gd" id="rift"]
 
-[node name="RiftRecovery" type="Node3D"]
+[node name="RiftRecovery" type="Node3D" unique_id=1406488952]
 script = ExtResource("recovery")
 metadata/_editor_description = "两处原始裂缝的黄屏复位。黄屏渐入后回到安全边缘，再逐渐淡出；Banks 为备用落脚点。"
 
-[node name="Rifts" type="Node3D" parent="."]
+[node name="Rifts" type="Node3D" parent="." unique_id=287354424]
 
-[node name="UpperRift" type="Area3D" parent="Rifts"]
+[node name="UpperRift" type="Area3D" parent="Rifts" unique_id=713032259]
 collision_layer = 0
 collision_mask = 0
 monitoring = false
@@ -17,45 +17,44 @@ monitorable = false
 script = ExtResource("rift")
 surface_height = 6.5925
 
-[node name="Shape" type="CollisionPolygon3D" parent="Rifts/UpperRift"]
-position = Vector3(0, -19.2075, 0)
-rotation = Vector3(1.5707964, 0, 0)
+[node name="Shape" type="CollisionPolygon3D" parent="Rifts/UpperRift" unique_id=300320584]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -19.2075, 0)
 depth = 50.0
 polygon = PackedVector2Array(79.836, -45.981, 65.837, -36.188, 64.157, -27.045, 66.582, -19.768, 68.075, -11.747, 71.993, -3.213, 79.836, -3.213, 79.836, -8.388, 69.94, -17.716, 70.314, -32.27, 79.836, -35.254)
 
-[node name="Banks" type="Node3D" parent="Rifts/UpperRift"]
+[node name="Banks" type="Node3D" parent="Rifts/UpperRift" unique_id=952047135]
 
-[node name="Bank1" type="Marker3D" parent="Rifts/UpperRift/Banks"]
-position = Vector3(63, 7.0955, -39)
+[node name="Bank1" type="Marker3D" parent="Rifts/UpperRift/Banks" unique_id=1280160803]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63, 7.5245, -39)
 
-[node name="Bank2" type="Marker3D" parent="Rifts/UpperRift/Banks"]
-position = Vector3(61.5, 7.0955, -30)
+[node name="Bank2" type="Marker3D" parent="Rifts/UpperRift/Banks" unique_id=1622085038]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.5, 7.5245, -30)
 
-[node name="Bank3" type="Marker3D" parent="Rifts/UpperRift/Banks"]
-position = Vector3(63.5, 7.0955, -20)
+[node name="Bank3" type="Marker3D" parent="Rifts/UpperRift/Banks" unique_id=1276125422]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.5, 7.5245, -20)
 
-[node name="Bank4" type="Marker3D" parent="Rifts/UpperRift/Banks"]
-position = Vector3(65, 7.0955, -12)
+[node name="Bank4" type="Marker3D" parent="Rifts/UpperRift/Banks" unique_id=841699022]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 6.2421, -12)
 
-[node name="Bank5" type="Marker3D" parent="Rifts/UpperRift/Banks"]
-position = Vector3(68.5, 7.0955, -6)
+[node name="Bank5" type="Marker3D" parent="Rifts/UpperRift/Banks" unique_id=233374961]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.5, 6.0068, -6)
 
-[node name="Bank6" type="Marker3D" parent="Rifts/UpperRift/Banks"]
-position = Vector3(83, 7.0955, -40)
+[node name="Bank6" type="Marker3D" parent="Rifts/UpperRift/Banks" unique_id=888998534]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 83, 7.0955, -40)
 
-[node name="Bank7" type="Marker3D" parent="Rifts/UpperRift/Banks"]
-position = Vector3(74, 7.0955, -31)
+[node name="Bank7" type="Marker3D" parent="Rifts/UpperRift/Banks" unique_id=86916495]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 74, 7.0955, -31)
 
-[node name="Bank8" type="Marker3D" parent="Rifts/UpperRift/Banks"]
-position = Vector3(73, 7.0955, -23)
+[node name="Bank8" type="Marker3D" parent="Rifts/UpperRift/Banks" unique_id=1067612392]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 73, 7.0955, -23)
 
-[node name="Bank9" type="Marker3D" parent="Rifts/UpperRift/Banks"]
-position = Vector3(76.5, 7.0955, -14)
+[node name="Bank9" type="Marker3D" parent="Rifts/UpperRift/Banks" unique_id=503987404]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.5, 7.0955, -14)
 
-[node name="Bank10" type="Marker3D" parent="Rifts/UpperRift/Banks"]
-position = Vector3(83, 7.0955, -8)
+[node name="Bank10" type="Marker3D" parent="Rifts/UpperRift/Banks" unique_id=144122843]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 83, 7.0955, -8)
 
-[node name="LowerRift" type="Area3D" parent="Rifts"]
+[node name="LowerRift" type="Area3D" parent="Rifts" unique_id=1172092409]
 collision_layer = 0
 collision_mask = 0
 monitoring = false
@@ -63,48 +62,47 @@ monitorable = false
 script = ExtResource("rift")
 surface_height = 3.2565
 
-[node name="Shape" type="CollisionPolygon3D" parent="Rifts/LowerRift"]
-position = Vector3(0, -22.5435, 0)
-rotation = Vector3(1.5707964, 0, 0)
+[node name="Shape" type="CollisionPolygon3D" parent="Rifts/LowerRift" unique_id=966261268]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -22.5435, 0)
 depth = 50.0
 polygon = PackedVector2Array(55.444, 5.65, 61.354, 23.232, 58.399, 38.01, 62.16, 52.441, 75.862, 52.441, 66.19, 42.307, 66.19, 31.83, 71.563, 27.531, 69.684, 22.158, 65.653, 5.65)
 
-[node name="Banks" type="Node3D" parent="Rifts/LowerRift"]
+[node name="Banks" type="Node3D" parent="Rifts/LowerRift" unique_id=2022162488]
 
-[node name="Bank1" type="Marker3D" parent="Rifts/LowerRift/Banks"]
-position = Vector3(53, 3.7595, 10)
+[node name="Bank1" type="Marker3D" parent="Rifts/LowerRift/Banks" unique_id=1409606864]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 3.7595, 10)
 
-[node name="Bank2" type="Marker3D" parent="Rifts/LowerRift/Banks"]
-position = Vector3(56, 3.7595, 20)
+[node name="Bank2" type="Marker3D" parent="Rifts/LowerRift/Banks" unique_id=1998516680]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 3.7595, 20)
 
-[node name="Bank3" type="Marker3D" parent="Rifts/LowerRift/Banks"]
-position = Vector3(56, 3.7595, 30)
+[node name="Bank3" type="Marker3D" parent="Rifts/LowerRift/Banks" unique_id=1053819743]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 3.7595, 30)
 
-[node name="Bank4" type="Marker3D" parent="Rifts/LowerRift/Banks"]
-position = Vector3(55, 3.7595, 41)
+[node name="Bank4" type="Marker3D" parent="Rifts/LowerRift/Banks" unique_id=282379489]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 3.7595, 41)
 
-[node name="Bank5" type="Marker3D" parent="Rifts/LowerRift/Banks"]
-position = Vector3(59, 3.7595, 47)
+[node name="Bank5" type="Marker3D" parent="Rifts/LowerRift/Banks" unique_id=1738085985]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59, 3.7595, 47)
 
-[node name="Bank6" type="Marker3D" parent="Rifts/LowerRift/Banks"]
-position = Vector3(69, 3.7595, 12)
+[node name="Bank6" type="Marker3D" parent="Rifts/LowerRift/Banks" unique_id=1432785783]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 69, 3.7595, 12)
 
-[node name="Bank7" type="Marker3D" parent="Rifts/LowerRift/Banks"]
-position = Vector3(72.5, 3.7595, 21)
+[node name="Bank7" type="Marker3D" parent="Rifts/LowerRift/Banks" unique_id=12671529]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72.5, 3.7595, 21)
 
-[node name="Bank8" type="Marker3D" parent="Rifts/LowerRift/Banks"]
-position = Vector3(74, 3.7595, 29)
+[node name="Bank8" type="Marker3D" parent="Rifts/LowerRift/Banks" unique_id=494012789]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 74, 3.7595, 29)
 
-[node name="Bank9" type="Marker3D" parent="Rifts/LowerRift/Banks"]
-position = Vector3(69, 3.7595, 37)
+[node name="Bank9" type="Marker3D" parent="Rifts/LowerRift/Banks" unique_id=1788041330]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 69, 3.7595, 37)
 
-[node name="Bank10" type="Marker3D" parent="Rifts/LowerRift/Banks"]
-position = Vector3(75, 3.7595, 47)
+[node name="Bank10" type="Marker3D" parent="Rifts/LowerRift/Banks" unique_id=1352245993]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, 3.7595, 47)
 
-[node name="Screen" type="CanvasLayer" parent="."]
+[node name="Screen" type="CanvasLayer" parent="." unique_id=1192281729]
 layer = 0
 
-[node name="Yellow" type="ColorRect" parent="Screen"]
+[node name="Yellow" type="ColorRect" parent="Screen" unique_id=776065393]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
@@ -113,4 +111,3 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.8, 0.08, 0)
-

@@ -218,9 +218,23 @@ func _probe_vine(from: Vector3, direction: Vector3) -> Dictionary:
 	var surface := hit.get("collider") as Node3D
 	if surface == null or not surface.has_method("can_climb") or not surface.can_climb():
 		return {}
-	if absf(hit.normal.y) > 0.4:
+	# 以角色可行走坡度区分侧面与顶面，倾斜放置的藤蔓仍允许攀爬。
+	if absf(hit.normal.y) >= cos(floor_max_angle):
 		return {}
 	return hit
+
+
+func _find_vine(direction: Vector3) -> Dictionary:
+	# 倾斜表面的下沿可能已经挡住脚部，但胸前射线仍够不到，抓附与维持使用同一组高度。
+	# 水平探测避免沿倾斜法线向下探出藤蔓底端，导致刚抓附就脱落。
+	direction.y = 0.0
+	direction = direction.normalized()
+	var feet := _feet_position()
+	for height in [1.1, 0.3, 1.8, -0.15]:
+		var hit := _probe_vine(feet + Vector3.UP * height, direction)
+		if not hit.is_empty():
+			return hit
+	return {}
 
 
 func _stop_climbing(wait_for_release: bool = false) -> void:
@@ -249,9 +263,7 @@ func _process_climbing(delta: float) -> bool:
 			_mount_remaining = 0.3
 			_stop_climbing()
 			return false
-		var support := _probe_vine(_feet_position() + Vector3.UP * 1.1, -_climb_normal)
-		if support.is_empty():
-			support = _probe_vine(_feet_position() - Vector3.UP * 0.15, -_climb_normal)
+		var support := _find_vine(-_climb_normal)
 		if support.is_empty():
 			_stop_climbing()
 			return false
@@ -260,7 +272,7 @@ func _process_climbing(delta: float) -> bool:
 	elif input_dir.y < 0.0 and not _climb_wait_release and _climb_cooldown <= 0.0 and velocity.y <= climb_speed:
 		var facing := -global_basis.z
 		facing.y = 0.0
-		var hit := _probe_vine(_feet_position() + Vector3.UP * 1.1, facing.normalized())
+		var hit := _find_vine(facing.normalized())
 		if not hit.is_empty():
 			_climb_surface = hit.collider
 			_climb_normal = hit.normal
@@ -270,7 +282,10 @@ func _process_climbing(delta: float) -> bool:
 	var right := up.cross(_climb_normal).normalized()
 	var movement := right * input_dir.x - up * input_dir.y
 	var speed := climb_speed / (1.0 + carry_weight * carry_slow_factor)
-	velocity = movement * speed - _climb_normal * 0.6
+	# 贴靠只施加水平速度，避免倾斜法线的竖直分量在松开按键后仍让角色滑动。
+	var inward := -_climb_normal
+	inward.y = 0.0
+	velocity = movement * speed + inward.normalized() * 0.6
 	move_and_slide()
 	_footsteps.stop()
 	return true

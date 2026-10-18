@@ -1,9 +1,11 @@
 [gd_scene format=3 uid="uid://d22jft1yrub13"]
 
-[ext_resource type="PackedScene" uid="uid://fynymovkxsrw" path="res://assets/map_origin.glb" id="1_flsf4"]
+[ext_resource type="PackedScene" uid="uid://c8oeasnmcslao" path="res://assets/main_world_v3.glb" id="1_flsf4"]
 [ext_resource type="Shape3D" path="res://resources/environment/main_world/mesh_01_collision.res" id="2_bxmb8"]
+[ext_resource type="Shape3D" path="res://resources/environment/main_world/mesh_03_collision.res" id="3_v2_mesh03"]
 [ext_resource type="Shape3D" path="res://resources/environment/main_world/mesh_02_collision.res" id="3_wfvbv"]
 [ext_resource type="PackedScene" uid="uid://b1nf44seup0a5" path="res://scenes/player/player.tscn" id="4_player"]
+[ext_resource type="Shape3D" path="res://resources/environment/main_world/mesh_04_collision.res" id="4_v3_mesh04"]
 [ext_resource type="Script" uid="uid://dri2pdxbmtkga" path="res://scripts/rooms/main_world.gd" id="5_world"]
 [ext_resource type="PackedScene" uid="uid://cmoneyui00001" path="res://scenes/ui/money_ui.tscn" id="6_money"]
 [ext_resource type="PackedScene" path="res://scenes/ui/crosshair.tscn" id="7_crosshair"]
@@ -28,8 +30,12 @@
 [ext_resource type="PackedScene" path="res://scenes/environment/shop_passage_steps.tscn" id="26_xqlbi"]
 [ext_resource type="PackedScene" path="res://scenes/economy/main_world_soul_egg_zones.tscn" id="27_jhoda"]
 [ext_resource type="PackedScene" path="res://scenes/economy/main_world_corpse_return_outlet.tscn" id="28_musv6"]
-[ext_resource type="PackedScene" path="res://scenes/environment/main_world_rift_recovery.tscn" id="29_musv6"]
+[ext_resource type="PackedScene" uid="uid://cpdc04dxe5vj5" path="res://scenes/environment/main_world_rift_recovery.tscn" id="29_musv6"]
 [ext_resource type="PackedScene" path="res://scenes/environment/main_world_drawbridges.tscn" id="30_y7bs8"]
+[ext_resource type="PackedScene" path="res://scenes/environment/retro_world_effect.tscn" id="31_retro"]
+[ext_resource type="Material" path="res://resources/environment/main_world_rock_material.tres" id="32_rock"]
+[ext_resource type="PackedScene" path="res://scenes/environment/main_world_passages.tscn" id="34_passages"]
+[ext_resource type="PackedScene" path="res://scenes/environment/main_world_gap_blockers.tscn" id="35_gap_blockers"]
 
 [sub_resource type="CylinderShape3D" id="HoleSwallowShape"]
 height = 8.0
@@ -52,6 +58,18 @@ metadata/_editor_description = "沿用现有地图尺寸（源模型 × 5 × 3�
 
 [node name="MapOrigin" parent="MapScale" unique_id=2075284540 instance=ExtResource("1_flsf4")]
 
+[node name="youximouxing_low(3)" parent="MapScale/MapOrigin" index="0" unique_id=316703624]
+material_override = ExtResource("32_rock")
+
+[node name="youximouxing_low(3)_001" parent="MapScale/MapOrigin" index="1" unique_id=762594960]
+material_override = ExtResource("32_rock")
+
+[node name="立方体" parent="MapScale/MapOrigin" index="2" unique_id=404179439]
+material_override = ExtResource("32_rock")
+
+[node name="立方体_001" parent="MapScale/MapOrigin" index="3" unique_id=1582985521]
+material_override = ExtResource("32_rock")
+
 [node name="Collision" type="Node3D" parent="MapScale" unique_id=1689819808]
 
 [node name="Mesh01" type="StaticBody3D" parent="MapScale/Collision" unique_id=1007336139]
@@ -63,12 +81,32 @@ metadata/source_mesh = "youximouxing_low(3)"
 shape = ExtResource("2_bxmb8")
 
 [node name="Mesh02" type="StaticBody3D" parent="MapScale/Collision" unique_id=365657948]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, -5.0847073, 0)
+transform = Transform3D(1.760985, 0, 0, 0, 0.22070633, 0, 0, 0, 1.8068713, 0.46847624, 1.9199342, -1.4824488)
 collision_mask = 0
-metadata/source_mesh = "youximouxing_low(3)_001"
+metadata/source_mesh = "立方体"
 
 [node name="Shape" type="CollisionShape3D" parent="MapScale/Collision/Mesh02" unique_id=60493682]
 shape = ExtResource("3_wfvbv")
+
+[node name="Mesh03" type="StaticBody3D" parent="MapScale/Collision" unique_id=713159326]
+transform = Transform3D(1.760985, 0, 0, 0, 0.22070633, 0, 0, 0, 1.8068713, 3.7945092, 1.7651346, 1.9543805)
+collision_mask = 0
+metadata/source_mesh = "立方体_001"
+
+[node name="Shape" type="CollisionShape3D" parent="MapScale/Collision/Mesh03" unique_id=601087572]
+shape = ExtResource("3_v2_mesh03")
+
+[node name="Mesh04" type="StaticBody3D" parent="MapScale/Collision" unique_id=550185741]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 4.724289, 0)
+collision_mask = 0
+metadata/source_mesh = "youximouxing_low(3)_001"
+
+[node name="Shape" type="CollisionShape3D" parent="MapScale/Collision/Mesh04" unique_id=898483454]
+shape = ExtResource("4_v3_mesh04")
+
+[node name="PassageRepairs" parent="." unique_id=1201085540 instance=ExtResource("34_passages")]
+
+[node name="GapBlockers" parent="." unique_id=2140076218 instance=ExtResource("35_gap_blockers")]
 
 [node name="GameplayAnchors" type="Node3D" parent="." unique_id=654921631]
 
@@ -87,6 +125,8 @@ layout_mode = 3
 [node name="OnboardingHints" parent="HUD" unique_id=1443645134 instance=ExtResource("9_onboarding")]
 
 [node name="WorldLighting" parent="." unique_id=1379777725 instance=ExtResource("10_lighting")]
+
+[node name="RetroWorldEffect" parent="." unique_id=1108396062 instance=ExtResource("31_retro")]
 
 [node name="Hole" parent="." unique_id=408587926 instance=ExtResource("11_hole")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -47.46, 2.298, -19.29)
@@ -142,7 +182,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.6, 2.328, -21)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.6, 2.328, -18)
 
 [node name="Torch" parent="." unique_id=1232848228 instance=ExtResource("12_4e057")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.450354, 3.175507, -9.745237)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.450354, 3.1600718, -9.745237)
 
 [node name="Shopkeeper" parent="." unique_id=1962818175 instance=ExtResource("15_h24ri")]
 transform = Transform3D(-0.89636135, 0, 0.44332415, 0, 1, 0, -0.44332415, 0, -0.89636135, -86.382996, 1.8149924, 6.0604386)
@@ -172,17 +212,17 @@ transform = Transform3D(0.64278764, 0, -0.76604444, 0, 1, 0, 0.76604444, 0, 0.64
 transform = Transform3D(-0.65605897, 0, 0.7547096, 0, 1, 0, -0.7547096, 0, -0.65605897, -83.04017, 1.8149934, -1.4277698)
 
 [node name="RatSpawner" parent="." unique_id=1313307626 instance=ExtResource("22_n76ho")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.857696, 3.2565079, -5.35596)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.857696, 3.7328944, -5.35596)
 max_alive = 1
 
 [node name="Torch2" parent="." unique_id=2055093749 instance=ExtResource("12_4e057")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.012514, 3.2565064, -4.3565245)
 
 [node name="Torch3" parent="." unique_id=856352410 instance=ExtResource("12_4e057")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.375168, 3.2565079, -28.099026)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.375168, 3.6581707, -28.099026)
 
 [node name="FlammableVines" parent="." unique_id=1544001774 instance=ExtResource("13_ftn7i")]
-transform = Transform3D(0.5424777, 0, -0.8400702, 0, 1, 0, 0.8400702, 0, 0.5424777, 27.383207, 3.256506, -18.3753)
+transform = Transform3D(0.5314739, 0.44071317, -0.72340006, -0.0047845654, 0.85554624, 0.51770467, 0.8470612, -0.27168536, 0.4568089, 26.26516, 3.7851877, -16.87859)
 size = Vector3(3.42, 3.36, 0.35)
 respawn_delay = 3.0
 
@@ -209,7 +249,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.991264, 3.256503, 12.61073
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 73.18203, 3.256503, 10.1628685)
 
 [node name="RatSpawner2" parent="." unique_id=243860645 instance=ExtResource("22_n76ho")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.9191, 3.2565012, 38.493202)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.9191, 3.3054962, 38.493202)
 max_alive = 1
 
 [node name="RatSpawner3" parent="." unique_id=1691100367 instance=ExtResource("22_n76ho")]
@@ -221,7 +261,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.62361, 3.2565045, 7.538885
 max_alive = 1
 
 [node name="Torch7" parent="." unique_id=1690920922 instance=ExtResource("12_4e057")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.78522, 6.592495, -8.31349)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.78522, 5.5997267, -8.31349)
 
 [node name="RatSpawner5" parent="." unique_id=826826836 instance=ExtResource("22_n76ho")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.12921, 6.592497, -39.80745)
@@ -255,4 +295,5 @@ transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -28, 2.875, -28)
 
 [node name="Drawbridges" parent="." unique_id=866211622 instance=ExtResource("30_y7bs8")]
 
+[editable path="MapScale/MapOrigin"]
 [editable path="Hole"]

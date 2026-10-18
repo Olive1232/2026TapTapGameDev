@@ -253,6 +253,8 @@ shape = SubResource("GalleryExitEntryShape")
 
 [node name="CleaningExitGallery" type="Area3D" parent="."]
 position = Vector3(60, 9, -2)
+monitoring = false
+editor_description = "原模型此处为封闭岩壁，停用离房判定以防隔墙回收。"
 collision_layer = 0
 collision_mask = 2
 monitorable = false
@@ -266,6 +268,8 @@ shape = SubResource("CleaningExitGalleryShape")
 
 [node name="GalleryExitCleaning" type="Area3D" parent="."]
 position = Vector3(60, 8, 7.5)
+monitoring = false
+editor_description = "原模型此处为封闭岩壁，停用离房判定以防隔墙回收。"
 collision_layer = 0
 collision_mask = 2
 monitorable = false
